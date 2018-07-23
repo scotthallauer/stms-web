@@ -1,2 +1,2 @@
 # capstone-project
-UCT 3rd-year Computer Science project
+3rd-year UCT Computer Science project
