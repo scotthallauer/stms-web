@@ -3,6 +3,7 @@ CREATE TABLE user (
     firstName VARCHAR(25) NOT NULL,
     lastNames VARCHAR(50) NOT NULL,
     email VARCHAR(40) NOT NULL,
+    confirmed BIT NOT NULL,
     PRIMARY KEY (userID)
 );
 
