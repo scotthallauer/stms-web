@@ -41,8 +41,8 @@ CREATE TABLE semester (
 CREATE TABLE course (
 	courseID int NOT NULL,
     semesterID int NOT NULL,
-    name VARCHAR(25) NOT NULL,
-    code VARCHAR(10) NOT NULL,
+    courseName VARCHAR(25) NOT NULL,
+    courseCode VARCHAR(10) NOT NULL,
     semester1 int NOT NULL,
     semester2 int NULL,
     PRIMARY KEY (courseID),
@@ -66,8 +66,8 @@ CREATE TABLE courseSession (
 CREATE TABLE courseAssignment (
 	assignmentID int NOT NULL,
     courseID int NOT NULL,
-    name VARCHAR(25) NOT NULL,
-    dueDate DateTime NOT NULL, 
+    Assignmentname VARCHAR(25) NOT NULL,
+    dueDate DateTime NOT NULL,
     PRIMARY KEY (assignmentID),
     FOREIGN KEY (courseID) REFERENCES course(courseID)
 );
