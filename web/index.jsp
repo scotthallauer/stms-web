@@ -8,7 +8,7 @@
 		<link rel="stylesheet" type="text/css" href="./css/stms.css">
 		<script src="./js/libraries/dhtmlxSuite/dhtmlx.js" type="text/javascript"></script>
 		<script src="./js/libraries/dhtmlxScheduler/dhtmlxscheduler.js" type="text/javascript"></script>
-		<script src="./js/calendar.js" type="text/javascript"></script>
+		<script src="./js/stms.js" type="text/javascript"></script>
 	</head>
 	<body>
 		<div id="stms_scheduler" class="dhx_cal_container" style='width:100%; height:100%;'>
