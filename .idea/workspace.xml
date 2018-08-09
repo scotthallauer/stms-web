@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+<<<<<<< HEAD
   <component name="ChangeListManager">
     <list default="true" id="42fc828c-5fb3-48e2-bdc9-564cfa254e73" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/STMS.iml" beforeDir="false" afterPath="$PROJECT_DIR$/STMS.iml" afterDir="false" />
@@ -97,10 +98,18 @@
         </subPane>
       </pane>
     </panes>
+=======
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="85" />
+    <option name="y" value="5" />
+    <option name="width" value="2190" />
+    <option name="height" value="1195" />
+>>>>>>> 3cdeced5a4cec65498e6193cd8da28a431ca9841
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+<<<<<<< HEAD
     <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1533821624844" />
     <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
@@ -439,6 +448,16 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
+=======
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>10</last-edited>
+>>>>>>> 3cdeced5a4cec65498e6193cd8da28a431ca9841
           <splitter-proportions>
             <option name="proportions">
               <list>

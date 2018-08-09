@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/stms.iml" filepath="$PROJECT_DIR$/stms.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/capstone-project.iml" filepath="$PROJECT_DIR$/capstone-project.iml" />
+>>>>>>> 3cdeced5a4cec65498e6193cd8da28a431ca9841
     </modules>
   </component>
 </project>
