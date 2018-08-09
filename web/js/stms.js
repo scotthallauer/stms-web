@@ -1,29 +1,57 @@
 // Set-up the page layout when the full HTML document has been downloaded
 dhtmlxEvent(window, 'load', function(){
 
-    // Initiate sidebar
-    var sidebar = new dhtmlXSideBar({
+    var stms_layout = new dhtmlXLayoutObject({
 
         parent:         document.body,
+        pattern:        "1C",
         skin:           "material",
-        template:       "icons_text",
-        icons_path:     "media/icons/",
-        width:          100,
-        header:         false,
-        autohide:       false,
-        items: [
+
+        offsets: {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        },
+
+        cells: [
+
             {
-                id:         "p1_calendar",
-                text:       "Calendar",
-                icon:       "calendar_icon.png",
-                selected:   true
+                id:         "a",
+                text:       "Scheduler"
             }
         ]
 
     });
 
-    sidebar.cells("p1_calendar").attachScheduler(new Date(), 'month', 'stms_scheduler', scheduler);
+    var stms_sidebar = stms_layout.cells("a").attachSidebar({
 
-    // Initiate scheduler
-    //scheduler.init('stms_scheduler', new Date(), 'month');
+        parent:         document.body,
+        skin:           "material",
+        template:       "icons_text",
+        icons_path:     "media/icons/",
+        width:          90,
+        header:         false,
+        autohide:       false,
+
+        items: [
+
+            {
+                id:         "p1_calendar",
+                text:       "Calendar",
+                icon:       "calendar_icon.png",
+                selected:   true
+            },
+
+            {
+                id:         "p2_assignments",
+                text:       "Assignments",
+                icon:       "assignment_icon.png"
+            }
+
+        ]
+
+    });
+
+    stms_sidebar.cells("p1_calendar").attachScheduler(new Date(), 'month');
 });
