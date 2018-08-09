@@ -3,26 +3,15 @@
 	<head>
 		<title>Scheduler</title>
 		<link rel="stylesheet" type="text/css" href="./css/normalize.css">
-		<link rel="stylesheet" type="text/css" href="./libraries/dhtmlxSuite/dhtmlx.css">
-		<link rel="stylesheet" type="text/css" href="./libraries/dhtmlxScheduler/dhtmlxscheduler_material.css">
-		<style type="text/css" media="screen">
-			html, body{
-				margin:0px;
-				padding:0px;
-				height:100%;
-				overflow:hidden;
-			}   
-		</style>
-		<script src="./libraries/dhtmlxSuite/dhtmlx.js" type="text/javascript"></script> 
-		<script src="./libraries/dhtmlxScheduler/dhtmlxscheduler.js" type="text/javascript"></script> 
-		<script type="text/javascript">
-			dhtmlxEvent(window, 'load', function(){ 
-				scheduler.init('scheduler_here', new Date(), 'month');
-			});
-		</script>
+		<link rel="stylesheet" type="text/css" href="./js/libraries/dhtmlxSuite/dhtmlx.css">
+		<link rel="stylesheet" type="text/css" href="./js/libraries/dhtmlxScheduler/dhtmlxscheduler_material.css">
+		<link rel="stylesheet" type="text/css" href="./css/stms.css">
+		<script src="./js/libraries/dhtmlxSuite/dhtmlx.js" type="text/javascript"></script>
+		<script src="./js/libraries/dhtmlxScheduler/dhtmlxscheduler.js" type="text/javascript"></script>
+		<script src="./js/calendar.js" type="text/javascript"></script>
 	</head>
 	<body>
-		<div id="scheduler_here" class="dhx_cal_container" style='width:100%; height:100%;'>
+		<div id="stms_scheduler" class="dhx_cal_container" style='width:100%; height:100%;'>
 			<div class="dhx_cal_navline">
 				<div class="dhx_cal_prev_button">&nbsp;</div>
 				<div class="dhx_cal_next_button">&nbsp;</div>
