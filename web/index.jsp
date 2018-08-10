@@ -10,7 +10,7 @@
 		<script src="./js/libraries/jquery/jquery-3.3.1.min.js" type="text/javascript"></script>
 		<script src="./js/libraries/dhtmlxSuite/dhtmlx.js" type="text/javascript"></script>
 		<script src="./js/libraries/dhtmlxScheduler/dhtmlxscheduler.js" type="text/javascript"></script>
-		<script src="./js/stms.js" type="text/javascript"></script>
+		<script src="./js/app.js" type="text/javascript"></script>
 	</head>
 	<body>
 		<div id="stms_header">

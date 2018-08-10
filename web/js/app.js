@@ -77,4 +77,5 @@ dhtmlxEvent(window, 'load', function(){
     });
 
     stms_sidebar.cells("p1_calendar").attachScheduler(new Date(), 'month');
+
 });
