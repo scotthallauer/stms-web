@@ -11,5 +11,15 @@
 		<script src="./js/stms.js" type="text/javascript"></script>
 	</head>
 	<body>
+		<div id="stms_header">
+			<div id="stms_title">
+				<div id="stms_title_icon"></div>
+				<div id="stms_title_text">Scheduler</div>
+			</div>
+			<div id="stms_account">
+				<div id="stms_account_icon"></div>
+				<div id="stms_account_text">Scott</div>
+			</div>
+		</div>
 	</body>
 </html>

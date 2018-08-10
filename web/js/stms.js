@@ -17,12 +17,13 @@ dhtmlxEvent(window, 'load', function(){
         cells: [
 
             {
-                id:         "a",
-                text:       "Scheduler"
+                id:         "a"
             }
         ]
 
     });
+
+    stms_layout.attachHeader("stms_header");
 
     var stms_sidebar = stms_layout.cells("a").attachSidebar({
 

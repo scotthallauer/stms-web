@@ -7,10 +7,30 @@ html, body{
 }
 
 /* Use this to hide layout cell header when implementing custom header*/
-/*
 div.dhx_cell_hdr{
     display: none;
-}*/
+}
+
+div#stms_header{
+    height: 42px;
+    width: 100%;
+    font-family: Roboto, Arial, Helvetica;
+    color: #FFFFFF;
+    background-color: #3399CC;
+    visibility: hidden;
+}
+
+div#stms_title{
+    float: left;
+}
+
+div#stms_title_text{
+    line-height: 42px;
+}
+
+div#stms_account{
+    float: right;
+}
 
 div.dhxsidebar_item_text{
     font-size: 13px;
