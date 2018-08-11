@@ -1,3 +1,5 @@
+CREATE SCHEMA stms
+
 CREATE TABLE user (
 	userID int NOT NULL,
     firstName VARCHAR(25) NOT NULL,

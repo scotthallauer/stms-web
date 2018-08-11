@@ -22,7 +22,7 @@ public class User {
 
     }
 
-    User (String email, String password){
+    User (String email, String password){ //This is for the log in sequence not create account
         //Loop until the log in details are correct
         DB = new Database();
         String query = "SELECT userID, firstName FROM user WHERE email = " + email + " AND password = " + password + ";";
