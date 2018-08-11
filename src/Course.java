@@ -4,11 +4,31 @@ public class Course {
     private String name;
     private String code;
 
-    Course() {
+    // getters and setters for all variables
 
-    }
+    public void setCourseID(int ID) {
+        this.courseID = ID; }
 
-    Course(int courseID) {
+    public int getCourseID() {
+        return courseID; }
+
+    public void setName(String name) {
+        this.name = name; }
+
+    public String getName() {
+        return name; }
+
+    public void setCode(String code) {
+        this.code = code; }
+
+    public String getCode() {
+        return code; }
+
+    // Various constructors
+
+    Course() { }
+
+    Course(int ID) {
 
     }
 

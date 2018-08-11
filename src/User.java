@@ -50,9 +50,7 @@ public class User {
 
     // Various constructors
 
-    User() {
-
-    }
+    User() { }
 
     User(int userID) {
 
@@ -66,7 +64,7 @@ public class User {
         //Loop until the log in details are correct
         DB = new Database();
         String query = "SELECT userID, firstName FROM user WHERE email = " + email + " AND password = " + password + ";";
-        ResultSet rs = null
+        ResultSet rs = null;
         rs = DB.filterDB(query);
         if (rs = null) {
             // Login Failure
