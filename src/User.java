@@ -9,6 +9,46 @@ public class User {
     private String pwdSalt;
     private Database DB;
 
+    // getters and setters for all variables
+
+    public void setUserID(int ID) {
+        this.userID = ID; }
+
+    public int getUserID() {
+        return userID; }
+
+    public void setName(String name) {
+        this.name = name; }
+
+    public String getName() {
+        return name; }
+
+    public void setEmail(String email) {
+        this.email = email; }
+
+    public String getEmail() {
+        return email; }
+
+    public void setPwdHash(String hash) {
+        this.pwdHash = hash; }
+
+    public String getPwdHash() {
+        return pwdHash; }
+
+    public void setPwdSalt(String salt) {
+        this.pwdSalt = salt; }
+
+    public String getPwdSalt() {
+        return pwdSalt; }
+
+    public void setDB(Database db) {
+        this.DB = db; }
+
+    public Database getDB() {
+        return DB; }
+
+    // Various constructors
+
     User() {
 
     }
