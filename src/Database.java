@@ -53,8 +53,7 @@ public class Database {
     //this class just connects, filtering and inserting will use specific methods
 
     //This is going to be the template for all SQL queries we use
-    public ResultSet filterOffUserID(int userID){
-        String query ="SELECT * FROM user WHERE userID = " + userID;
+    public ResultSet filterDB(String query){
         try{
             PrepStat = connect.prepareStatement(query);
             resultSet = PrepStat.executeQuery();
@@ -63,7 +62,6 @@ public class Database {
             e.printStackTrace();
         }
         return resultSet;
-
     }
 
 }
