@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Scheduler</title>
+		<title>Monthly Mentor</title>
 		<link rel="shortcut icon" href="./media/icons/favicon.ico"/>
 		<link rel="stylesheet" type="text/css" href="./css/normalize.css">
 		<link rel="stylesheet" type="text/css" href="./js/libraries/dhtmlxSuite/dhtmlx.css">
@@ -16,7 +16,7 @@
 		<div id="stms_header">
 			<div id="stms_title">
 				<div id="stms_title_icon"></div>
-				<div id="stms_title_text">Scheduler</div>
+				<div id="stms_title_text">Monthly Mentor</div>
 			</div>
 			<div id="stms_account">
 				<div id="stms_account_icon">SH</div>
