@@ -24,18 +24,29 @@ public class Database {
 
     }
 
+    Database(String username, String password){
+        try {  //Necessary to put in a try catch block
+            connectToDB();
+        } catch (Exception e){
+            System.out.println("Database connection failed.");
+        }
+    }
+
     private void connectToDB() throws Exception{
         try{
             //load the MySQL driver
             Class.forName(("com.mysql.jdbc.Driver"));
 
             // Setting up the connection
-            connect = DriverManager.getConnection("jdbc:mysql://localhost/STMS\"\n" +
-                    "                            + \"user=root&password=jonrules1021");
+            String connectURL = "jdbc:mysql://localhost:8800/SMTS";
+            String user = "root"; //This is whatever we set our user name and password to
+            String password = "root";
+            connect = DriverManager.getConnection(connectURL, user, password);
         } catch (Exception e){
             e.printStackTrace(); //Purely for debug purposes
             throw e;//
         }   finally {
+            System.out.println("try catch block completed.");//Debugg
             //close(); //Check this is necessary and doesn't break shit
         }
     }
