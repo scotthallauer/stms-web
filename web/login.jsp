@@ -20,7 +20,7 @@
             </div>
             <div id="stms_login_bottom">
                 <div id="stms_login_desc">Log in to continue to your account</div>
-                <div><div id="stms_login_form"></div></div>
+                <div id="stms_login_form"></div>
                 <div id="stms_login_links">Not registered? <a href="./register.jsp">Create an account</a></div>
             </div>
         </div>
