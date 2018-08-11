@@ -41,6 +41,7 @@ public class Database {
             // Setting up the connection
             String connectURL = "jdbc:mysql://localhost:8800/SMTS";
             //If the line abopve throws an error it means we can't find the DB
+            //Or its set to the wrong port
             String user = "root"; //This is whatever we set our user name and password to
             String password = "root";
             connect = DriverManager.getConnection(connectURL, user, password);
