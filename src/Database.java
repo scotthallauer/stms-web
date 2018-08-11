@@ -15,7 +15,7 @@ public class Database {
     private PreparedStatement PrepStat = null;
     private ResultSet resultSet = null;
 
-    Database(){
+    Database(){ //This is the constructor fort the new user calass
         try {  //Necessary to put in a try catch block
             connectToDB();
         } catch (Exception e){
@@ -36,9 +36,11 @@ public class Database {
         try{
             //load the MySQL driver
             Class.forName(("com.mysql.jdbc.Driver"));
+            //If the line above throws an error you haven't installed the mysql connector jar file
 
             // Setting up the connection
             String connectURL = "jdbc:mysql://localhost:8800/SMTS";
+            //If the line abopve throws an error it means we can't find the DB
             String user = "root"; //This is whatever we set our user name and password to
             String password = "root";
             connect = DriverManager.getConnection(connectURL, user, password);
