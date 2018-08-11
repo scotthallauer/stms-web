@@ -7,7 +7,11 @@ public class Semester {
     private Date startDate;
     private Date endDate;
 <<<<<<< HEAD
+<<<<<<< HEAD
     private Database DB;
+=======
+    private Course[] courses;
+>>>>>>> 300a2411e37bce4b272f98aab334088f6e8d1eab
 =======
     private Course[] courses;
 >>>>>>> 300a2411e37bce4b272f98aab334088f6e8d1eab
@@ -50,8 +54,12 @@ public class Semester {
 
     Semester(int semesterID) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         DB = new Database();
 
+=======
+        this.semesterID = semesterID;
+>>>>>>> 300a2411e37bce4b272f98aab334088f6e8d1eab
 =======
         this.semesterID = semesterID;
 >>>>>>> 300a2411e37bce4b272f98aab334088f6e8d1eab
