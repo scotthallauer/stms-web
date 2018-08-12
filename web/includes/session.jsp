@@ -1,7 +1,7 @@
 <%
     // Set up the session's "authenticated" attribute if it is null
     if(session.getAttribute("authenticated") == null){
-        session.setAttribute("authenticated", new Boolean(false));
+        session.setAttribute("authenticated", false);
     }
 
     // If the user is on a restricted page and they are not logged in, then redirect them to the login page
