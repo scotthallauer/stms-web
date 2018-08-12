@@ -1,17 +1,60 @@
+import java.sql.SQLException;
 import java.util.Date;
+import java.sql.ResultSet;
 
 public class Semester {
 
-    private int semesterID;
+    private String semesterID;
     private String name;
     private Date startDate;
     private Date endDate;
     private Database DB;
-    private Course[] courses;
+    //private Course[] courses;
+
+    // Various constructors
+
+    Semester() { }
+
+    Semester(String semesterID) {
+        DB = new Database();
+        this.semesterID = semesterID;
+
+        System.out.println("SemesterID ONLY constructor test");
+
+        String query = "SELECT * FROM stms1.semester WHERE semesterID = '" + semesterID + "';";
+        ResultSet rs = DB.filterDB(query);
+        try {
+            if (rs.next()){
+                try{
+                    this.semesterID = rs.getString(1);
+                    name = rs.getString(3);
+                    startDate = rs.getTimestamp(4);
+                    endDate = rs.getTimestamp(5);
+                } catch (SQLException e){
+                    e.printStackTrace();
+                }
+            }
+        } catch
+        (SQLException e){
+            e.printStackTrace();
+            System.out.println("Failed SEMESTERID ONLY CONSTRUCTOR");
+        }
+        System.out.println(semesterID + " name : " + name);
+    }
+
+    Semester(String semesterID, String name, Date start, Date end){
+        DB = new Database();
+        this.semesterID = semesterID;
+        this.name = name;
+        startDate = start;
+        endDate = end;
+
+        System.out.println("Semester object created");
+    }
 
     // getters and setters for all variables
 
-    public void setSemesterID(int ID) {
+    /*public void setSemesterID(int ID) {
         this.semesterID = ID; }
 
     public int getSemesterID() {
@@ -47,14 +90,6 @@ public class Semester {
     public Course[] getCourses() {
         return courses; }
 
-    // Various constructors
-
-    Semester() { }
-
-    Semester(int semesterID) {
-        DB = new Database();
-        this.semesterID = semesterID;
-    }
 
     public void addCourse (Course course) {
 
@@ -66,5 +101,5 @@ public class Semester {
 
     public boolean savetoDB() {
 
-    }
+    }*/
 }

@@ -56,5 +56,15 @@ public class Database {
         }
         return resultSet;
     }
+	
+    public void WriteToDB(String query){
+        try {
+            PrepStat = connect.prepareStatement(query);
+            PrepStat.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+            System.out.println("Failed to write to DB");
+        }
 
+    }
 }
