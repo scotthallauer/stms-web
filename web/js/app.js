@@ -33,6 +33,11 @@ dhtmlxEvent(window, 'load', function(){
         {id: 1, option: "Account Settings"},
         {id: 2, option: "Log Out"}
     ]);
+    stms_account_popup.attachEvent("onClick", function(id){
+        if(id == 2){
+            window.location = "/logout.jsp";
+        }
+    });
     $("#stms_account").click(function(){
         if(stms_account_popup.isVisible()){
             stms_account_popup.hide();

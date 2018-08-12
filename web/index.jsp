@@ -1,3 +1,5 @@
+<%! boolean authRequired = true; %>
+<%@ include file="./includes/session.jsp" %>
 <!DOCTYPE html>
 <html>
 	<head>

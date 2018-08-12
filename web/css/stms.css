@@ -6,61 +6,65 @@ html, body{
     overflow: hidden;
 }
 
-/* LOGIN PAGE */
-div#stms_login_container{
+/* LOGIN & REGISTER PAGES */
+.stms_pale_container{
+    background-color: #e5f6ff;
+}
+div#stms_login_container, div#stms_register_container{
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -55%); /*This translates the login box so that it is centered, but 55% is used because it looks a better a bit higher up than perfectly in the center*/
 }
-    div#stms_login_top{
+    div#stms_login_top, div#stms_register_top{
     }
-        div#stms_login_icon{
+        div#stms_login_icon, div#stms_register_icon{
             background-image: url("../media/icons/black_app_icon.png");
             background-size: cover;
             width: 70px;
             height: 70px;
             margin: 0 auto;
         }
-        div#stms_login_title{
+        div#stms_login_title, div#stms_register_title{
             padding: 8px 0 25px 0;
             text-align: center;
             font-family: Roboto, Arial, Helvetica;
             font-weight: bold;
             font-size: 20px;
         }
-    div#stms_login_bottom{
+    div#stms_login_bottom, div#stms_register_bottom{
         box-sizing: border-box;
+        background-color: #FFF;
         border: 1px solid #000;
         padding: 15px;
     }
-        div#stms_login_desc{
+        div#stms_login_desc, div#stms_register_desc{
             padding: 5px 0 10px 0;
             text-align: center;
             font-family: Roboto, Arial, Helvetica;
             font-weight: bold;
             font-size: 14px;
         }
-        div#stms_login_form{
+        div#stms_login_form, div#stms_register_form{
             text-align: center;
         }
             div#stms_login_form .dhxform_item_required{
                 display: none;
             }
-            div.stms_login_button{
+            div.stms_login_button, div.stms_register_button{
                 display: inline-block;
                 padding-bottom: 10px;
             }
-        div#stms_login_links{
+        div#stms_login_links, div#stms_register_links{
             text-align: center;
             font-family: Roboto, Arial, Helvetica;
             font-size: 13px;
         }
-            div#stms_login_links a{
+            div#stms_login_links a, div#stms_register_links a{
                 color: #2a86b2;
                 text-decoration: none;
             }
-            div#stms_login_links a:hover{
+            div#stms_login_links a:hover, div#stms_register_links a:hover{
                 text-decoration: underline;
             }
 
