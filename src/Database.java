@@ -2,10 +2,10 @@ import java.sql.*;
 import java.util.Date;
 
 /*
-* Database class for the captstone project
-* Will input, output and filter the information stored in the database
-* Coded by Jonathon Everatt, Scott Hallauer and Jessica Bourn
-*
+ * Database class for the captstone project
+ * Will input, output and filter the information stored in the database
+ * Coded by Jonathon Everatt, Scott Hallauer and Jessica Bourn
+ *
 
  */
 public class Database {
@@ -24,27 +24,17 @@ public class Database {
 
     }
 
-    Database(String username, String password){
-        try {  //Necessary to put in a try catch block
-            connectToDB();
-        } catch (Exception e){
-            System.out.println("Database connection failed.");
-        }
-    }
-
     private void connectToDB() throws Exception{
         try{
             //load the MySQL driver
             Class.forName(("com.mysql.jdbc.Driver"));
-            //If the line above throws an error you haven't installed the mysql connector jar file
 
             // Setting up the connection
-            String connectURL = "jdbc:mysql://localhost:8800/SMTS";
-            //If the line abopve throws an error it means we can't find the DB
-            //Or its set to the wrong port
+            String connectURL = "jdbc:mysql://localhost:3306/STMS1";
             String user = "root"; //This is whatever we set our user name and password to
-            String password = "root";
+            String password = "jonrules1021";
             connect = DriverManager.getConnection(connectURL, user, password);
+            System.out.println("Connected");
         } catch (Exception e){
             e.printStackTrace(); //Purely for debug purposes
             throw e;//

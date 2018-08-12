@@ -61,33 +61,24 @@ public class User {
     }
 
     User (String email, String password){ //This is for the log in sequence not create account
+        System.out.println("User constructor");
         //Loop until the log in details are correct
         DB = new Database();
-        String query = "SELECT userID, firstName FROM user WHERE email = " + email + " AND password = " + password + ";";
+
+        //String query = "SELECT userID, firstName FROM stms1.user WHERE email = '" + email + "' AND password = '" + password + "';";
+        String query = "SELECT userID, firstName FROM stms1.user WHERE email = '" + email + "' AND userPassword = '" + password + "';";
         ResultSet rs = null;
         rs = DB.filterDB(query);
-        if (rs == null) {
-            // Login Failure
-            ///break ;
-            return; //Not sure which method will succeed in exiting
-        }
 
         try {
-            name = rs.getString("firstName");
-            userID = rs.getInt("user");
+            if (rs.next()){
+                userID = rs.getString(1);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("There is an error at try catch log in sequence");
+            System.out.println("There is an issue with the result set");
         }
-        //At this point we should have the userID from the login email
-        //Or throw an error message if the password and the email are incorrect
-        //Also got the name for the user
-
-        query = "SELECT * FROM semester WHERE userID = " + userID + ";";
-        rs = DB.filterDB(query);
-        while (rs.next()){
-            //Create Semester object
-        }
+        System.out.println("userID: " + userID);
     }
 
     public boolean checkLogin (String password) {
