@@ -6,15 +6,8 @@ public class Semester {
     private String name;
     private Date startDate;
     private Date endDate;
-<<<<<<< HEAD
-<<<<<<< HEAD
     private Database DB;
-=======
     private Course[] courses;
->>>>>>> 300a2411e37bce4b272f98aab334088f6e8d1eab
-=======
-    private Course[] courses;
->>>>>>> 300a2411e37bce4b272f98aab334088f6e8d1eab
 
     // getters and setters for all variables
 
@@ -48,28 +41,22 @@ public class Semester {
     public Database getDB() {
         return DB; }
 
+    public void setCourses(Course[] crs) {
+        this.courses = crs; }
+
+    public Course[] getCourses() {
+        return courses; }
+
     // Various constructors
 
     Semester() { }
 
     Semester(int semesterID) {
-<<<<<<< HEAD
-<<<<<<< HEAD
         DB = new Database();
-
-=======
         this.semesterID = semesterID;
->>>>>>> 300a2411e37bce4b272f98aab334088f6e8d1eab
-=======
-        this.semesterID = semesterID;
->>>>>>> 300a2411e37bce4b272f98aab334088f6e8d1eab
     }
 
     public void addCourse (Course course) {
-
-    }
-
-    public Course[] getCourses() {
 
     }
 

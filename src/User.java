@@ -66,7 +66,7 @@ public class User {
         String query = "SELECT userID, firstName FROM user WHERE email = " + email + " AND password = " + password + ";";
         ResultSet rs = null;
         rs = DB.filterDB(query);
-        if (rs = null) {
+        if (rs == null) {
             // Login Failure
             ///break ;
             return; //Not sure which method will succeed in exiting
