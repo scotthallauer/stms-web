@@ -22,7 +22,7 @@ public class CourseSession {
     CourseSession() { }
 
     CourseSession(int ID) {
-
+        courseID = ID;
     }
 
 

@@ -15,6 +15,7 @@ public class Course {
 
     Course(int courseID) {
         this.courseID = courseID;
+        loadCourseSessions();
     }
 
     private void loadCourseSessions(){
@@ -35,9 +36,9 @@ public class Course {
                     flag = true;
                 }
 
-                sessions[count] = new CourseSession();
+                sessions[count] = new CourseSession(courseID);
                 sessions[count].setcSessionID(rs.getInt(1));
-                sessions[count].setCourseID((courseID));
+                //sessions[count].setCourseID((courseID));
                 sessions[count].setName(rs.getString(3));
                 sessions[count].setType(rs.getString(4));
                 sessions[count].setStartTime(rs.getTimestamp(5));
@@ -45,8 +46,10 @@ public class Course {
                 sessions[count].setLocation(rs.getString(7));
                 sessions[count].setRRule(rs.getString(8));
                 sessions[count].setNote(rs.getString(9));
-
+                System.out.println(sessions[count].getName());
                 count++;
+                System.out.println("course session " + count + "loaded" );
+
             }
         } catch (SQLException e){
             e.printStackTrace();
