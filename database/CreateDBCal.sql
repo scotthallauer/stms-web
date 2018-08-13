@@ -1,12 +1,11 @@
-CREATE SCHEMA stms
-
 CREATE TABLE user (
 	userID int NOT NULL,
     firstName VARCHAR(25) NOT NULL,
     lastNames VARCHAR(50) NOT NULL,
     email VARCHAR(40) NOT NULL,
     confirmed BIT NOT NULL,
-    userPassword VARCHAR(15) NOT NULL,
+    pwdHash VARCHAR(250) NOT NULL,
+    pwdSalt VARCHAR(15) NOT NULL,
     PRIMARY KEY (userID)
 );
 

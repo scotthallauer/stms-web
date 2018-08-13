@@ -1,4 +1,6 @@
 import java.sql.*;
+import java.util.LinkedList;
+import java.util.Date;
 
 public class User {
 
@@ -8,98 +10,80 @@ public class User {
     private String pwdHash;
     private String pwdSalt;
     private Database DB;
-    private Semester[];
+    private LinkedList<Semester> semesterLinkedList;
 
-    // getters and setters for all variables
+    User() {
+        //Create user method
+        //Check if the user exists
 
-    public void setUserID(int ID) {
-        this.userID = ID; }
-
-    public int getUserID() {
-        return userID; }
-
-    public void setName(String name) {
-        this.name = name; }
-
-    public String getName() {
-        return name; }
-
-    public void setEmail(String email) {
-        this.email = email; }
-
-    public String getEmail() {
-        return email; }
-
-    public void setPwdHash(String hash) {
-        this.pwdHash = hash; }
-
-    public String getPwdHash() {
-        return pwdHash; }
-
-    public void setPwdSalt(String salt) {
-        this.pwdSalt = salt; }
-
-    public String getPwdSalt() {
-        return pwdSalt; }
-
-    public void setDB(Database db) {
-        this.DB = db; }
-
-    public Database getDB() {
-        return DB; }
-
-    // Various constructors
-
-    User() { }
+    }
 
     User(int userID) {
 
     }
 
     User(String email) {
-
-    }
-
-     User (String email, String password) { //This is for the log in sequence not create account
+        //email only login
+        //check password
         System.out.println("User constructor start");
         //Loop until the log in details are correct
-        DB = new Database(email, password);
+        DB = new Database();
 
         //String query = "SELECT userID, firstName FROM stms1.user WHERE email = '" + email + "' AND password = '" + password + "';";
-        String query = "SELECT userID, firstName FROM stms1.user WHERE email = '" + email + "' AND userPassword = '" + password + "';";
+        String query = "SELECT userID, firstName FROM stms1.user WHERE email = '" + email + "';";
         ResultSet rs = null;
         rs = DB.filterDB(query);
 
         try {
             if (rs.next()){
-                userID = rs.getString(1);
+                userID = rs.getInt(1);
+            } else {
+                //log in failed
             }
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("There is an error at try catch log in sequence");
         }
         System.out.println("userID: " + userID);
+        System.out.println("Got user info from DB");
         //At this point we should have the userID from the login email
         //Or throw an error message if the password and the email are incorrect
         //Also got the name for the user
-        loadSemesterInfo();
 
+        //loadSemesterInfo();
 
     }
+
+    public boolean checkLogin (String password) {
+        String query = "SELECT (pwdHash, pwdSalt) FROM stms1.user WHERE userID = " + userID + ";";
+        try {
+            ResultSet rs = DB.filterDB(query);
+            pwdHash = rs.getString(1);
+            pwdSalt = rs.getString(2);
+        } catch (SQLException e){
+            System.out.println("Failed to get query data CheckLogin method");
+            e.printStackTrace();
+        }
+        //After the checkLogin is completed we call the rest of the DB stuff we need
+        loadSemesterInfo();
+        return false;
+    }
+
 
     private void loadSemesterInfo(){
         String query = "SELECT * FROM stms1.semester WHERE userID = '" + userID + "';";
         ResultSet rs = DB.filterDB(query);
-        System.out.println("Before trry catch block load semester info");
+        System.out.println("Load Semester method called and DB filtered");
         try{
             while(rs.next()){
-                System.out.println(rs.getString(1) + "SemesterID with user ID" + userID);
-                Semester s = new Semester(rs.getString(1));
+                System.out.println(rs.getString(1) + "SemesterID with user ID: " + userID);
+                Semester s = new Semester(rs.getInt(1));
             }
         } catch (SQLException e){
             e.printStackTrace();
             System.out.println("Error User loadSemesterInfo");
         }
+        System.out.println("Semester info loaded");
     }
 
     public void CreateSemester(){//String name, Date start, Date end){
@@ -112,15 +96,9 @@ public class User {
         //VALUES (1, 'Jonathon', 'Everatt', 'EVRJON003@myuct.ac.za', 1, '1234');
     }
 
-    public boolean checkLogin (String password) {
-
-    }
+   /*
 
     public boolean forgotPassword (String email) {
-
-    }
-
-    public void addSemester (Semester semester) {
 
     }
 
@@ -130,6 +108,6 @@ public class User {
 
     public boolean savetoDB() {
 
-    }
+    }*/
 }
 
