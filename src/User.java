@@ -1,5 +1,6 @@
 import java.sql.*;
 import java.util.LinkedList;
+import java.security.MessageDigest;
 import java.util.Date;
 
 public class User {
@@ -46,6 +47,7 @@ public class User {
         }
         System.out.println("userID: " + userID);
         System.out.println("Got user info from DB");
+        HashPassword("1234","5");
         //At this point we should have the userID from the login email
         //Or throw an error message if the password and the email are incorrect
         //Also got the name for the user
@@ -64,9 +66,37 @@ public class User {
             System.out.println("Failed to get query data CheckLogin method");
             e.printStackTrace();
         }
+        String checkPassword = HashPassword(password, pwdSalt );
+        if (checkPassword.equals(pwdHash)){
+            //loadSemesterInfo();
+            return true;
+        } else {
+            //passwords don't match
+            return false;
+        }
         //After the checkLogin is completed we call the rest of the DB stuff we need
-        loadSemesterInfo();
-        return false;
+        //
+    }
+
+    public String HashPassword(String Hash, String Salt){
+        //arbitrary decision to put salt at the end
+        String pass = Hash + Salt;
+        System.out.println(pass);
+        try{
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(pass.getBytes("UTF-8"));
+            StringBuffer hexString = new StringBuffer();
+
+            for (int i = 0; i < hash.length; i++) {
+                String hex = Integer.toHexString(0xff & hash[i]);
+                if(hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            System.out.println(hexString.toString());
+            return hexString.toString();
+        } catch(Exception ex){
+            throw new RuntimeException(ex);
+        }
     }
 
 
