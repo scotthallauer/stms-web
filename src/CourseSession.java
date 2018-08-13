@@ -1,12 +1,14 @@
 import java.time.LocalTime;
+import java.util.Date;
 
 public class CourseSession {
 
     private int cSessionID;
+    private  int courseID;
     private String type;
     private String name;
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private Date startTime;
+    private Date endTime;
     private String note;
     private String location;
     private String rrule;
@@ -14,6 +16,15 @@ public class CourseSession {
     private double possibleMark;
     private double earnedMark;
     private int priority;
+
+    // Various constructors
+
+    CourseSession() { }
+
+    CourseSession(int ID) {
+
+    }
+
 
     // getters and setters for all variables
 
@@ -32,19 +43,23 @@ public class CourseSession {
     public void setName(String name) {
         this.name = name; }
 
+    public void setCourseID(int ID){
+        this.courseID = ID;
+    }
+
     public String getName() {
         return name; }
 
-    public void setStartTime(LocalTime time) {
+    public void setStartTime(Date time) {
         this.startTime = time; }
 
-    public LocalTime getStartTime() {
+    public Date getStartTime() {
         return startTime; }
 
-    public void setEndTime(LocalTime time) {
+    public void setEndTime(Date time) {
         this.endTime = time; }
 
-    public LocalTime getEndTime() {
+    public Date getEndTime() {
         return endTime; }
 
     public void setLocation(String venue) {
@@ -89,15 +104,5 @@ public class CourseSession {
     public double getEarnedMark() {
         return earnedMark; }
 
-    // Various constructors
 
-    CourseSession() { }
-
-    CourseSession(int ID) {
-
-    }
-
-    public boolean savetoDB() {
-
-    }
 }

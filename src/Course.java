@@ -5,6 +5,7 @@ public class Course {
 
     private int courseID;
     private int semesterID;
+    private CourseSession[] sessions;
     private String name;
     private String code;
 
@@ -14,6 +15,43 @@ public class Course {
 
     Course(int courseID) {
         this.courseID = courseID;
+    }
+
+    private void loadCourseSessions(){
+        Database DB = new Database();
+        String query = "SELECT * FROM stms1.courseSession WHERE courseID = '" + courseID + "';";
+        ResultSet rs = DB.filterDB(query);
+
+        try {
+            if(rs.last()){
+                sessions = new CourseSession[rs.getRow()];
+                rs.first();
+            }
+            Boolean flag = false;
+            int count = 0;
+            while (rs.next()){
+                if (flag == false){
+                    rs.first();
+                    flag = true;
+                }
+
+                sessions[count] = new CourseSession();
+                sessions[count].setcSessionID(rs.getInt(1));
+                sessions[count].setCourseID((courseID));
+                sessions[count].setName(rs.getString(3));
+                sessions[count].setType(rs.getString(4));
+                sessions[count].setStartTime(rs.getTimestamp(5));
+                sessions[count].setEndTime(rs.getTimestamp(6));
+                sessions[count].setLocation(rs.getString(7));
+                sessions[count].setRRule(rs.getString(8));
+                sessions[count].setNote(rs.getString(9));
+
+                count++;
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+            System.out.println("Fail in try-catch loadCourseSessions");
+        }
     }
 
     /*public void addSession (CourseSession session) {
