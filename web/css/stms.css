@@ -51,13 +51,13 @@ div#stms_login_container, div#stms_register_container{
             font-weight: bold;
             font-size: 14px;
         }
-        div#stms_login_dhx_form, div#stms_register_form{
+        div#stms_login_dhx_form, div#stms_register_dhx_form{
             text-align: center;
         }
             div#stms_login_dhx_form .dhxform_item_required{
                 display: none;
             }
-            div#stms_login_dhx_form .validate_error div.dhxform_control input{
+            div#stms_login_dhx_form .validate_error div.dhxform_control input, div#stms_register_dhx_form .validate_error div.dhxform_control input{
                 border-bottom-color: red;
             }
             div.stms_login_button, div.stms_register_button{

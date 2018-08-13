@@ -16,5 +16,7 @@
         }else{
             out.print("2");
         }
+    }else{
+        out.print("2");
     }
 %>

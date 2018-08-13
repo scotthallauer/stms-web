@@ -8,11 +8,11 @@ dhtmlxEvent(window, 'load', function(){
     ]);
 
     stms_login_form.attachEvent("onButtonClick", function(name){
-        submit_login();
+        submit_form();
     });
 
     stms_login_form.attachEvent("onEnter", function(name){
-        submit_login();
+        submit_form();
     });
 
     stms_login_form.attachEvent("onFocus", function(name){
@@ -39,7 +39,7 @@ dhtmlxEvent(window, 'load', function(){
         }
     })
 
-    function submit_login(){
+    function submit_form(){
         stms_login_form.send("./ajax/process_login.jsp", "post", function(loader, response){
             // when we get the AJAX response, hide the loading screen
             $("body").loadingModal("hide");
@@ -54,7 +54,7 @@ dhtmlxEvent(window, 'load', function(){
                     swal({
                         icon: "warning",
                         title: "Inactive Account",
-                        text: "Please click the link we sent to your email."
+                        text: "Please click the activation link we sent to your email."
                     });
                     break;
                 // login failed - incorrect credentials
