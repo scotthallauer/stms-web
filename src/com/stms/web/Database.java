@@ -33,7 +33,7 @@ public class Database{
      */
     private void connect() throws Exception{
         // load the MySQL driver
-        Class.forName("com.mysql.jdbc.Driver");
+        Class.forName("com.mysql.cj.jdbc.Driver");
         // MySQL database log-in details
         String url = "jdbc:mysql://localhost:3306/stms";
         String user = "root";

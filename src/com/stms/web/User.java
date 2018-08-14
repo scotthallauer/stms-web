@@ -7,77 +7,62 @@ import java.util.Random;
 
 public class User {
 
+    private Database db;
     private int userID;
-    private String name;
-    private String email;
-    private String pwdHash;
-    private String pwdSalt;
-    private Database DB;
     private LinkedList<Semester> semesterLinkedList;
 
-    User() {
+    public User() {
         //Create user method
         //Check if the user exists
+    }
+
+    public User(int userID) {
 
     }
 
-    User(int userID) {
-
-    }
-
-    User(String email) {
-        //String s = genSalt();
-        //System.out.println(s);
-        //email only login
-        //check password
-        System.out.println("User constructor start");
-        //Loop until the log in details are correct
-        DB = new Database();
-
-        //String query = "SELECT userID, firstName FROM stms1.user WHERE email = '" + email + "' AND password = '" + password + "';";
-        String sql = "SELECT userID, firstName FROM user WHERE email = '" + email + "';";
-        ResultSet rs = null;
-        rs = DB.query(sql);
-
-        try {
-            if (rs.next()){
-                userID = rs.getInt(1);
-            } else {
-                //log in failed
+    /**
+     * Parameterised constructor to create a user using their email. If an account with the provided does not exist, an exception will be thrown.
+     * @param email the account email address of an existing user
+     */
+    public User(String email) throws Exception{
+        // connect to database
+        this.db = new Database();
+        if(this.db.isConnected()) {
+            // query database to get userID (if user exists)
+            ResultSet rs = this.db.query("SELECT userID FROM user WHERE email = '" + email + "';");
+            if (rs.first()) {
+                this.userID = rs.getInt("userID");
+            }else{
+                throw new Exception();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("There is an error at try catch log in sequence");
+            System.out.println("userID: " + userID);
+            System.out.println("Got user info from DB");
+            HashPassword("password", "gh90845hg093hqp");
+            //loadSemesterInfo();
+            //At this point we should have the userID from the login email
+            //Or throw an error message if the password and the email are incorrect
+            //Also got the name for the user
+        }else{
+            throw new Exception();
         }
-        System.out.println("userID: " + userID);
-        System.out.println("Got user info from DB");
-        HashPassword("1234","5");
-        loadSemesterInfo();
-        //At this point we should have the userID from the login email
-        //Or throw an error message if the password and the email are incorrect
-        //Also got the name for the user
     }
 
-    public boolean checkLogin (String password) {
-        String sql = "SELECT (pwdHash, pwdSalt) FROM user WHERE userID = " + userID + ";";
+    public boolean checkPassword(String password) {
+        ResultSet rs = this.db.query("SELECT pwdHash, pwdSalt FROM user WHERE userID = " + this.userID + ";");
         try {
-            ResultSet rs = DB.query(sql);
-            pwdHash = rs.getString(1);
-            pwdSalt = rs.getString(2);
-        } catch (SQLException e){
-            System.out.println("Failed to get query data CheckLogin method");
+            if (rs.first()) {
+                String pwdHash = rs.getString("pwdHash");
+                String pwdSalt = rs.getString("pwdSalt");
+                String checkPassword = HashPassword(password, pwdSalt);
+                return checkPassword.equals(pwdHash);
+            }else{
+                return false;
+            }
+        } catch (Exception e){
+            System.out.println("Failed to get query data CheckPassword method");
             e.printStackTrace();
-        }
-        String checkPassword = HashPassword(password, pwdSalt );
-        if (checkPassword.equals(pwdHash)){
-            //loadSemesterInfo();
-            return true;
-        } else {
-            //passwords don't match
             return false;
         }
-        //After the checkLogin is completed we call the rest of the DB stuff we need
-        //
     }
 
     public String HashPassword(String Hash, String Salt){
@@ -107,7 +92,7 @@ public class User {
 
     private void loadSemesterInfo(){
         String sql = "SELECT * FROM semester WHERE userID = '" + userID + "';";
-        ResultSet rs = DB.query(sql);
+        ResultSet rs = db.query(sql);
         System.out.println("Load Semester method called and DB filtered");
         try{
             while(rs.next()){
@@ -135,11 +120,11 @@ public class User {
 	
 	private void saveToDB(String password){
         //password is plain text from the user
-        String salt = genSalt();
+        /*String salt = genSalt();
         String DBPassword = HashPassword(password, salt);
         String sql = "INSERT INTO user ((firstName,lastNames,email,confirmed,pwdHash,pwdSalt) \n" +
                 "VALUES ('" + name + "','','" + email +"',1,'" + DBPassword + "','" + salt + "');";
-        DB.update(sql);
+        db.update(sql);*/
 
     }
 

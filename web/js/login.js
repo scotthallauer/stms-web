@@ -65,6 +65,13 @@ dhtmlxEvent(window, 'load', function(){
                         text: "Please try again."
                     });
                     break;
+                // login failed - server error
+                case 3:
+                    swal({
+                        icon: "error",
+                        title: "Server Error",
+                        text: "Please try again later."
+                    });
             }
         });
     }
