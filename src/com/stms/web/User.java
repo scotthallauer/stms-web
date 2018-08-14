@@ -35,9 +35,9 @@ public class User {
         DB = new Database();
 
         //String query = "SELECT userID, firstName FROM stms1.user WHERE email = '" + email + "' AND password = '" + password + "';";
-        String query = "SELECT userID, firstName FROM user WHERE email = '" + email + "';";
+        String sql = "SELECT userID, firstName FROM user WHERE email = '" + email + "';";
         ResultSet rs = null;
-        rs = DB.filterDB(query);
+        rs = DB.query(sql);
 
         try {
             if (rs.next()){
@@ -59,9 +59,9 @@ public class User {
     }
 
     public boolean checkLogin (String password) {
-        String query = "SELECT (pwdHash, pwdSalt) FROM user WHERE userID = " + userID + ";";
+        String sql = "SELECT (pwdHash, pwdSalt) FROM user WHERE userID = " + userID + ";";
         try {
-            ResultSet rs = DB.filterDB(query);
+            ResultSet rs = DB.query(sql);
             pwdHash = rs.getString(1);
             pwdSalt = rs.getString(2);
         } catch (SQLException e){
@@ -106,8 +106,8 @@ public class User {
 
 
     private void loadSemesterInfo(){
-        String query = "SELECT * FROM semester WHERE userID = '" + userID + "';";
-        ResultSet rs = DB.filterDB(query);
+        String sql = "SELECT * FROM semester WHERE userID = '" + userID + "';";
+        ResultSet rs = DB.query(sql);
         System.out.println("Load Semester method called and DB filtered");
         try{
             while(rs.next()){
@@ -137,9 +137,9 @@ public class User {
         //password is plain text from the user
         String salt = genSalt();
         String DBPassword = HashPassword(password, salt);
-        String query = "INSERT INTO user ((firstName,lastNames,email,confirmed,pwdHash,pwdSalt) \n" +
+        String sql = "INSERT INTO user ((firstName,lastNames,email,confirmed,pwdHash,pwdSalt) \n" +
                 "VALUES ('" + name + "','','" + email +"',1,'" + DBPassword + "','" + salt + "');";
-        DB.WriteToDB(query);
+        DB.update(sql);
 
     }
 

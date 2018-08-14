@@ -24,8 +24,8 @@ public class Semester {
 
         System.out.println("SemesterID ONLY constructor called");
 
-        String query = "SELECT * FROM semester WHERE semesterID = '" + semesterID + "';";
-        ResultSet rs = DB.filterDB(query);
+        String sql = "SELECT * FROM semester WHERE semesterID = '" + semesterID + "';";
+        ResultSet rs = DB.query(sql);
         try {
             if (rs.next()){
                 try{
@@ -67,8 +67,8 @@ public class Semester {
     }
 
     private void loadCourse(){
-        String query = "SELECT * FROM course WHERE semesterID = '" + semesterID + "';";
-        ResultSet rs = DB.filterDB(query);
+        String sql = "SELECT * FROM course WHERE semesterID = '" + semesterID + "';";
+        ResultSet rs = DB.query(sql);
         //Course course;
         try{
             if(rs.last()){
@@ -108,9 +108,9 @@ public class Semester {
     }
 
     private void saveToDB(String password){
-        String query = "INSERT INTO user (userID, semesterName, startDate, endDate) \n" +
+        String sql = "INSERT INTO user (userID, semesterName, startDate, endDate) \n" +
                 "VALUES (" + userID + ", '" + name + "' ," + DateFormat(startDate) + "," + DateFormat(endDate) + ");";
-        DB.update(query);
+        DB.update(sql);
 
     }
 
