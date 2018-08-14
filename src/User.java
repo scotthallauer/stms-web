@@ -2,6 +2,7 @@ import java.sql.*;
 import java.util.LinkedList;
 import java.security.MessageDigest;
 import java.util.Date;
+import java.util.Random;
 
 public class User {
 
@@ -24,6 +25,8 @@ public class User {
     }
 
     User(String email) {
+        //String s = genSalt();
+        //System.out.println(s);
         //email only login
         //check password
         System.out.println("User constructor start");
@@ -48,12 +51,10 @@ public class User {
         System.out.println("userID: " + userID);
         System.out.println("Got user info from DB");
         HashPassword("1234","5");
+        loadSemesterInfo();
         //At this point we should have the userID from the login email
         //Or throw an error message if the password and the email are incorrect
         //Also got the name for the user
-
-        //loadSemesterInfo();
-
     }
 
     public boolean checkLogin (String password) {
@@ -82,6 +83,8 @@ public class User {
         //arbitrary decision to put salt at the end
         String pass = Hash + Salt;
         System.out.println(pass);
+        //Hash algorithm gotten from
+        //https://stackoverflow.com/questions/5531455/how-to-hash-some-string-with-sha256-in-java
         try{
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(pass.getBytes("UTF-8"));
@@ -97,6 +100,7 @@ public class User {
         } catch(Exception ex){
             throw new RuntimeException(ex);
         }
+        //End of Hash algorithm
     }
 
 
@@ -114,6 +118,18 @@ public class User {
             System.out.println("Error User loadSemesterInfo");
         }
         System.out.println("Semester info loaded");
+    }
+
+    public String genSalt(){
+        byte[] salt = new byte[16];
+        Random r = new Random();
+        r.nextBytes(salt);
+        String Salt ="";
+        for (int x = 0; x < 16; x++){
+            Salt = Salt + salt[x];
+        }
+        System.out.println(Salt);
+        return Salt;
     }
 
     public void CreateSemester(){//String name, Date start, Date end){
