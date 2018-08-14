@@ -62,13 +62,8 @@ public class Course {
         String sql = "INSERT INTO course (semesterID,courseName,courseCode,semester1,semester2) \n" +
                 "VALUES (" + semesterID + ",'" + name + "','" + code + "'," + semesterID + ",);";
         Database DB = new Database();
-        try{
-			DB.query(sql);
-			return true;
-		} catch (SQLException e){
-			e.printStackTrace();
-			System.out.println("Error in Save to DB Course");
-		}
+        DB.update(sql);
+        return true;
     }
 
     /*public void addSession (CourseSession session) {
