@@ -83,4 +83,19 @@ dhtmlxEvent(window, 'load', function(){
 
     stms_sidebar.cells("p1_calendar").attachScheduler(new Date(), 'month');
 
+    /*
+    $(".dhx_cal_container").loadingModal({
+        position: "auto",
+        color: "#fff",
+        opacity: "0.7",
+        backgroundColor: "rgb(0,0,0)",
+        animation: "doubleBounce"
+    });
+    $(".dhx_cal_container").loadingModal("show");
+
+    $.ajax({
+        url: ""
+    })
+    */
+
 });
