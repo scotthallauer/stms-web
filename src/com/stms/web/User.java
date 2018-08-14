@@ -132,6 +132,16 @@ public class User {
         System.out.println(Salt);
         return Salt;
     }
+	
+	private void saveToDB(String password){
+        //password is plain text from the user
+        String salt = genSalt();
+        String DBPassword = HashPassword(password, salt);
+        String query = "INSERT INTO user ((firstName,lastNames,email,confirmed,pwdHash,pwdSalt) \n" +
+                "VALUES ('" + name + "','','" + email +"',1,'" + DBPassword + "','" + salt + "');";
+        DB.WriteToDB(query);
+
+    }
 
     public void CreateSemester(){//String name, Date start, Date end){
 
