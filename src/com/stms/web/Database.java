@@ -13,13 +13,13 @@ public class Database{
     private Connection conn = null;
 
     /**
-     * Blank constructor which attempts to set up connection with database
+     * Blank constructor which attempts to set up connection with database.
      */
     public Database(){
         try {
             this.connect();
             System.out.println("Database connection successful.");
-            this.query("USE stms;");
+            this.query("USE stms;"); // ensure that all queries are using the stms schema
         } catch (Exception e){
             System.out.println("Database connection failed.");
             e.printStackTrace();
@@ -28,7 +28,7 @@ public class Database{
     }
 
     /**
-     * Internal method which attempts to connect to database (using hard-coded connection details)
+     * Internal method which attempts to connect to database (using hard-coded connection details).
      * @throws Exception unsuccessful in connecting to database
      */
     private void connect() throws Exception{
@@ -43,7 +43,7 @@ public class Database{
     }
 
     /**
-     * Method to test is the object has an active connection with the database
+     * Method to test if the object has an active connection with the database.
      * @return true if connected to the database, false otherwise
      */
     public boolean isConnected(){
@@ -55,7 +55,7 @@ public class Database{
     }
 
     /**
-     * Method to execute a SQL query statement using the previously connected database
+     * Method to execute a SQL query statement using the previously connected database.
      * @param sql the SQL query statement to execute
      * @return the ResultSet from a successful query, null otherwise
      */
@@ -72,7 +72,7 @@ public class Database{
     }
 
     /**
-     * Method to execute a SQL update statement (i.e. INSERT, UPDATE, DELETE) using the previously connected database
+     * Method to execute a SQL update statement (i.e. INSERT, UPDATE, DELETE) using the previously connected database.
      * @param sql the SQL update statement to execute
      */
     public void update(String sql){
