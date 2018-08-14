@@ -1,7 +1,8 @@
+package com.stms.web;
+
 import java.sql.*;
 import java.util.LinkedList;
 import java.security.MessageDigest;
-import java.util.Date;
 import java.util.Random;
 
 public class User {

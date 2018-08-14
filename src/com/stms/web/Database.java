@@ -1,5 +1,6 @@
+package com.stms.web;
+
 import java.sql.*;
-import java.util.Date;
 
 /*
  * Database class for the captstone project
@@ -8,6 +9,7 @@ import java.util.Date;
  *
 
  */
+
 public class Database {
 
     private Connection connect = null;
@@ -15,7 +17,7 @@ public class Database {
     private PreparedStatement PrepStat = null;
     private ResultSet resultSet = null;
 
-    Database(){ //This is the constructor fort the new user calass
+    public Database(){ //This is the constructor fort the new user class
         try {  //Necessary to put in a try catch block
             connectToDB();
         } catch (Exception e){

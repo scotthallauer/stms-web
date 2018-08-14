@@ -1,5 +1,7 @@
+<%@ page import="com.stms.web.Database" %>
 <%! boolean authRequired = false; %>
 <%@ include file="../includes/session.jsp" %>
+<%@ page import="com.stms.web.*" %>
 <%
     // Handle login attempt
     String user_email = request.getParameter("user_email");

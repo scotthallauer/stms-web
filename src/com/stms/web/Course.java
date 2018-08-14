@@ -1,5 +1,6 @@
+package com.stms.web;
+
 import java.sql.*;
-import java.util.Date;
 
 public class Course {
 
