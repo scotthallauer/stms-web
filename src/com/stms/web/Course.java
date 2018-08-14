@@ -57,6 +57,19 @@ public class Course {
             System.out.println("Fail in try-catch loadCourseSessions");
         }
     }
+	
+	private boolean saveToDB(String password){
+        String sql = "INSERT INTO course (semesterID,courseName,courseCode,semester1,semester2) \n" +
+                "VALUES (" + semesterID + ",'" + name + "','" + code + "'," + semesterID + ",);";
+        Database DB = new Database();
+        try{
+			DB.query(sql);
+			return true;
+		} catch (SQLException e){
+			e.printStackTrace();
+			System.out.println("Error in Save to DB Course");
+		}
+    }
 
     /*public void addSession (CourseSession session) {
 
