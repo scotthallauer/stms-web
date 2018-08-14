@@ -35,7 +35,7 @@ public class User {
         DB = new Database();
 
         //String query = "SELECT userID, firstName FROM stms1.user WHERE email = '" + email + "' AND password = '" + password + "';";
-        String query = "SELECT userID, firstName FROM stms1.user WHERE email = '" + email + "';";
+        String query = "SELECT userID, firstName FROM user WHERE email = '" + email + "';";
         ResultSet rs = null;
         rs = DB.filterDB(query);
 
@@ -59,7 +59,7 @@ public class User {
     }
 
     public boolean checkLogin (String password) {
-        String query = "SELECT (pwdHash, pwdSalt) FROM stms1.user WHERE userID = " + userID + ";";
+        String query = "SELECT (pwdHash, pwdSalt) FROM user WHERE userID = " + userID + ";";
         try {
             ResultSet rs = DB.filterDB(query);
             pwdHash = rs.getString(1);
@@ -106,7 +106,7 @@ public class User {
 
 
     private void loadSemesterInfo(){
-        String query = "SELECT * FROM stms1.semester WHERE userID = '" + userID + "';";
+        String query = "SELECT * FROM semester WHERE userID = '" + userID + "';";
         ResultSet rs = DB.filterDB(query);
         System.out.println("Load Semester method called and DB filtered");
         try{
@@ -137,9 +137,9 @@ public class User {
 
         //Date start = new Date(01/01/18);
         //Date end = new Date(30/06/18);
-        //String query = "INSERT INTO stms1.semester VALUES (1," + userID +"'2018 Jan-June',";
+        //String query = "INSERT INTO semester VALUES (1," + userID +"'2018 Jan-June',";
         //PreparedStatement prep;
-        //basic SQL statement for semester create INSERT INTO STMS1.USER (userID,firstName,lastNames,email,confirmed,userPassword)
+        //basic SQL statement for semester create INSERT INTO USER (userID,firstName,lastNames,email,confirmed,userPassword)
         //VALUES (1, 'Jonathon', 'Everatt', 'EVRJON003@myuct.ac.za', 1, '1234');
     }
 

@@ -24,7 +24,7 @@ public class Semester {
 
         System.out.println("SemesterID ONLY constructor called");
 
-        String query = "SELECT * FROM stms1.semester WHERE semesterID = '" + semesterID + "';";
+        String query = "SELECT * FROM semester WHERE semesterID = '" + semesterID + "';";
         ResultSet rs = DB.filterDB(query);
         try {
             if (rs.next()){
@@ -62,12 +62,12 @@ public class Semester {
         System.out.println("Semester object created");
         //This method would be used to create the Semester object
         //gen unique ID method
-        String query = "INSERT INTO stms1.semester (semesterID, userID, semesterName, startDate, endDate)" +
+        String query = "INSERT INTO semester (semesterID, userID, semesterName, startDate, endDate)" +
                 " VALUES (" + semesterID + "," + userID + "," + name + "," + start + "," + end + ");";
     }
 
     private void loadCourse(){
-        String query = "SELECT * FROM stms1.course WHERE semesterID = '" + semesterID + "';";
+        String query = "SELECT * FROM course WHERE semesterID = '" + semesterID + "';";
         ResultSet rs = DB.filterDB(query);
         //Course course;
         try{

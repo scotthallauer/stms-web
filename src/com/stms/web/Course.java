@@ -21,7 +21,7 @@ public class Course {
 
     private void loadCourseSessions(){
         Database DB = new Database();
-        String query = "SELECT * FROM stms1.courseSession WHERE courseID = '" + courseID + "';";
+        String query = "SELECT * FROM courseSession WHERE courseID = '" + courseID + "';";
         ResultSet rs = DB.filterDB(query);
 
         try {

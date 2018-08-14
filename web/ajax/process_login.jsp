@@ -4,6 +4,13 @@
 <%@ page import="com.stms.web.*" %>
 <%
     // Handle login attempt
+    Database db = new Database();
+    if(db.isConnected()) {
+        out.println("Loving life!");
+    }else{
+        out.println("Kak life");
+    }
+    /*
     String user_email = request.getParameter("user_email");
     String user_password = request.getParameter("user_password");
     if(user_email != null && user_password != null){
@@ -20,5 +27,5 @@
         }
     }else{
         out.print("2");
-    }
+    }*/
 %>

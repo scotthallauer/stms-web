@@ -12,7 +12,7 @@ import java.sql.*;
 
 public class Database {
 
-    private Connection connect = null;
+    private Connection conn = null;
     private Statement statement = null;
     private PreparedStatement PrepStat = null;
     private ResultSet resultSet = null;
@@ -20,10 +20,19 @@ public class Database {
     public Database(){ //This is the constructor fort the new user class
         try {  //Necessary to put in a try catch block
             connectToDB();
+            filterDB("USE stms");
         } catch (Exception e){
             System.out.println("Database connection failed.");
         }
 
+    }
+
+    public boolean isConnected(){
+        try {
+            return conn.isValid(2);
+        }catch(Exception e){
+            return false;
+        }
     }
 
     private void connectToDB() throws Exception{
@@ -32,10 +41,10 @@ public class Database {
             Class.forName(("com.mysql.jdbc.Driver"));
 
             // Setting up the connection
-            String connectURL = "jdbc:mysql://localhost:3306/STMS1";
+            String connectURL = "jdbc:mysql://localhost:3306/stms";
             String user = "root"; //This is whatever we set our user name and password to
-            String password = "jonrules1021";
-            connect = DriverManager.getConnection(connectURL, user, password);
+            String password = "";
+            conn = DriverManager.getConnection(connectURL, user, password);
             System.out.println("Connected");
         } catch (Exception e){
             e.printStackTrace(); //Purely for debug purposes
@@ -50,7 +59,7 @@ public class Database {
     //This is going to be the template for all SQL queries we use
     public ResultSet filterDB(String query){
         try{
-            PrepStat = connect.prepareStatement(query);
+            PrepStat = conn.prepareStatement(query);
             resultSet = PrepStat.executeQuery();
         } catch (SQLException e){
             System.out.println("ERROR!");
@@ -61,7 +70,7 @@ public class Database {
 	
     public void WriteToDB(String query){
         try {
-            PrepStat = connect.prepareStatement(query);
+            PrepStat = conn.prepareStatement(query);
             PrepStat.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
