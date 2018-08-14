@@ -99,6 +99,21 @@ public class Semester {
         }
     }
 
+    public String DateFormat(Date date){
+        //Turns Date into a format readable by SQL
+        String s = date.toString();
+        s = s.substring(0,4) + s.substring(5,7) + s.substring(8,10);
+        System.out.println(s);
+        return s;
+    }
+
+    private void saveToDB(String password){
+        String query = "INSERT INTO user (userID, semesterName, startDate, endDate) \n" +
+                "VALUES (" + userID + ", '" + name + "' ," + DateFormat(startDate) + "," + DateFormat(endDate) + ");";
+        DB.update(query);
+
+    }
+
     // getters and setters for all variables
 
     /*public void setSemesterID(int ID) {
