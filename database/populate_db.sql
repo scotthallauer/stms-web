@@ -9,7 +9,7 @@ VALUES ('Jonathon', 'Everatt', 'EVRJON003@myuct.ac.za',1,'5994471abb01112afcc181
 #password is 1234
 
 INSERT INTO user (firstName, lastNames, email, confirmed, pwdHash, pwdSalt) 
-VALUES ('Jessica','Bourn','BRNJES018@myuct.ac.za',1,'c60ef4626af52dcae3395b6b02f6e9d50f8508e0f9e19985bd7c0b26ecb26200','81552974381271');
+VALUES ('Jessica','Bourn','BRNJES018@myuct.ac.za',1,'18650c5730d77b32f0910983fdff30c75f91eeaa70378a51c35240249f3fbf81','81552974381271');
 #password is p3gasus 
 
 #Semester inserts
