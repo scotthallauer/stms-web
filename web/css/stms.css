@@ -83,6 +83,11 @@ div.dhx_cell_hdr{
     display: none;
 }
 
+/* Make font size smaller on popup to fix "Edit occurrence" button exceeding its width for editing recurring events */
+.dhtmlx_popup_button div {
+    font-size: 13px;
+}
+
 /* Custom application header */
 div#stms_header{
     height: 42px;

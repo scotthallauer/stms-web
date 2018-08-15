@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+    Static schedule data for prototype demonstration purposes.
+    This will be made into a dynamic script in a later iteration.
+-->
+<data>
+    <event id="1">
+        <text><![CDATA[CSC3003S - Lecture]]></text>
+        <start_date>2018-07-23 09:00:00</start_date>
+        <end_date>2018-09-07 09:45:00</end_date>
+        <rec_type><![CDATA[week_1___1,2,3,4,5]]></rec_type>
+        <event_length>2700</event_length>
+        <event_pid>0</event_pid>
+        <color>#22A7F0</color>
+        <textColor>#FFFFFF</textColor>
+    </event>
+    <event id="2">
+        <text><![CDATA[MCB3023S - Lecture]]></text>
+        <start_date>2018-07-23 11:00:00</start_date>
+        <end_date>2018-09-07 11:45:00</end_date>
+        <rec_type><![CDATA[week_1___1,2,3,4,5]]></rec_type>
+        <event_length>2700</event_length>
+        <event_pid>0</event_pid>
+        <color>#26A65B</color>
+        <textColor>#FFFFFF</textColor>
+    </event>
+    <event id="3">
+        <text><![CDATA[MCB3012Z - Practical]]></text>
+        <start_date>2018-07-30 14:00:00</start_date>
+        <end_date>2018-09-03 17:00:00</end_date>
+        <rec_type><![CDATA[week_1___1,2]]></rec_type>
+        <event_length>10800</event_length>
+        <event_pid>0</event_pid>
+        <color>#C3272B</color>
+        <textColor>#FFFFFF</textColor>
+    </event>
+    <event id="4">
+        <text><![CDATA[Personal - Gym]]></text>
+        <start_date>2018-07-23 17:30:00</start_date>
+        <end_date>2018-07-23 19:00:00</end_date>
+        <color>#F47983</color>
+        <textColor>#FFFFFF</textColor>
+        <readonly>true</readonly>
+    </event>
+    <event id="5">
+        <text><![CDATA[Personal - Gym]]></text>
+        <start_date>2018-08-25 13:00:00</start_date>
+        <end_date>2018-09-05 14:30:00</end_date>
+        <rec_type><![CDATA[week_1___3]]></rec_type>
+        <event_length>10800</event_length>
+        <event_pid>0</event_pid>
+        <color>#F47983</color>
+        <textColor>#FFFFFF</textColor>
+        <readonly>true</readonly>
+    </event>
+    <event id="6">
+        <text><![CDATA[Personal - Gym]]></text>
+        <start_date>2018-07-27 15:30:00</start_date>
+        <end_date>2018-09-07 17:00:00</end_date>
+        <rec_type><![CDATA[week_1___5]]></rec_type>
+        <event_length>10800</event_length>
+        <event_pid>0</event_pid>
+        <color>#F47983</color>
+        <textColor>#FFFFFF</textColor>
+        <readonly>true</readonly>
+    </event>
+    <event id="7">
+        <text><![CDATA[MCB3023S - Test]]></text>
+        <start_date>2018-08-17 11:00:00</start_date>
+        <end_date>2018-08-17 11:45:00</end_date>
+        <color>#26A65B</color>
+        <textColor>#FFFFFF</textColor>
+    </event>
+    <event id="8">
+        <text><![CDATA[MCB3023S - Lecture]]></text>
+        <start_date>2018-08-17 11:00:00</start_date>
+        <end_date>2018-08-17 11:45:00</end_date>
+        <rec_type><![CDATA[none]]></rec_type>
+        <event_length>1534496400</event_length> <!-- unix timestamp of when event would have happened if it hadn't been edited -->
+        <event_pid>2</event_pid>
+        <color>#26A65B</color>
+        <textColor>#FFFFFF</textColor>
+    </event>
+    <event id="9">
+        <text><![CDATA[CSC3003S - Demonstration]]></text>
+        <start_date>2018-08-17 13:00:00</start_date>
+        <end_date>2018-08-17 14:40:00</end_date>
+        <color>#22A7F0</color>
+        <textColor>#FFFFFF</textColor>
+    </event>
+</data>

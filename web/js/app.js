@@ -81,7 +81,38 @@ dhtmlxEvent(window, 'load', function(){
 
     });
 
-    stms_sidebar.cells("p1_calendar").attachScheduler(new Date(), 'month');
+    scheduler.config.xml_date = "%Y-%m-%d %H:%i:%s";
+    scheduler.config.api_date = "%Y-%m-%d %H:%i:%s";
+    scheduler.config.repeat_date = "%d/%m/%Y";
+    scheduler.config.details_on_dblclick = true;
+
+    stms_sidebar.cells("p1_calendar").attachScheduler(new Date(), 'week');
+
+    // configure scheduler to only show "details" button when event is readonly, otherwise show "edit" and "delete" icon
+    scheduler.attachEvent("onClick", function(id){
+        var event = scheduler.getEvent(id);
+        if (event.readonly) {
+            scheduler.config.icons_select = ["icon_details"];
+        }else {
+            scheduler.config.icons_select = ["icon_edit", "icon_delete"];
+        }
+        return true;
+    });
+
+    scheduler._click.buttons.edit = function(id){
+        scheduler.showLightbox(id);
+    }
+
+    scheduler.attachEvent("onBeforeDrag", function(id){
+        var event = scheduler.getEvent(id);
+        if(event.readonly){
+            return false;
+        }else{
+            return true;
+        }
+    });
+
+    scheduler.load("./ajax/load_calendar.xml", "xml");
 
     /*
     $(".dhx_cal_container").loadingModal({

@@ -2,6 +2,7 @@ package com.stms.web;
 
 import java.time.LocalTime;
 import java.util.Date;
+import java.sql.*;
 
 public class CourseSession {
 
