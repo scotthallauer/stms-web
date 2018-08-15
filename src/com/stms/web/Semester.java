@@ -17,7 +17,14 @@ public class Semester {
     // Various constructors
 
     Semester() { }
-
+	
+	/*
+	 * Constructs the Semester class and provides it will it's unqiue ID.
+	 * Fetches all the relevant data about the semster class from the database 
+	 * using its unique ID and saves it in the correct format in the class
+	 * finally calls loadCourse to load all the necessary courses for the semester
+	*/
+	
     Semester(int semesterID) {
         DB = new Database();
         this.semesterID = semesterID;
@@ -65,6 +72,11 @@ public class Semester {
         String query = "INSERT INTO semester (semesterID, userID, semesterName, startDate, endDate)" +
                 " VALUES (" + semesterID + "," + userID + "," + name + "," + start + "," + end + ");";
     }
+	
+	/*
+	 * Loads all the courses into the semester class and stores them in an array
+	 * said courses are constructed and filled with data using set methods
+	*/
 
     private void loadCourse(){
         String sql = "SELECT * FROM course WHERE semesterID = '" + semesterID + "';";
@@ -98,6 +110,8 @@ public class Semester {
             System.out.println("Failed to load data into the Course class");
         }
     }
+	
+	//Formats Date into a format used to insert into sql
 
     public String DateFormat(Date date){
         //Turns Date into a format readable by SQL
@@ -106,6 +120,8 @@ public class Semester {
         System.out.println(s);
         return s;
     }
+	
+	//Saves the data from the class into the DataBase
 
     private void saveToDB(String password){
         String sql = "INSERT INTO user (userID, semesterName, startDate, endDate) \n" +
