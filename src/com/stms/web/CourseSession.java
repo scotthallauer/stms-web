@@ -21,11 +21,36 @@ public class CourseSession {
 
     // Various constructors
 
-    CourseSession() { }
+	// Constructor for CourseSession which fetches its own data from DB
+	
+     CourseSession(int ID) {
+        Database DB = new Database();
+        String sql = "SELECT * FROM coursesession WHERE sessionID = " + ID + ";";
+        ResultSet rs = DB.query(sql);
 
-    CourseSession(int ID) {
-        courseID = ID;
+        try {
+            this.courseID = rs.getInt(2);
+            this.name = rs.getString(3);
+            this.type = rs.getString(4);
+            this.startTime = rs.getTimestamp(5);
+            this.endTime = rs.getTimestamp(6);
+            this.location = rs.getString(7);
+            this.rrule = rs.getString(8);
+            this.note = rs.getString(9);
+            System.out.print("Constructor completed off Session ID. Data gotten from DB");
+        } catch (SQLException e){
+            e.printStackTrace();
+            System.out.print("Constructor fail coursesession");
+        }
     }
+	
+	//Constructor for when class is loaded by course
+	
+    CourseSession() {
+
+    }
+	
+	//Formats the Date into a format usable to insert into the sql database
 	
 	public String DateFormat(Date date){
         //Turns Date into a format readable by SQL
@@ -35,6 +60,11 @@ public class CourseSession {
         return s;
     }
 
+	/*
+	 * Saves the data of the class to the database. Used when creating a new
+	 * coursesession from the application.
+	*/
+	
     public void saveToDB(){
         String sql = "INSERT INTO courseSession (courseID, sessionName, sessionType, startTime, endTime, location, rrule, note) ";
         sql = sql + "(" + courseID + ",'" + name + "','" + type + "'," + DateFormat(startTime) + "," + DateFormat(endTime) + ",'";

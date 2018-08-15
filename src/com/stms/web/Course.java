@@ -18,6 +18,12 @@ public class Course {
         this.courseID = courseID;
         loadCourseSessions();
     }
+	
+	/*
+	 * The loadCourseSessions method is used to load all of the course sessions for the 
+	 * course into an array in the course class. So that they can be accessed off a 
+	 * central location.
+	*/
 
     private void loadCourseSessions(){
         Database DB = new Database();
@@ -57,7 +63,9 @@ public class Course {
             System.out.println("Fail in try-catch loadCourseSessions");
         }
     }
-	
+	/*
+	 * Save the data of the class to the data. Used in create methods of the class
+	*/
 	private boolean saveToDB(String password){
         String sql = "INSERT INTO course (semesterID,courseName,courseCode,semester1,semester2) \n" +
                 "VALUES (" + semesterID + ",'" + name + "','" + code + "'," + semesterID + ",);";

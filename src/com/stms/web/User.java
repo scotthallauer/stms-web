@@ -59,6 +59,12 @@ public class User {
         String checkPassword = HashPassword(password, this.pwdSalt);
         return checkPassword.equals(this.pwdHash);
     }
+	
+	/*
+	 * This method is used to hash a password that the user inputs
+	 * It is used in both create account and log in use case.
+	 * Uses SHA - 256 hashing to hash a password
+	*/
 
     public String HashPassword(String Hash, String Salt){
         //arbitrary decision to put salt at the end
@@ -83,7 +89,11 @@ public class User {
         }
         //End of Hash algorithm
     }
-
+	
+	/*
+     *  Load semester info class used to get the semester information for the user
+     *  called after user validation and method leads to loading all the data from all the classes
+     */
 
     private void loadSemesterInfo(){
         String sql = "SELECT * FROM semester WHERE userID = '" + userID + "';";
@@ -101,6 +111,10 @@ public class User {
         System.out.println("Semester info loaded");
     }
 
+	/*
+     * Used in create am account sequence to generate a random salt for the user's account
+     */
+	
     public String genSalt(){
         byte[] salt = new byte[16];
         Random r = new Random();
@@ -128,6 +142,11 @@ public class User {
     public String getEmail(){
         return this.email;
     }
+	
+	/*
+     *  Save the information of the user class to the database
+	 * used in the create account use case
+     */
 
 	private void saveToDB(String password){
         //password is plain text from the user
