@@ -1,3 +1,4 @@
+<%@ page import="com.stms.web.*" %>
 <%! boolean authRequired = true; %>
 <%@ include file="./includes/session.jsp" %>
 <!DOCTYPE html>
@@ -24,8 +25,8 @@
 				<div id="stms_title_text">Monthly Mentor</div>
 			</div>
 			<div id="stms_account">
-				<div id="stms_account_icon">SH</div>
-				<div id="stms_account_text">Scott</div>
+				<div id="stms_account_icon"><%= ((User)session.getAttribute("user")).getInitials() %></div>
+				<div id="stms_account_text"><%= ((User)session.getAttribute("user")).getFirstName() %></div>
 			</div>
 		</div>
 	</body>

@@ -1,7 +1,6 @@
-<%@ page import="com.stms.web.Database" %>
+<%@ page import="com.stms.web.*" %>
 <%! boolean authRequired = false; %>
 <%@ include file="../includes/session.jsp" %>
-<%@ page import="com.stms.web.*" %>
 <%
     // get login credentials from POST parameters
     String user_email = request.getParameter("user_email");
@@ -20,7 +19,8 @@
                 return;
             }
             if(user.checkPassword(user_password)) {
-                session.setAttribute("authenticated", true);
+                session.setAttribute("auth", true);
+                session.setAttribute("user", user);
                 // login successful
                 out.print(0);
                 return;

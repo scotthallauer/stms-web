@@ -2,7 +2,7 @@
 <%@ include file="./includes/session.jsp" %>
 <%
     // Redirect to application if user is already logged in
-    if(((Boolean)session.getAttribute("authenticated")).booleanValue() == true){
+    if(bool(session.getAttribute("auth"))){
         response.sendRedirect("/");
     }
 %>

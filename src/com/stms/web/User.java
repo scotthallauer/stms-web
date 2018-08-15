@@ -9,6 +9,11 @@ public class User {
 
     private Database db;
     private int userID;
+    private String firstName;
+    private String lastNames;
+    private String email;
+    private String pwdHash;
+    private String pwdSalt;
     private LinkedList<Semester> semesterLinkedList;
 
     public User() {
@@ -29,15 +34,18 @@ public class User {
         this.db = new Database();
         if(this.db.isConnected()) {
             // query database to get userID (if user exists)
-            ResultSet rs = this.db.query("SELECT userID FROM user WHERE email = '" + email + "';");
+            ResultSet rs = this.db.query("SELECT * FROM user WHERE email = '" + email + "';");
             if (rs.first()) {
                 this.userID = rs.getInt("userID");
+                this.firstName = rs.getString("firstName");
+                this.lastNames = rs.getString("lastNames");
+                this.email = rs.getString("email");
+                this.pwdHash = rs.getString("pwdHash");
+                this.pwdSalt = rs.getString("pwdSalt");
             }else{
                 throw new Exception();
             }
-            System.out.println("userID: " + userID);
-            System.out.println("Got user info from DB");
-            HashPassword("password", "gh90845hg093hqp");
+            System.out.println("Successfully loaded User (userID: " + userID + ") from database.");
             //loadSemesterInfo();
             //At this point we should have the userID from the login email
             //Or throw an error message if the password and the email are incorrect
@@ -48,21 +56,8 @@ public class User {
     }
 
     public boolean checkPassword(String password) {
-        ResultSet rs = this.db.query("SELECT pwdHash, pwdSalt FROM user WHERE userID = " + this.userID + ";");
-        try {
-            if (rs.first()) {
-                String pwdHash = rs.getString("pwdHash");
-                String pwdSalt = rs.getString("pwdSalt");
-                String checkPassword = HashPassword(password, pwdSalt);
-                return checkPassword.equals(pwdHash);
-            }else{
-                return false;
-            }
-        } catch (Exception e){
-            System.out.println("Failed to get query data CheckPassword method");
-            e.printStackTrace();
-            return false;
-        }
+        String checkPassword = HashPassword(password, this.pwdSalt);
+        return checkPassword.equals(this.pwdHash);
     }
 
     public String HashPassword(String Hash, String Salt){
@@ -117,7 +112,23 @@ public class User {
         System.out.println(Salt);
         return Salt;
     }
-	
+
+    public String getFirstName(){
+        return this.firstName;
+    }
+
+    public String getLastNames(){
+        return this.lastNames;
+    }
+
+    public String getInitials(){
+        return String.valueOf(this.firstName.charAt(0)) + String.valueOf(this.lastNames.charAt(0));
+    }
+
+    public String getEmail(){
+        return this.email;
+    }
+
 	private void saveToDB(String password){
         //password is plain text from the user
         /*String salt = genSalt();
