@@ -14,16 +14,16 @@ VALUES ('Jessica','Bourn','BRNJES018@myuct.ac.za',1,'c60ef4626af52dcae3395b6b02f
 
 #Semester inserts
 INSERT INTO semester (userID,semesterName,startDate,endDate) 
-VALUES (1,'Jan-June 2018', 20180191, 20180624);
+VALUES (1,'Jan-June 2018', 20180119, 20180624);
 
 INSERT INTO semester (userID,semesterName,startDate,endDate) 
 VALUES (1, 'July-Dec', 20180724, 20181130);
 
 INSERT INTO semester (userID,semesterName,startDate,endDate) 
-VALUES (2,'Jan-June 2018', 20180191, 20180624);
+VALUES (2,'Jan-June 2018', 20180119, 20180624);
 
 INSERT INTO semester (userID,semesterName,startDate,endDate) 
-VALUES (3, 'Jan-June 2018', 20180191, 20180624);
+VALUES (3, 'Jan-June 2018', 20180119, 20180624);
 
 INSERT INTO semester (userID,semesterName,startDate,endDate) 
 VALUES (3,  'July-Dec', 20180724, 20181130);
