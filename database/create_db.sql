@@ -56,7 +56,7 @@ CREATE TABLE course (
 );
 
 CREATE TABLE courseSession (
-	sessionID int NOT NULL,
+	sessionID int NOT NULL AUTO_INCREMENT,
     courseID int NOT NULL,
     sessionName VARCHAR(25) NOT NULL,
     sessionType VARCHAR(10) NOT NULL,

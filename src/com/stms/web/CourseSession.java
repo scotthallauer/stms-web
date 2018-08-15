@@ -26,6 +26,22 @@ public class CourseSession {
     CourseSession(int ID) {
         courseID = ID;
     }
+	
+	public String DateFormat(Date date){
+        //Turns Date into a format readable by SQL
+        String s = date.toString();
+        s = s.substring(0,4) + s.substring(5,7) + s.substring(8,10);
+        System.out.println(s);
+        return s;
+    }
+
+    public void saveToDB(){
+        String sql = "INSERT INTO courseSession (courseID, sessionName, sessionType, startTime, endTime, location, rrule, note) ";
+        sql = sql + "(" + courseID + ",'" + name + "','" + type + "'," + DateFormat(startTime) + "," + DateFormat(endTime) + ",'";
+        sql = sql + location + "','" + rrule + "','" + note + "');";
+        Database DB = new Database();
+        DB.update(sql);
+    }
 
 
     // getters and setters for all variables
