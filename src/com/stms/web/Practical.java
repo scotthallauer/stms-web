@@ -1,6 +1,11 @@
 package com.stms.web;
 
 public class Practical extends CourseSession {
+	String[] bringToPrac;
+	
+	Practical(){
+		
+	}
 	
 	public void PracRequirements(String[] requirements){
         System.out.print("Don't forget to do these before you prac");
@@ -8,5 +13,22 @@ public class Practical extends CourseSession {
             System.out.print(requirements[x]);
         }
     }
+	
+	public String getReminder(){
+		String s = "Practical from" + DateFormat(startDate) + " until " + DateFormat(endDate);
+		return s;
+	}
+	
+	public void setBringToPrac(String[] bring){
+		bringToPrac = bring;
+	}
+	
+	public String remindBring(){
+		String s = "You need to bring: ";
+		for (int x = 0; x < bringToPrac.length; x++){
+			s += bringToPrac[x] + ", ";
+		}
+		return s;
+	}
 	
 }
