@@ -14,12 +14,18 @@ public class Course {
 
     Course() { }
 
+    /**
+     * Course class created through semester object and values set with set methods
+     * setst the ID and then loads the sessions related to the class
+     *
+     * @param courseID unique ID from DB
+     */
     Course(int courseID) {
         this.courseID = courseID;
         loadCourseSessions();
     }
 	
-	/*
+	/**
 	 * The loadCourseSessions method is used to load all of the course sessions for the 
 	 * course into an array in the course class. So that they can be accessed off a 
 	 * central location.
@@ -63,10 +69,13 @@ public class Course {
             System.out.println("Fail in try-catch loadCourseSessions");
         }
     }
-	/*
-	 * Save the data of the class to the data. Used in create methods of the class
-	*/
-	private boolean saveToDB(String password){
+
+    /**
+     * Save the data of the class to the data. Used in create methods of the class
+     *
+     * @return true if successful and false if failed to save
+     */
+	private boolean saveToDB(){
         String sql = "INSERT INTO course (semesterID,courseName,courseCode,semester1,semester2) \n" +
                 "VALUES (" + semesterID + ",'" + name + "','" + code + "'," + semesterID + ",);";
         Database DB = new Database();
@@ -94,7 +103,9 @@ public class Course {
 
     }*/
 
-    // getters and setters for all variables
+    /**
+     * Setter and getter methods for the class
+     */
 
     public void setSemesterID(int semesterID){
         this.semesterID = semesterID;

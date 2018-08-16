@@ -2,7 +2,7 @@ package com.stms.web;
 
 import java.time.LocalTime;
 import java.util.Date;
-import java.sql.*;
+import java.sql.ResultSet;
 
 public class CourseSession {
 
@@ -21,9 +21,12 @@ public class CourseSession {
     private int priority;
 
     // Various constructors
+    /**
+     * Constructor for CourseSession which fetches its own data from DB
+     *
+     * @param ID unique ID from the database
+     */
 
-	// Constructor for CourseSession which fetches its own data from DB
-	
      CourseSession(int ID) {
         Database DB = new Database();
         String sql = "SELECT * FROM coursesession WHERE sessionID = " + ID + ";";
@@ -44,14 +47,20 @@ public class CourseSession {
             System.out.print("Constructor fail coursesession");
         }
     }
-	
-	//Constructor for when class is loaded by course
-	
+
+    /**
+     * Constructor for when class is loaded by course
+     */
     CourseSession() {
 
     }
-	
-	//Formats the Date into a format usable to insert into the sql database
+
+    /**
+     * Formats the Date into a format usable to insert into the sql database
+     *
+     * @param date necessary to be inserted into the database
+     * @return String format of the data to insert into sql DB
+     */
 	
 	public String DateFormat(Date date){
         //Turns Date into a format readable by SQL
@@ -61,7 +70,7 @@ public class CourseSession {
         return s;
     }
 
-	/*
+	/**
 	 * Saves the data of the class to the database. Used when creating a new
 	 * coursesession from the application.
 	*/
@@ -75,7 +84,9 @@ public class CourseSession {
     }
 
 
-    // getters and setters for all variables
+    /**
+     * getters and setters for all variables
+    */
 
     public void setcSessionID(int ID) {
         this.cSessionID = ID; }

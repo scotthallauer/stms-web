@@ -17,19 +17,22 @@ public class Semester {
     // Various constructors
 
     Semester() { }
-	
-	/*
-	 * Constructs the Semester class and provides it will it's unqiue ID.
-	 * Fetches all the relevant data about the semster class from the database 
-	 * using its unique ID and saves it in the correct format in the class
-	 * finally calls loadCourse to load all the necessary courses for the semester
-	*/
+
+    /**
+     * Constructs the Semester class and provides it with it's unqiue ID.
+     * Fetches all the relevant data about the semster class from the database
+     * using its unique ID and saves it in the correct format in the class
+     * finally calls loadCourse to load all the necessary courses for the semester
+     *
+     *
+     * @param semesterID unique value from the database
+     */
 	
     Semester(int semesterID) {
         DB = new Database();
         this.semesterID = semesterID;
 
-        System.out.println("SemesterID ONLY constructor called");
+        System.out.println("SemesterID ONLY constructor called. Databse connected");
 
         String sql = "SELECT * FROM semester WHERE semesterID = '" + semesterID + "';";
         ResultSet rs = DB.query(sql);
@@ -51,14 +54,14 @@ public class Semester {
             e.printStackTrace();
             System.out.println("Failed SEMESTERID ONLY CONSTRUCTOR");
         }
-        System.out.println("semester ID: " + semesterID + " name : " + name);
-        System.out.println("calling load courses");
+
         loadCourse();
-        System.out.println("Courses loaded into semester");
+        System.out.println("Courses loaded into semester. Semester object constructed");
     }
 
     Semester(int semesterID, String userID, String name, Date start, Date end){
         //THIS METHOD HAS NOT BEEN TESTED
+        System.out.println(" Semester constructor called with all variable constructors");
         DB = new Database();
         this.semesterID = semesterID;
         this.userID = userID;
@@ -72,13 +75,14 @@ public class Semester {
         String query = "INSERT INTO semester (semesterID, userID, semesterName, startDate, endDate)" +
                 " VALUES (" + semesterID + "," + userID + "," + name + "," + start + "," + end + ");";
     }
-	
-	/*
-	 * Loads all the courses into the semester class and stores them in an array
-	 * said courses are constructed and filled with data using set methods
+
+	/**
+	 * The course associated with the Semester in the database via the foreign semesterID key
+     *  connection is set up and DB is filtered to get and load all  realated to the semester
 	*/
 
     private void loadCourse(){
+        System.out.println("Loadcourse called");
         String sql = "SELECT * FROM course WHERE semesterID = '" + semesterID + "';";
         ResultSet rs = DB.query(sql);
         //Course course;
@@ -109,9 +113,15 @@ public class Semester {
             e.printStackTrace();
             System.out.println("Failed to load data into the Course class");
         }
+        System.out.println("Successful. All course loaded to the semester");
     }
-	
-	//Formats Date into a format used to insert into sql
+
+    /**
+     * Formats the Date to a string that can be inserted into sql
+     *
+     * @param date neeeded to insert inot a database
+     * @return String format of date to inset into sql database
+     */
 
     public String DateFormat(Date date){
         //Turns Date into a format readable by SQL
@@ -120,8 +130,11 @@ public class Semester {
         System.out.println(s);
         return s;
     }
-	
-	//Saves the data from the class into the DataBase
+
+    /**
+     * @param password to save to the Database
+     * Saves the information in the object to the corresponding table in the database
+     */
 
     private void saveToDB(String password){
         String sql = "INSERT INTO user (userID, semesterName, startDate, endDate) \n" +

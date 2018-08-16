@@ -12,10 +12,10 @@ public class User {
     private String firstName;
     private String lastNames;
     private String email;
-    private boolean activated;
     private String pwdHash;
     private String pwdSalt;
     private LinkedList<Semester> semesterLinkedList;
+
 
     public User() {
         //Create user method
@@ -32,6 +32,7 @@ public class User {
      */
     public User(String email) throws Exception{
         // connect to database
+        System.out.println("User constructor has been called.")
         this.db = new Database();
         if(this.db.isConnected()) {
             // query database to get userID (if user exists)
@@ -41,7 +42,6 @@ public class User {
                 this.firstName = rs.getString("firstName");
                 this.lastNames = rs.getString("lastNames");
                 this.email = rs.getString("email");
-                this.activated = rs.getBoolean("activated");
                 this.pwdHash = rs.getString("pwdHash");
                 this.pwdSalt = rs.getString("pwdSalt");
             }else{
@@ -55,6 +55,8 @@ public class User {
         }else{
             throw new SQLException();
         }
+
+        System.out.println("User object has been constructed");
     }
 
     public boolean checkPassword(String password) {
@@ -62,20 +64,19 @@ public class User {
         return checkPassword.equals(this.pwdHash);
     }
 
-    public boolean isActivated(){
-        return this.activated;
-    }
-	
-	/*
-	 * This method is used to hash a password that the user inputs
-	 * It is used in both create account and log in use case.
-	 * Uses SHA - 256 hashing to hash a password
-	*/
+    /**
+     * This method is used to hash a password that the user inputs
+     * It is used in both create account and log in use case.
+     * Uses SHA - 256 hashing to hash a password
+     *
+     * @param Hash password that will be hashed
+     * @param Salt Salt for the user gotten from the DB
+     * @return Hashed password including salt
+     */
 
     public String HashPassword(String Hash, String Salt){
         //arbitrary decision to put salt at the end
         String pass = Hash + Salt;
-        System.out.println(pass);
         //Hash algorithm gotten from
         //https://stackoverflow.com/questions/5531455/how-to-hash-some-string-with-sha256-in-java
         try{
@@ -88,31 +89,32 @@ public class User {
                 if(hex.length() == 1) hexString.append('0');
                 hexString.append(hex);
             }
-            System.out.println(hexString.toString());
+
             return hexString.toString();
         } catch(Exception ex){
             throw new RuntimeException(ex);
         }
         //End of Hash algorithm
+        System.out.println("The password has been hashed. Method completed");
     }
-	
-	/*
+
+	/**
      *  Load semester info class used to get the semester information for the user
      *  called after user validation and method leads to loading all the data from all the classes
      */
 
     private void loadSemesterInfo(){
+        System.out.println("Load semester info method called");
         String sql = "SELECT * FROM semester WHERE userID = '" + userID + "';";
         ResultSet rs = db.query(sql);
-        System.out.println("Load Semester method called and DB filtered");
+
         try{
             while(rs.next()){
-                System.out.println(rs.getString(1) + "SemesterID with user ID: " + userID);
                 Semester s = new Semester(rs.getInt(1));
             }
         } catch (SQLException e){
             e.printStackTrace();
-            System.out.println("Error User loadSemesterInfo");
+            System.out.println("Error in method loadSemesterInfo");
         }
         System.out.println("Semester info loaded");
     }
@@ -122,14 +124,15 @@ public class User {
      */
 	
     public String genSalt(){
-        byte[] salt = new byte[16];
+        byte[] salt = new byte[8];
         Random r = new Random();
         r.nextBytes(salt);
         String Salt ="";
-        for (int x = 0; x < 16; x++){
+        for (int x = 0; x < 8; x++){
             Salt = Salt + salt[x];
         }
-        System.out.println(Salt);
+        System.out.println("The Salt key has been generated");
+
         return Salt;
     }
 
@@ -148,12 +151,16 @@ public class User {
     public String getEmail(){
         return this.email;
     }
-	
-	/*
-     *  Save the information of the user class to the database
-	 * used in the create account use case
+
+    /**
+     * Save the information of the user class to the database
+     * used in the create account use case
+     *
+     *
+     * @param password Hashed password saved to the database
      */
 
+	//Switch to boolean when implemented
 	private void saveToDB(String password){
         //password is plain text from the user
         /*String salt = genSalt();
@@ -163,6 +170,12 @@ public class User {
         db.update(sql);*/
 
     }
+
+    /**
+     * Used to create a semester object from information sent to the user
+     * the semester data is saved into the database with the userID set
+     * as its forgeign key
+     */
 
     public void CreateSemester(){//String name, Date start, Date end){
 
@@ -174,6 +187,10 @@ public class User {
         //VALUES (1, 'Jonathon', 'Everatt', 'EVRJON003@myuct.ac.za', 1, '1234');
     }
 
+   /**
+    * Forgot password will be a method that will allow the user to reset their password
+    * after the email verification sequence
+    */
    /*
 
     public boolean forgotPassword (String email) {
@@ -183,9 +200,5 @@ public class User {
     public Semester[] getSemesters() {
 
     }
-
-    public boolean savetoDB() {
-
-    }*/
 }
 
