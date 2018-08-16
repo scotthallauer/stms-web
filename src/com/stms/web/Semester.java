@@ -1,130 +1,135 @@
 package com.stms.web;
 
-import java.sql.SQLException;
 import java.util.Date;
-import java.sql.ResultSet;
+import java.sql.*;
 
+/**
+ * Semester class for Student Time Management System
+ * Used to create new and edit existing semesters in the database.
+ * @author Jonathon Everatt, Scott Hallauer and Jessica Bourn
+ * @version 16/08/2018
+ */
 public class Semester {
 
+    // ATTRIBUTES //
+
     private int semesterID;
-    private String userID;
+    private int userID;
     private String name;
     private Date startDate;
     private Date endDate;
-    private Database DB;
     private Course[] courses;
 
-    // Various constructors
-
-    Semester() { }
+    // CONSTRUCTORS //
 
     /**
-     * Constructs the Semester class and provides it with it's unqiue ID.
-     * Fetches all the relevant data about the semster class from the database
-     * using its unique ID and saves it in the correct format in the class
-     * finally calls loadCourse to load all the necessary courses for the semester
-     *
-     *
-     * @param semesterID unique value from the database
+     * Blank constructor used to create and insert new semester records in the database.
      */
-	
-    Semester(int semesterID) {
-        DB = new Database();
-        this.semesterID = semesterID;
+    Semester(){}
 
-        System.out.println("SemesterID ONLY constructor called. Databse connected");
+    /**
+     * Parameterised constructor used to create and fetch an existing semester from the database.
+     * Loads all associated courses into memory.
+     * @param semesterID the semester's unique ID in the database
+     */
+    Semester(int semesterID) throws Exception {
+        // connect to database
+        System.out.println("Semester constructor has been called.");
+        Database db = new Database();
+        if(db.isConnected()) {
+            // query database to get semester details (if semester exists)
+            ResultSet rs = db.query("SELECT * FROM semester WHERE semesterID = " + semesterID + ";");
+            if (rs.first()) {
+                this.semesterID = rs.getInt("semsterID");
+                this.userID = rs.getInt("userID");
+                this.name = rs.getString("courseName");
+                this.startDate = rs.getTimestamp("startDate");
+                this.endDate = rs.getTimestamp("endDate");
+            }else{
+                throw new NullPointerException();
+            }
+            System.out.println("Successfully loaded Semester (semesterID: " + semesterID + ") from database.");
+            this.loadCourses();
+        }else{
+            throw new SQLException();
+        }
+        System.out.println("Semester object has been constructed");
+    }
 
-        String sql = "SELECT * FROM semester WHERE semesterID = '" + semesterID + "';";
-        ResultSet rs = DB.query(sql);
+    // METHODS //
+
+    /**
+     * Loads all of the courses for the semester into an array stored as an attribute.
+     */
+    private void loadCourses(){
+        Database db = new Database();
+        String sql = "SELECT * FROM course WHERE semesterID = " + this.semesterID + ";";
+        ResultSet rs = db.query(sql);
         try {
-            if (rs.next()){
-                try{
-                    this.semesterID = rs.getInt(1);
-                    this.userID = rs.getString(2);
-                    name = rs.getString(3);
-                    startDate = rs.getTimestamp(4);
-                    endDate = rs.getTimestamp(5);
-
-                } catch (SQLException e){
-                    e.printStackTrace();
-                }
-            }
-        } catch
-        (SQLException e){
-            e.printStackTrace();
-            System.out.println("Failed SEMESTERID ONLY CONSTRUCTOR");
-        }
-
-        loadCourse();
-        System.out.println("Courses loaded into semester. Semester object constructed");
-    }
-
-    Semester(int semesterID, String userID, String name, Date start, Date end){
-        //THIS METHOD HAS NOT BEEN TESTED
-        System.out.println(" Semester constructor called with all variable constructors");
-        DB = new Database();
-        this.semesterID = semesterID;
-        this.userID = userID;
-        this.name = name;
-        startDate = start;
-        endDate = end;
-
-        System.out.println("Semester object created");
-        //This method would be used to create the Semester object
-        //gen unique ID method
-        String query = "INSERT INTO semester (semesterID, userID, semesterName, startDate, endDate)" +
-                " VALUES (" + semesterID + "," + userID + "," + name + "," + start + "," + end + ");";
-    }
-
-	/**
-	 * The course associated with the Semester in the database via the foreign semesterID key
-     *  connection is set up and DB is filtered to get and load all  realated to the semester
-	*/
-
-    private void loadCourse(){
-        System.out.println("Loadcourse called");
-        String sql = "SELECT * FROM course WHERE semesterID = '" + semesterID + "';";
-        ResultSet rs = DB.query(sql);
-        //Course course;
-        try{
+            // set length of array
             if(rs.last()){
-                int count = rs.getRow();
-                System.out.println(rs.getRow() + " NUMBER OF RS ROWS");
-                rs.first();
-                courses = new Course[count];
+                this.courses = new Course[rs.getRow()];
             }
-
-            Boolean flag = false;
-            while (rs.next()){
-                if (flag == false){
-                    rs.first();
-                    flag = true;
-                }
-                int count = 0;
-                courses[count] = new Course(rs.getInt(1));
-                System.out.println("Course ID is " + courses[count].getCourseID());
-
-                courses[count].setSemesterID(rs.getInt(2));
-                courses[count].setName(rs.getString(3));
-                courses[count].setCode(rs.getString(4));
-                System.out.println("coursename: " + courses[count].getName());
+            int count = 0;
+            if(rs.first()){
+                do{
+                    this.courses[count] = new Course(rs.getInt("courseID"));
+                    count++;
+                }while(rs.next());
             }
-        } catch (SQLException e){
+        } catch (Exception e){
+            System.out.println("Failed to load all courses for semester (semesterID: " + this.semesterID + ")");
             e.printStackTrace();
-            System.out.println("Failed to load data into the Course class");
         }
-        System.out.println("Successful. All course loaded to the semester");
+    }
+
+    public void setSemesterID(int semesterID) {
+        this.semesterID = semesterID;
+    }
+
+    public int getSemesterID() {
+        return this.semesterID;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+
+    public int getUserID() {
+        return this.userID;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getStartDate() {
+        return this.startDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public Date getEndDate() {
+        return this.endDate;
     }
 
     /**
-     * Formats the Date to a string that can be inserted into sql
-     *
-     * @param date neeeded to insert inot a database
-     * @return String format of date to inset into sql database
+     * Formats the Date into a format usable to insert into the MySQL database
+     * @param date the Date value to be inserted as a field value into the database
+     * @return the String format of the Date to insert into MySQL database
      */
-
-    public String DateFormat(Date date){
-        //Turns Date into a format readable by SQL
+    String DateFormat(Date date){
+        // Turns Date into a format readable by SQL
         String s = date.toString();
         s = s.substring(0,4) + s.substring(5,7) + s.substring(8,10);
         System.out.println(s);
@@ -132,61 +137,33 @@ public class Semester {
     }
 
     /**
-     * @param password to save to the Database
-     * Saves the information in the object to the corresponding table in the database
+     * Save the semester's details to the database.
+     * @return true if successful, false otherwise.
      */
-
-    private void saveToDB(String password){
-        String sql = "INSERT INTO user (userID, semesterName, startDate, endDate) \n" +
-                "VALUES (" + userID + ", '" + name + "' ," + DateFormat(startDate) + "," + DateFormat(endDate) + ");";
-        DB.update(sql);
-
+    private boolean saveToDB(){
+        Database db = new Database();
+        if(db.isConnected()) {
+            String sql = "INSERT INTO semester (userID,semesterName,startDate,endDate) " +
+                    "VALUES (" + this.userID + ",'" + this.name + "'," + DateFormat(this.startDate) + "," + DateFormat(this.endDate) + ");";
+            db.update(sql);
+            return true;
+        }else{
+            return false;
+        }
     }
 
-    // getters and setters for all variables
-
-    /*public void setSemesterID(int ID) {
-        this.semesterID = ID; }
-
-    public int getSemesterID() {
-        return semesterID; }
-
-    public void setName(String name) {
-        this.name = name; }
-
-    public String getName() {
-        return name; }
-
-    public void setStartDate(Date date) {
-        this.startDate = date; }
-
-    public Date getStartDate() {
-        return startDate; }
-
-    public void setEndDate(Date date) {
-        this.endDate = date; }
-
-    public Date getEndDate() {
-        return endDate; }
-
-    public void setDB(Database db) {
-        this.DB = db; }
-
-    public Database getDB() {
-        return DB; }
-
+    // Methods still to be implemented
+    /*
     public void setCourses(Course[] crs) {
         this.courses = crs; }
 
     public Course[] getCourses() {
         return courses; }
 
-
     public void addCourse (Course course) {
-
     }
 
     public StudySession[] getStudySession() {
-
-    };*/
+    };
+    */
 }

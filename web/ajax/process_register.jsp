@@ -1,7 +1,9 @@
 <%! boolean authRequired = false; %>
 <%@ include file="../includes/session.jsp" %>
 <%
-    // Handle login attempt
+    // Currently hard-coded for testing purposes, will be completed in future iteration
+
+    // Handle register attempt
     String user_name = request.getParameter("user_name");
     String user_email = request.getParameter("user_email");
     String user_password_1 = request.getParameter("user_password_1");

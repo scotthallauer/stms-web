@@ -5,60 +5,95 @@ import java.util.LinkedList;
 import java.security.MessageDigest;
 import java.util.Random;
 
+/**
+ * User class for Student Time Management System
+ * Used to create new and edit existing user accounts in the database.
+ * Offers additional functionality such as login verfication.
+ * @author Jonathon Everatt, Scott Hallauer and Jessica Bourn
+ * @version 16/08/2018
+ */
 public class User {
 
-    private Database db;
+    // ATTRIBUTES //
+
     private int userID;
     private String firstName;
     private String lastNames;
     private String email;
+    private boolean activated;
     private String pwdHash;
     private String pwdSalt;
-    private LinkedList<Semester> semesterLinkedList;
+    private Semester[] semesters;
 
+    // CONSTRUCTOR //
 
-    public User() {
-        //Create user method
-        //Check if the user exists
-    }
-
-    public User(int userID) {
-
-    }
+    /**
+     * Blank constructor used to create and insert new user accounts in the database.
+     */
+    public User() {}
 
     /**
      * Parameterised constructor to create a user using their email. If an account with the provided does not exist, an exception will be thrown.
      * @param email the account email address of an existing user
      */
-    public User(String email) throws Exception{
+    public User(String email) throws Exception {
         // connect to database
-        System.out.println("User constructor has been called.")
-        this.db = new Database();
-        if(this.db.isConnected()) {
-            // query database to get userID (if user exists)
-            ResultSet rs = this.db.query("SELECT * FROM user WHERE email = '" + email + "';");
+        System.out.println("User constructor has been called.");
+        Database db = new Database();
+        if(db.isConnected()) {
+            // query database to get user account details (if user exists)
+            ResultSet rs = db.query("SELECT * FROM user WHERE email = '" + email + "';");
             if (rs.first()) {
                 this.userID = rs.getInt("userID");
                 this.firstName = rs.getString("firstName");
                 this.lastNames = rs.getString("lastNames");
                 this.email = rs.getString("email");
+                this.activated = rs.getBoolean("activated");
                 this.pwdHash = rs.getString("pwdHash");
                 this.pwdSalt = rs.getString("pwdSalt");
             }else{
                 throw new NullPointerException();
             }
             System.out.println("Successfully loaded User (userID: " + userID + ") from database.");
-            //loadSemesterInfo();
-            //At this point we should have the userID from the login email
-            //Or throw an error message if the password and the email are incorrect
-            //Also got the name for the user
+            this.loadSemesters();
         }else{
             throw new SQLException();
         }
-
         System.out.println("User object has been constructed");
     }
 
+    // METHODS //
+
+    /**
+     * Loads all of the semesters for the user into an array stored as an attribute.
+     */
+    private void loadSemesters(){
+        Database db = new Database();
+        String sql = "SELECT * FROM semester WHERE userID = " + this.userID + ";";
+        ResultSet rs = db.query(sql);
+        try {
+            // set length of array
+            if(rs.last()){
+                this.semesters = new Semester[rs.getRow()];
+            }
+            int count = 0;
+            if(rs.first()){
+                do{
+                    this.semesters[count] = new Semester(rs.getInt("semesterID"));
+                    count++;
+                }while(rs.next());
+            }
+        } catch (Exception e){
+            System.out.println("Failed to load all semesters for user (userID: " + this.userID + ")");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Checks if the supplied password matches the hashed password in the database.
+     * @param password the plaintext password to check
+     * @return true if the password matches, false otherwise
+     */
     public boolean checkPassword(String password) {
         String checkPassword = HashPassword(password, this.pwdSalt);
         return checkPassword.equals(this.pwdHash);
@@ -73,12 +108,11 @@ public class User {
      * @param Salt Salt for the user gotten from the DB
      * @return Hashed password including salt
      */
-
     public String HashPassword(String Hash, String Salt){
-        //arbitrary decision to put salt at the end
+        // arbitrary decision to put salt at the end
         String pass = Hash + Salt;
-        //Hash algorithm gotten from
-        //https://stackoverflow.com/questions/5531455/how-to-hash-some-string-with-sha256-in-java
+        // Hash algorithm gotten from
+        // https://stackoverflow.com/questions/5531455/how-to-hash-some-string-with-sha256-in-java
         try{
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(pass.getBytes("UTF-8"));
@@ -94,35 +128,12 @@ public class User {
         } catch(Exception ex){
             throw new RuntimeException(ex);
         }
-        //End of Hash algorithm
-        System.out.println("The password has been hashed. Method completed");
     }
 
 	/**
-     *  Load semester info class used to get the semester information for the user
-     *  called after user validation and method leads to loading all the data from all the classes
+     * Used in create an account sequence to generate a random salt for the user's account
+     * @return the unique salt to be used for password hashing
      */
-
-    private void loadSemesterInfo(){
-        System.out.println("Load semester info method called");
-        String sql = "SELECT * FROM semester WHERE userID = '" + userID + "';";
-        ResultSet rs = db.query(sql);
-
-        try{
-            while(rs.next()){
-                Semester s = new Semester(rs.getInt(1));
-            }
-        } catch (SQLException e){
-            e.printStackTrace();
-            System.out.println("Error in method loadSemesterInfo");
-        }
-        System.out.println("Semester info loaded");
-    }
-
-	/**
-     * Used in create am account sequence to generate a random salt for the user's account
-     */
-	
     public String genSalt(){
         byte[] salt = new byte[8];
         Random r = new Random();
@@ -140,8 +151,16 @@ public class User {
         return this.firstName;
     }
 
+    public void setFirstName(String firstName){
+        this.firstName = firstName;
+    }
+
     public String getLastNames(){
         return this.lastNames;
+    }
+
+    public void setLastNames(String lastNames){
+        this.lastNames = lastNames;
     }
 
     public String getInitials(){
@@ -152,53 +171,37 @@ public class User {
         return this.email;
     }
 
-    /**
-     * Save the information of the user class to the database
-     * used in the create account use case
-     *
-     *
-     * @param password Hashed password saved to the database
-     */
+    public void setEmail(String email){
+        this.email = email;
+    }
 
-	//Switch to boolean when implemented
-	private void saveToDB(String password){
-        //password is plain text from the user
-        /*String salt = genSalt();
-        String DBPassword = HashPassword(password, salt);
-        String sql = "INSERT INTO user ((firstName,lastNames,email,confirmed,pwdHash,pwdSalt) \n" +
-                "VALUES ('" + name + "','','" + email +"',1,'" + DBPassword + "','" + salt + "');";
-        db.update(sql);*/
-
+    public boolean isActivated(){
+        return this.activated;
     }
 
     /**
-     * Used to create a semester object from information sent to the user
-     * the semester data is saved into the database with the userID set
-     * as its forgeign key
+     * Save the user's details to the database.
+     * @return true if successful, false otherwise.
      */
-
-    public void CreateSemester(){//String name, Date start, Date end){
-
-        //Date start = new Date(01/01/18);
-        //Date end = new Date(30/06/18);
-        //String query = "INSERT INTO semester VALUES (1," + userID +"'2018 Jan-June',";
-        //PreparedStatement prep;
-        //basic SQL statement for semester create INSERT INTO USER (userID,firstName,lastNames,email,confirmed,userPassword)
-        //VALUES (1, 'Jonathon', 'Everatt', 'EVRJON003@myuct.ac.za', 1, '1234');
+    private boolean saveToDB(){
+        Database db = new Database();
+        if(db.isConnected()) {
+            String sql = "INSERT INTO user (firstName,lastNames,email,activated,pwdHash,pwdSalt) " +
+                    "VALUES ('" + this.firstName + "','" + this.lastNames + "','" + this.email + "'," + this.activated + ",'" + this.pwdHash + "','" + this.pwdSalt + "');";
+            db.update(sql);
+            return true;
+        }else{
+            return false;
+        }
     }
 
-   /**
-    * Forgot password will be a method that will allow the user to reset their password
-    * after the email verification sequence
-    */
-   /*
-
+    // Methods still to be implemented
+    /*
     public boolean forgotPassword (String email) {
-
     }
 
     public Semester[] getSemesters() {
-
     }
+    */
 }
 

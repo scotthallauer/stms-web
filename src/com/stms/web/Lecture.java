@@ -7,6 +7,6 @@ public class Lecture extends CourseSession {
 	}
 	
 	public String getReminder(){
-		return "Lecture from" + DateFormat(super.getStartTime()) + " until " + DateFormat(super.getEndTime());
+		return "Lecture from" + super.DateFormat(super.getStartTime()) + " until " + super.DateFormat(super.getEndTime());
 	}
 }
