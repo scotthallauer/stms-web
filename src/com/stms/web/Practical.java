@@ -4,7 +4,7 @@ public class Practical extends CourseSession {
 	String[] bringToPrac;
 	
 	Practical(){
-		
+		Super();
 	}
 	
 	public void PracRequirements(String[] requirements){
