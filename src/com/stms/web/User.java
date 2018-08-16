@@ -111,7 +111,7 @@ public class User {
         System.out.println("Semester info loaded");
     }
 
-	/*
+	/**
      * Used in create am account sequence to generate a random salt for the user's account
      */
 	

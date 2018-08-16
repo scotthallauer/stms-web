@@ -2,7 +2,7 @@ package com.stms.web;
 
 import java.time.LocalTime;
 import java.util.Date;
-import java.sql.*;
+import java.sql.ResultSet;
 
 public class CourseSession {
 
