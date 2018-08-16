@@ -12,6 +12,7 @@ public class User {
     private String firstName;
     private String lastNames;
     private String email;
+    private boolean activated;
     private String pwdHash;
     private String pwdSalt;
     private LinkedList<Semester> semesterLinkedList;
@@ -40,10 +41,11 @@ public class User {
                 this.firstName = rs.getString("firstName");
                 this.lastNames = rs.getString("lastNames");
                 this.email = rs.getString("email");
+                this.activated = rs.getBoolean("activated");
                 this.pwdHash = rs.getString("pwdHash");
                 this.pwdSalt = rs.getString("pwdSalt");
             }else{
-                throw new Exception();
+                throw new NullPointerException();
             }
             System.out.println("Successfully loaded User (userID: " + userID + ") from database.");
             //loadSemesterInfo();
@@ -51,13 +53,17 @@ public class User {
             //Or throw an error message if the password and the email are incorrect
             //Also got the name for the user
         }else{
-            throw new Exception();
+            throw new SQLException();
         }
     }
 
     public boolean checkPassword(String password) {
         String checkPassword = HashPassword(password, this.pwdSalt);
         return checkPassword.equals(this.pwdHash);
+    }
+
+    public boolean isActivated(){
+        return this.activated;
     }
 	
 	/*
