@@ -2,12 +2,12 @@ package com.stms.web;
 
 import java.time.LocalTime;
 import java.util.Date;
-import java.sql.ResultSet;
+import java.sql.*;
 
 public class CourseSession {
 
     private int cSessionID;
-    private  int courseID;
+    private int courseID;
     private String type;
     private String name;
     private Date startTime;

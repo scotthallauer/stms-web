@@ -3,10 +3,10 @@ package com.stms.web;
 public class Lecture extends CourseSession {
 	
 	Lecture(){
-		
+		super();
 	}
 	
 	public String getReminder(){
-		String s = "Lecture from" + DateFormat(startDate) + " until " + DateFormat(endDate);
+		return "Lecture from" + DateFormat(super.getStartTime()) + " until " + DateFormat(super.getEndTime());
 	}
 }

@@ -50,15 +50,6 @@ public class Course {
                 }
 
                 sessions[count] = new CourseSession(courseID);
-                sessions[count].setcSessionID(rs.getInt(1));
-                //sessions[count].setCourseID((courseID));
-                sessions[count].setName(rs.getString(3));
-                sessions[count].setType(rs.getString(4));
-                sessions[count].setStartTime(rs.getTimestamp(5));
-                sessions[count].setEndTime(rs.getTimestamp(6));
-                sessions[count].setLocation(rs.getString(7));
-                sessions[count].setRRule(rs.getString(8));
-                sessions[count].setNote(rs.getString(9));
                 System.out.println(sessions[count].getName());
                 count++;
                 System.out.println("course session " + count + "loaded" );

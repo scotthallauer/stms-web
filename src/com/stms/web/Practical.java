@@ -4,7 +4,7 @@ public class Practical extends CourseSession {
 	String[] bringToPrac;
 	
 	Practical(){
-		Super();
+		super();
 	}
 	
 	public void PracRequirements(String[] requirements){
@@ -15,7 +15,7 @@ public class Practical extends CourseSession {
     }
 	
 	public String getReminder(){
-		String s = "Practical from" + DateFormat(startDate) + " until " + DateFormat(endDate);
+		String s = "Practical from" + DateFormat(super.getStartTime()) + " until " + DateFormat(super.getEndTime());
 		return s;
 	}
 	
