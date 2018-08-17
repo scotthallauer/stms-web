@@ -40,9 +40,9 @@ public class Semester {
             // query database to get semester details (if semester exists)
             ResultSet rs = db.query("SELECT * FROM semester WHERE semesterID = " + semesterID + ";");
             if (rs.first()) {
-                this.semesterID = rs.getInt("semsterID");
+                this.semesterID = rs.getInt("semesterID");
                 this.userID = rs.getInt("userID");
-                this.name = rs.getString("courseName");
+                this.name = rs.getString("semesterName");
                 this.startDate = rs.getTimestamp("startDate");
                 this.endDate = rs.getTimestamp("endDate");
             }else{

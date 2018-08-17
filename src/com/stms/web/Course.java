@@ -39,7 +39,7 @@ public class Course {
             ResultSet rs = db.query("SELECT * FROM course WHERE courseID = " + courseID + ";");
             if (rs.first()) {
                 this.courseID = rs.getInt("courseID");
-                this.semesterID = rs.getInt("semsterID");
+                this.semesterID = rs.getInt("semesterID");
                 this.name = rs.getString("courseName");
                 this.code = rs.getString("courseCode");
             }else{
