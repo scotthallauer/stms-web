@@ -1,39 +1,35 @@
+<%@ page import="com.stms.web.*" %>
+<%! boolean authRequired = true; %>
+<%@ include file="./includes/session.jsp" %>
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Scheduler</title>
+		<title>Monthly Mentor</title>
+		<link rel="shortcut icon" href="./media/icons/favicon.ico"/>
 		<link rel="stylesheet" type="text/css" href="./css/normalize.css">
-		<link rel="stylesheet" type="text/css" href="./libraries/dhtmlxSuite/dhtmlx.css">
-		<link rel="stylesheet" type="text/css" href="./libraries/dhtmlxScheduler/dhtmlxscheduler_material.css">
-		<style type="text/css" media="screen">
-			html, body{
-				margin:0px;
-				padding:0px;
-				height:100%;
-				overflow:hidden;
-			}   
-		</style>
-		<script src="./libraries/dhtmlxSuite/dhtmlx.js" type="text/javascript"></script> 
-		<script src="./libraries/dhtmlxScheduler/dhtmlxscheduler.js" type="text/javascript"></script> 
-		<script type="text/javascript">
-			dhtmlxEvent(window, 'load', function(){ 
-				scheduler.init('scheduler_here', new Date(), 'month');
-			});
-		</script>
+		<link rel="stylesheet" type="text/css" href="./js/libraries/dhtmlxSuite/dhtmlx.css">
+		<link rel="stylesheet" type="text/css" href="./js/libraries/dhtmlxScheduler/dhtmlxscheduler_material.css">
+		<link rel="stylesheet" type="text/css" href="./js/libraries/loadingModal/jquery.loadingModal.min.css">
+		<link rel="stylesheet" type="text/css" href="./css/stms.css">
+		<script src="./js/libraries/jquery/jquery-3.3.1.min.js" type="text/javascript"></script>
+		<script src="./js/libraries/dhtmlxSuite/dhtmlx.js" type="text/javascript"></script>
+		<script src="./js/libraries/dhtmlxScheduler/dhtmlxscheduler.js" type="text/javascript"></script>
+        <script src="./js/libraries/dhtmlxScheduler/ext/dhtmlxscheduler_recurring.js" type="text/javascript"></script>
+        <script src="./js/libraries/dhtmlxScheduler/ext/dhtmlxscheduler_readonly.js" type="text/javascript"></script>
+		<script src="./js/libraries/sweetalert/sweetalert.min.js" type="text/javascript"></script>
+		<script src="./js/libraries/loadingModal/jquery.loadingModal.min.js" type="text/javascript"></script>
+		<script src="./js/app.js" type="text/javascript"></script>
 	</head>
 	<body>
-		<div id="scheduler_here" class="dhx_cal_container" style='width:100%; height:100%;'>
-			<div class="dhx_cal_navline">
-				<div class="dhx_cal_prev_button">&nbsp;</div>
-				<div class="dhx_cal_next_button">&nbsp;</div>
-				<div class="dhx_cal_today_button"></div>
-				<div class="dhx_cal_date"></div>
-				<div class="dhx_cal_tab" name="day_tab" style="right:204px;"></div>
-				<div class="dhx_cal_tab" name="week_tab" style="right:140px;"></div>
-				<div class="dhx_cal_tab" name="month_tab" style="right:76px;"></div>
+		<div id="stms_header">
+			<div id="stms_title">
+				<div id="stms_title_icon"></div>
+				<div id="stms_title_text">Monthly Mentor</div>
 			</div>
-			<div class="dhx_cal_header"></div>
-			<div class="dhx_cal_data"></div>       
+			<div id="stms_account">
+				<div id="stms_account_icon"><%= ((User)session.getAttribute("user")).getInitials() %></div>
+				<div id="stms_account_text"><%= ((User)session.getAttribute("user")).getFirstName() %></div>
+			</div>
 		</div>
 	</body>
 </html>

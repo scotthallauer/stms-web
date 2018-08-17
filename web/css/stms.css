@@ -1,0 +1,150 @@
+html, body{
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* ALERT MESSAGES*/
+.swal-modal{
+    font-family: Roboto, Arial, Helvetica;
+}
+
+/* LOGIN & REGISTER PAGES */
+.stms_pale_container{
+    background-color: #f2faff;
+}
+div#stms_login_container, div#stms_register_container{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%); /*This translates the login box so that it is centered, but 55% is used because it looks a better a bit higher up than perfectly in the center*/
+}
+    div#stms_login_top, div#stms_register_top{
+    }
+        div#stms_login_icon, div#stms_register_icon{
+            background-image: url("../media/icons/black_app_icon.png");
+            background-size: cover;
+            width: 70px;
+            height: 70px;
+            margin: 0 auto;
+        }
+        div#stms_login_title, div#stms_register_title{
+            padding: 8px 0 25px 0;
+            text-align: center;
+            font-family: Roboto, Arial, Helvetica;
+            font-weight: bold;
+            font-size: 20px;
+        }
+    div#stms_login_bottom, div#stms_register_bottom{
+        box-sizing: border-box;
+        border-radius: 8px;
+        box-shadow: 0 0 10px #AAA;
+        background-color: #FFF;
+        padding: 15px;
+    }
+        div#stms_login_desc, div#stms_register_desc{
+            padding: 5px 0 10px 0;
+            text-align: center;
+            font-family: Roboto, Arial, Helvetica;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        div#stms_login_dhx_form, div#stms_register_dhx_form{
+            text-align: center;
+        }
+            div#stms_login_dhx_form .dhxform_item_required{
+                display: none;
+            }
+            div#stms_login_dhx_form .validate_error div.dhxform_control input, div#stms_register_dhx_form .validate_error div.dhxform_control input{
+                border-bottom-color: red;
+            }
+            div.stms_login_button, div.stms_register_button{
+                display: inline-block;
+                padding-bottom: 10px;
+            }
+        div#stms_login_links, div#stms_register_links{
+            text-align: center;
+            font-family: Roboto, Arial, Helvetica;
+            font-size: 13px;
+        }
+            div#stms_login_links a, div#stms_register_links a{
+                color: #2a86b2;
+                text-decoration: none;
+            }
+            div#stms_login_links a:hover, div#stms_register_links a:hover{
+                text-decoration: underline;
+            }
+
+/* APPLICATION PAGE */
+/* Hide the default header at the top of the DHTMLX layout cell*/
+div.dhx_cell_hdr{
+    display: none;
+}
+
+/* Make font size smaller on popup to fix "Edit occurrence" button exceeding its width for editing recurring events */
+.dhtmlx_popup_button div {
+    font-size: 13px;
+}
+
+/* Custom application header */
+div#stms_header{
+    height: 42px;
+    width: 100%;
+    font-family: Roboto, Arial, Helvetica;
+    color: #FFFFFF;
+    background-color: #3399CC;
+    visibility: hidden;
+    position: absolute;
+    z-index: 1;
+}
+
+    div#stms_title{
+        float: left;
+    }
+
+        div#stms_title_icon{
+            float: left;
+            margin: 4px;
+            height: 34px;
+            width: 34px;
+            background-image: url("../media/icons/white_app_icon.png");
+            background-size: cover;
+        }
+
+        div#stms_title_text{
+            float: left;
+            line-height: 42px;
+        }
+
+    div#stms_account{
+        float: right;
+        cursor: pointer;
+    }
+
+        div#stms_account:hover{
+            background-color: #2c85b2;
+        }
+
+        div#stms_account_text{
+            float: right;
+            line-height: 42px;
+            margin-left: 10px;
+        }
+
+        div#stms_account_icon{
+            float: right;
+            margin: 5px 5px 5px 10px;
+            height: 32px;
+            width: 32px;
+            background-color: #205e7c;
+            border-radius: 16px;
+            text-align: center;
+            line-height: 32px;
+            font-size: 12px;
+        }
+
+div.dhxsidebar_item_text{
+    font-size: 13px;
+}
