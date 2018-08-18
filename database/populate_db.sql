@@ -1,14 +1,14 @@
 USE stms;
 
-INSERT INTO user (firstName, lastNames, email, activated, pwdHash, pwdSalt) 
+INSERT INTO user (firstName, lastName, email, activated, pwdHash, pwdSalt) 
 values ('Scott', 'Hallauer', 'scott.hallauer@gmail.com', 1, '7eb9f680bf2c5914ff32d5acca123aa7ed4f82f8572ab6b12a7aec4edc8610e0', 'gh90845hg093hqp'); 
 # password is password
 
-INSERT INTO user (firstName, lastNames, email, activated, pwdHash, pwdSalt) 
+INSERT INTO user (firstName, lastName, email, activated, pwdHash, pwdSalt) 
 VALUES ('Jonathon', 'Everatt', 'EVRJON003@myuct.ac.za',1,'5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5','5');
 #password is 1234
 
-INSERT INTO user (firstName, lastNames, email, activated, pwdHash, pwdSalt) 
+INSERT INTO user (firstName, lastName, email, activated, pwdHash, pwdSalt) 
 VALUES ('Jessica','Bourn','BRNJES018@myuct.ac.za',0,'18650c5730d77b32f0910983fdff30c75f91eeaa70378a51c35240249f3fbf81','81552974381271');
 #password is p3gasus 
 

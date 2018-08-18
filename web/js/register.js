@@ -2,7 +2,8 @@ dhtmlxEvent(window, 'load', function(){
 
     var stms_register_form = new dhtmlXForm("stms_register_dhx_form", [
         {type: "settings", position: "label-left", labelWidth: 135, inputWidth: 260},
-        {type: "input", name: "user_name", label: "Name:", required: true},
+        {type: "input", name: "user_fname", label: "First Name:", required: true},
+        {type: "input", name: "user_lname", label: "Last Name:", required: true},
         {type: "input", name: "user_email", label: "Email:", required: true, validate: "ValidEmail"},
         {type: "password", name: "user_password_1", label: "Password:", required: true, validate: "ValidPassword"},
         {type: "password", name: "user_password_2", label: "Confirm Password:", required: true, validate: "ValidPassword"},
@@ -97,6 +98,14 @@ dhtmlxEvent(window, 'load', function(){
                         icon: "error",
                         title: "Invalid Registration",
                         text: "Please try again."
+                    });
+                    break;
+                // registration failed - server error
+                case 3:
+                    swal({
+                        icon: "error",
+                        title: "Server Error",
+                        text: "Please try again later."
                     });
                     break;
             }

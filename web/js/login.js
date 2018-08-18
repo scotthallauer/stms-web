@@ -72,6 +72,7 @@ dhtmlxEvent(window, 'load', function(){
                         title: "Server Error",
                         text: "Please try again later."
                     });
+                    break;
             }
         });
     }

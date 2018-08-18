@@ -7,11 +7,13 @@ USE stms;
 CREATE TABLE user (
 	userID int NOT NULL AUTO_INCREMENT,
     firstName VARCHAR(25) NOT NULL,
-    lastNames VARCHAR(50) NOT NULL,
-    email VARCHAR(40) NOT NULL,
+    lastName VARCHAR(50) NOT NULL,
+    email VARCHAR(40) NOT NULL UNIQUE,
     activated BIT NOT NULL,
     pwdHash VARCHAR(64) NOT NULL,
     pwdSalt VARCHAR(15) NOT NULL,
+    tokenCode VARCHAR(64) NULL UNIQUE,
+    tokenDate DATETIME NULL,
     PRIMARY KEY (userID)
 );
 
