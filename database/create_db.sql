@@ -50,25 +50,30 @@ CREATE TABLE semester (
 
 CREATE TABLE course (
 	courseID int NOT NULL AUTO_INCREMENT,
-    semesterID int NOT NULL,
+    semesterID1 int NOT NULL,
+    semesterID2 int NULL,
     courseName VARCHAR(25) NOT NULL,
-    courseCode VARCHAR(10) NOT NULL,
-    semester1 int NOT NULL,
-    semester2 int NULL,
+    courseCode VARCHAR(10) NULL,
+    colour VARCHAR(6) NULL,
     PRIMARY KEY (courseID),
-    FOREIGN KEY (semesterID) REFERENCES semester(semesterID)
+    FOREIGN KEY (semesterID1) REFERENCES semester(semesterID),
+    FOREIGN KEY (semesterID2) REFERENCES semester(semesterID),
+    UNIQUE KEY semester_course (semesterID1, semesterID2, courseName, courseCode) # prevents two of the same courses happening in the same semester
 );
 
 CREATE TABLE courseSession (
 	sessionID int NOT NULL AUTO_INCREMENT,
+	sessionPID int NOT NULL,
     courseID int NOT NULL,
     sessionName VARCHAR(25) NOT NULL,
     sessionType VARCHAR(10) NOT NULL,
-    startTime DateTime NOT NULL,
-    endTime DateTime NOT NULL,
+    startDate DateTime NOT NULL,
+    endDate DateTime NOT NULL,
+    sessionLength int NULL, # duration of session in seconds (only required for recurring events) 
+    recType VARCHAR(40) NOT NULL,
     location VARCHAR(25) NULL,
-    rrule VARCHAR(25) NOT NULL,
     note VARCHAR(200) NULL,
+    
     PRIMARY KEY (sessionID),
     FOREIGN KEY (courseID) REFERENCES course(courseID)
 );

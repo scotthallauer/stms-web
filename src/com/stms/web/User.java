@@ -12,20 +12,21 @@ import java.util.Random;
  * User class for Student Time Management System
  * Used to create new and edit existing user accounts in the database.
  * Offers additional functionality such as login verfication.
- * @author Jonathon Everatt, Scott Hallauer and Jessica Bourn
- * @version 16/08/2018
+ * @author Scott Hallauer, Jonathon Everatt and Jessica Bourn
+ * @version 18/08/2018
  */
 public class User {
 
     // ATTRIBUTES //
 
-    private boolean recordExists;
-    private boolean recordSaved;
-    private int userID;
+    private Boolean recordExists;
+    private Boolean recordSaved;
+
+    private Integer userID;
     private String firstName;
     private String lastName;
     private String email;
-    private boolean activated;
+    private Boolean activated;
     private String pwdHash;
     private String pwdSalt;
     private String tokenCode;
@@ -38,7 +39,6 @@ public class User {
      * Blank constructor used to create and insert new user accounts in the database.
      */
     public User() {
-        this.userID = -1;
         this.recordExists = false;
         this.recordSaved = false;
     }
@@ -68,11 +68,13 @@ public class User {
             this.pwdHash = rs.getString("pwdHash");
             this.pwdSalt = rs.getString("pwdSalt");
             this.tokenCode = rs.getString("tokenCode");
+            if(rs.wasNull()) this.tokenCode = null;
             this.tokenDate = rs.getTimestamp("tokenDate");
+            if(rs.wasNull()) this.tokenDate = null;
             this.recordExists = true;
             this.recordSaved = true;
         }else{
-            throw new NullPointerException("No user account exists with the email " + email);
+            throw new NullPointerException("No User exists with the email " + email);
         }
     }
 
@@ -105,9 +107,14 @@ public class User {
                 }while(rs.next());
             }
         } catch (Exception e){
-            System.out.println("Failed to load all semesters for user (userID: " + this.userID + ")");
+            System.out.println("Failed to load all semesters for User (userID: " + this.userID + ").");
             e.printStackTrace();
         }
+    }
+
+    public Semester[] getSemesters(){
+        this.loadSemesters();
+        return this.semesters;
     }
 
     public String getFirstName(){
@@ -195,6 +202,16 @@ public class User {
         }
     }
 
+    public boolean forgotPassword () {
+        this.generateToken();
+        if(this.save()) {
+            // SEND EMAIL WITH TOKEN
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public boolean isActivated(){
         return this.activated;
     }
@@ -202,11 +219,6 @@ public class User {
     public void setActivated(boolean activated){
         this.activated = activated;
         this.recordSaved = false;
-    }
-
-    public Semester[] getSemesters(){
-        this.loadSemesters();
-        return this.semesters;
     }
 
     /**
@@ -223,7 +235,7 @@ public class User {
             return true;
         }
         // if the record was created successfully in the database (on a previous call to save(), but was unable to retrieve the userID thereafter), then cannot save
-        if(this.recordExists && this.userID == -1){
+        if(this.recordExists && this.userID == null){
             return false;
         }
         // prepare query statement
@@ -285,11 +297,5 @@ public class User {
             return false;
         }
     }
-
-    // Methods still to be implemented
-    /*
-    public boolean forgotPassword (String email) {
-    }
-    */
 }
 

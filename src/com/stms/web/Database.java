@@ -5,8 +5,8 @@ import java.sql.*;
 /**
  * Database class for Student Time Management System
  * Used to connect to MySQL database and execute SQL query and update statements
- * @author Jonathon Everatt, Scott Hallauer and Jessica Bourn
- * @version 14/08/2018
+ * @author Scott Hallauer, Jonathon Everatt and Jessica Bourn
+ * @version 18/08/2018
  */
 public class Database{
 

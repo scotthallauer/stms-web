@@ -7,25 +7,27 @@ import java.sql.*;
  * CourseSession class for Student Time Management System
  * Used to create new and edit existing course sessions in the database.
  * @author Jonathon Everatt, Scott Hallauer and Jessica Bourn
- * @version 16/08/2018
+ * @version 18/08/2018
  */
 public class CourseSession {
 
     // ATTRIBUTES //
 
-    private int sessionID;
-    private int courseID;
+    private Boolean recordExists;
+    private Boolean recordSaved;
+
+    private Integer sessionID;
+    private Integer sessionPID;
+    private Integer courseID;
     private String name;
     private String type;
-    private Date startTime;
-    private Date endTime;
+    private Timestamp startDate;
+    private Timestamp endDate;
     private String note;
     private String location;
     private String rrule;
-    private int weighting;
-    private double possibleMark;
-    private double earnedMark;
-    private int priority;
+    private Double possibleMark;
+    private Double earnedMark;
 
     // CONSTRUCTORS //
 
