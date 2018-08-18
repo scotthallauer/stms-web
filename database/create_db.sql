@@ -58,7 +58,7 @@ CREATE TABLE course (
     PRIMARY KEY (courseID),
     FOREIGN KEY (semesterID1) REFERENCES semester(semesterID),
     FOREIGN KEY (semesterID2) REFERENCES semester(semesterID),
-    UNIQUE KEY semester_course (semesterID1, semesterID2, courseName, courseCode) # prevents two of the same courses happening in the same semester
+    UNIQUE KEY semester_course_uniq (semesterID1, semesterID2, courseName, courseCode) # prevents two of the same courses happening in the same semester
 );
 
 CREATE TABLE courseSession (
@@ -69,13 +69,15 @@ CREATE TABLE courseSession (
     sessionType VARCHAR(10) NOT NULL,
     startDate DateTime NOT NULL,
     endDate DateTime NOT NULL,
-    sessionLength int NULL, # duration of session in seconds (only required for recurring events) 
+    length int NULL, # duration of session in seconds (only required for recurring events) 
     recType VARCHAR(40) NOT NULL,
     location VARCHAR(25) NULL,
-    note VARCHAR(200) NULL,
-    
+    note VARCHAR(500) NULL,
+    possibleMark double NULL,
+    earnedMark double NULL,
     PRIMARY KEY (sessionID),
-    FOREIGN KEY (courseID) REFERENCES course(courseID)
+    FOREIGN KEY (courseID) REFERENCES course(courseID),
+    UNIQUE KEY course_session_uniq (courseID, sessionName, sessionType, startDate, endDate, recType)
 );
 
 CREATE TABLE courseAssignment (
