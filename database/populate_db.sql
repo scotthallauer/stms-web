@@ -1,16 +1,16 @@
 USE stms;
 
 INSERT INTO user (firstName, lastName, email, activated, pwdHash, pwdSalt) 
-values ('Scott', 'Hallauer', 'scott.hallauer@gmail.com', 1, '7eb9f680bf2c5914ff32d5acca123aa7ed4f82f8572ab6b12a7aec4edc8610e0', 'gh90845hg093hqp'); 
+values ('Scott', 'Hallauer', 'scott.hallauer@gmail.com', 1, '225c245490a5385b2a034f7c1ebcbe7a034e44e26871163a32fb20e2f76a3f01', 'KxZ65ezpqs86tlM'); 
 # password is password
 
 INSERT INTO user (firstName, lastName, email, activated, pwdHash, pwdSalt) 
-VALUES ('Jonathon', 'Everatt', 'EVRJON003@myuct.ac.za',1,'5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5','5');
-#password is 1234
+VALUES ('Jonathon', 'Everatt', 'EVRJON003@myuct.ac.za',1,'d6a4c76e085cf2f4130ba94188883ec6fff9e91a9546887a0ee8f55066be8d37','JKMCNTAc7xNoR3b');
+#password is 12345678
 
 INSERT INTO user (firstName, lastName, email, activated, pwdHash, pwdSalt) 
-VALUES ('Jessica','Bourn','BRNJES018@myuct.ac.za',0,'18650c5730d77b32f0910983fdff30c75f91eeaa70378a51c35240249f3fbf81','81552974381271');
-#password is p3gasus 
+VALUES ('Jessica','Bourn','BRNJES018@myuct.ac.za',0,'8eac3fdf96fde1d740de6d1309b94eb8ce80a0d2232b14d1900384fc30202f6b','IjlSlQWnDwbD1Ee');
+#password is p3gasuss 
 
 #semester inserts
 INSERT INTO semester (userID,semesterName,startDate,endDate) 
