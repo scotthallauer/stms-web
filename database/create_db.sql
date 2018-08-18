@@ -54,7 +54,7 @@ CREATE TABLE course (
     semesterID2 int NULL,
     courseName VARCHAR(25) NOT NULL,
     courseCode VARCHAR(10) NULL,
-    colour VARCHAR(6) NULL,
+    colour VARCHAR(7) NULL,
     PRIMARY KEY (courseID),
     FOREIGN KEY (semesterID1) REFERENCES semester(semesterID),
     FOREIGN KEY (semesterID2) REFERENCES semester(semesterID),
