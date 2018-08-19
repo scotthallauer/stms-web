@@ -84,6 +84,8 @@ dhtmlxEvent(window, 'load', function(){
     scheduler.config.xml_date = "%Y-%m-%d %H:%i:%s";
     scheduler.config.api_date = "%Y-%m-%d %H:%i:%s";
     scheduler.config.repeat_date = "%d/%m/%Y";
+    scheduler.config.scroll_hour = 5;
+    scheduler.config.include_end_by = true;
     scheduler.config.details_on_dblclick = true;
 
     stms_sidebar.cells("p1_calendar").attachScheduler(new Date(), 'week');
@@ -105,14 +107,28 @@ dhtmlxEvent(window, 'load', function(){
 
     scheduler.attachEvent("onBeforeDrag", function(id){
         var event = scheduler.getEvent(id);
-        if(event.readonly){
+        if(event != null && event.readonly){
             return false;
         }else{
             return true;
         }
     });
 
-    scheduler.load("./ajax/load_calendar.xml", "xml");
+    scheduler.attachEvent("onEventDeleted", function(id, ev){
+        console.log("event " + id + " deleted.");
+    })
+
+    scheduler.load("./ajax/connect_scheduler.jsp", "json");
+    dp = new dataProcessor("./ajax/connect_scheduler.jsp");
+    dp.init(scheduler);
+    dp.setTransactionMode("POST", false);
+    dp.attachEvent("onAfterUpdate", function(id, action, tid, response){
+        if(action == "inserted"){
+            scheduler.changeEventId(id, tid);
+        }
+        return true;
+    });
+    //scheduler.load("./ajax/load_calendar.xml", "xml");
 
     /*
     $(".dhx_cal_container").loadingModal({

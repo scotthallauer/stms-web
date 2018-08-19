@@ -52,3 +52,6 @@ INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour)
 VALUES (5, NULL, 'Genetics', 'MCB3023S', '#26A65B');
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
 VALUES (4, NULL, 'Genetics', 'MCB3026F', '#26A65B');
+
+INSERT INTO courseSession (sessionPID, courseID, sessionName, sessionType, startDate, endDate, length, recType)
+VALUES (0, 3, 'CSC3002S', 'lecture', '2018-07-23 09:00:00', '2018-09-07 09:45:00', 2700, 'week_1___1,2,3,4,5#');

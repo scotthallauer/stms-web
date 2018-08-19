@@ -117,6 +117,10 @@ public class User {
         return this.semesters;
     }
 
+    public Integer getUserID(){
+        return this.userID;
+    }
+
     public String getFirstName(){
         return this.firstName;
     }

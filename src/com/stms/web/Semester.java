@@ -7,17 +7,20 @@ import java.sql.*;
  * Semester class for Student Time Management System
  * Used to create new and edit existing semesters in the database.
  * @author Jonathon Everatt, Scott Hallauer and Jessica Bourn
- * @version 16/08/2018
+ * @version 19/08/2018
  */
 public class Semester {
 
     // ATTRIBUTES //
 
-    private int semesterID;
-    private int userID;
+    private Boolean recordExists;
+    private Boolean recordSaved;
+
+    private Integer semesterID;
+    private Integer userID;
     private String name;
-    private Date startDate;
-    private Date endDate;
+    private Timestamp startDate;
+    private Timestamp endDate;
     private Course[] courses;
 
     // CONSTRUCTORS //
@@ -25,35 +28,39 @@ public class Semester {
     /**
      * Blank constructor used to create and insert new semester records in the database.
      */
-    Semester(){}
+    public Semester(){
+        this.recordExists = false;
+        this.recordSaved = false;
+    }
 
     /**
      * Parameterised constructor used to create and fetch an existing semester from the database.
      * Loads all associated courses into memory.
      * @param semesterID the semester's unique ID in the database
      */
-    Semester(int semesterID) throws Exception {
-        // connect to database
-        System.out.println("Semester constructor has been called.");
-        Database db = new Database();
-        if(db.isConnected()) {
-            // query database to get semester details (if semester exists)
-            ResultSet rs = db.query("SELECT * FROM semester WHERE semesterID = " + semesterID + ";");
-            if (rs.first()) {
-                this.semesterID = rs.getInt("semesterID");
-                this.userID = rs.getInt("userID");
-                this.name = rs.getString("semesterName");
-                this.startDate = rs.getTimestamp("startDate");
-                this.endDate = rs.getTimestamp("endDate");
-            }else{
-                throw new NullPointerException();
-            }
-            System.out.println("Successfully loaded Semester (semesterID: " + semesterID + ") from database.");
-            this.loadCourses();
-        }else{
-            throw new SQLException();
+    public Semester(int semesterID) throws Exception {
+        // check if database is connected
+        if(!Database.isConnected()) {
+            throw new SQLException("Database is not connected.");
         }
-        System.out.println("Semester object has been constructed");
+        // query database to get semester details (if semester exists)
+        String sql = "SELECT * FROM semester WHERE semesterID = ?";
+        Object[] params = new Object[1];
+        int[] types = new int[1];
+        params[0] = semesterID;
+        types[0] = Types.INTEGER;
+        ResultSet rs = Database.query(sql, params, types);
+        if (rs.first()) {
+            this.semesterID = rs.getInt("semesterID");
+            this.userID = rs.getInt("userID");
+            this.name = rs.getString("semesterName");
+            this.startDate = rs.getTimestamp("startDate");
+            this.endDate = rs.getTimestamp("endDate");
+            this.recordExists = true;
+            this.recordSaved = true;
+        }else{
+            throw new NullPointerException("No Semester exists with the semesterID " + semesterID);
+        }
     }
 
     // METHODS //
@@ -62,9 +69,18 @@ public class Semester {
      * Loads all of the courses for the semester into an array stored as an attribute.
      */
     private void loadCourses(){
-        Database db = new Database();
-        String sql = "SELECT * FROM course WHERE semesterID = " + this.semesterID + ";";
-        ResultSet rs = db.query(sql);
+        // check if database is connected
+        if(!Database.isConnected()) {
+            return;
+        }
+        String sql = "SELECT * FROM course WHERE semesterID1 = ? OR semesterID2 = ?";
+        Object[] params = new Object[2];
+        int[] types = new int[2];
+        params[0] = this.semesterID;
+        types[0] = Types.INTEGER;
+        params[1] = this.semesterID;
+        types[1] = Types.INTEGER;
+        ResultSet rs = Database.query(sql, params, types);
         try {
             // set length of array
             if(rs.last()){
@@ -78,69 +94,121 @@ public class Semester {
                 }while(rs.next());
             }
         } catch (Exception e){
-            System.out.println("Failed to load all courses for semester (semesterID: " + this.semesterID + ")");
+            System.out.println("Failed to load all courses for Semester (semesterID: " + this.semesterID + ").");
             e.printStackTrace();
         }
     }
 
-    public void setSemesterID(int semesterID) {
-        this.semesterID = semesterID;
+    public Course[] getCourses () {
+        this.loadCourses();
+        return this.courses;
     }
+
     public int getSemesterID() {
         return this.semesterID;
     }
 
-    public void setUserID(int userID) {
-        this.userID = userID;
-    }
     public int getUserID() {
         return this.userID;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUserID(int userID) {
+        this.userID = userID;
+        this.recordSaved = false;
     }
+
     public String getName() {
         return this.name;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setName(String name) {
+        this.name = name;
+        this.recordSaved = false;
     }
-    public Date getStartDate() {
+
+    public Timestamp getStartDate() {
         return this.startDate;
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setStartDate(Timestamp startDate) {
+        this.startDate = startDate;
+        this.recordSaved = false;
     }
-    public Date getEndDate() {
+
+    public Timestamp getEndDate() {
         return this.endDate;
     }
 
-    /**
-     * Formats the Date into a format usable to insert into the MySQL database
-     * @param date the Date value to be inserted as a field value into the database
-     * @return the String format of the Date to insert into MySQL database
-     */
-    String DateFormat(Date date){
-        // Turns Date into a format readable by SQL
-        String s = date.toString();
-        s = s.substring(0,4) + s.substring(5,7) + s.substring(8,10);
-        System.out.println(s);
-        return s;
+    public void setEndDate(Timestamp endDate) {
+        this.endDate = endDate;
+        this.recordSaved = false;
     }
 
     /**
      * Save the semester's details to the database.
      * @return true if successful, false otherwise.
      */
-    private boolean saveToDB(){
-        Database db = new Database();
-        if(db.isConnected()) {
-            String sql = "INSERT INTO semester (userID,semesterName,startDate,endDate) " +
-                    "VALUES (" + this.userID + ",'" + this.name + "'," + DateFormat(this.startDate) + "," + DateFormat(this.endDate) + ");";
-            db.update(sql);
+    private boolean save(){
+        // check if database is connected
+        if(!Database.isConnected()) {
+            return false;
+        }
+        // don't need to save to database, there have been no changes
+        if(this.recordSaved){
+            return true;
+        }
+        // if the record was created successfully in the database (on a previous call to save(), but was unable to retrieve the semesterID thereafter), then cannot save
+        if(this.recordExists && this.semesterID == null){
+            return false;
+        }
+        // prepare query statement
+        String sql;
+        // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
+        if(!this.recordExists){
+            sql = "INSERT INTO semester (userID, semesterName, startDate, endDate) VALUES (?, ?, ?, ?)";
+        }else{
+            sql = "UPDATE semester SET userID = ?, semesterName = ?, startDate = ?, endDate = ? WHERE semesterID = ?";
+        }
+        // prepare query parameters
+        Object[] params;
+        int[] types;
+        if(!this.recordExists){
+            params = new Object[4];
+            types = new int[4];
+        }else{
+            params = new Object[5];
+            types = new int[5];
+            params[4] = this.semesterID;
+            types[4] = Types.INTEGER;
+        }
+        params[0] = this.userID;
+        types[0] = Types.INTEGER;
+        params[1] = this.name;
+        types[1] = Types.VARCHAR;
+        params[2] = this.startDate;
+        types[2] = Types.TIMESTAMP;
+        params[3] = this.endDate;
+        types[3] = Types.TIMESTAMP;
+        // execute query
+        if(Database.update(sql, params, types)){
+            // get semester ID
+            sql = "SELECT semesterID FROM semester WHERE userID = ? AND startDate = ? AND endDate = ?";
+            params = new Object[3];
+            types = new int[3];
+            params[0] = this.userID;
+            types[0] = Types.INTEGER;
+            params[1] = this.startDate;
+            types[1] = Types.TIMESTAMP;
+            params[2] = this.endDate;
+            types[2] = Types.TIMESTAMP;
+            ResultSet rs = Database.query(sql, params, types); // if fetching the semesterID fails, this object will no longer be able to save data to the database (i.e. save() will always return false)
+            try {
+                if (rs.first()) {
+                    this.semesterID = rs.getInt("semesterID");
+                }
+            }catch (Exception e){}
+            this.recordExists = true;
+            this.recordSaved = true;
             return true;
         }else{
             return false;

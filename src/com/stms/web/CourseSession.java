@@ -44,7 +44,7 @@ public class CourseSession {
      * Parameterised constructor used to create and fetch any existing course sessions from the database.
      * @param sessionID the course session's unique ID in the database
      */
-    CourseSession(int sessionID) throws Exception {
+    public CourseSession(int sessionID) throws Exception {
         // check if database is connected
         if(!Database.isConnected()) {
             throw new SQLException("Database is not connected.");
@@ -70,95 +70,131 @@ public class CourseSession {
             this.note = rs.getString("note");
             this.possibleMark = rs.getDouble("possibleMark");
             this.earnedMark = rs.getDouble("earnedMark");
+            this.recordExists = true;
+            this.recordSaved = true;
         }else{
             throw new NullPointerException("No CourseSession exists with the sessionID " + sessionID);
         }
     }
 
-    public void setSessionID(int sessionID){ this.sessionID = sessionID; }
     public Integer getSessionID() {
         return this.sessionID;
     }
 
-    public void setSessionPID(int sessionPID){
-        this.sessionPID = sessionPID;
+    public void setSessionPID(Integer sessionPID){
+        if(sessionPID == null) sessionPID = 0;
+        if(sessionPID >= 0) {
+            this.sessionPID = sessionPID;
+            this.recordSaved = false;
+        }
     }
+
     public Integer getSessionPID() {
         return this.sessionPID;
     }
 
-    public void setCourseID(int courseID){
-        this.courseID = courseID;
+    public void setCourseID(Integer courseID){
+        if(courseID != null && courseID > 1) {
+            this.courseID = courseID;
+            this.recordSaved = false;
+        }
     }
+
     public Integer getCourseID(){
         return this.courseID;
     }
 
     public void setName(String name) {
         this.name = name;
+        this.recordSaved = false;
     }
+
     public String getName() {
         return this.name;
     }
 
     public void setType(String type) {
         this.type = type.toLowerCase();
+        this.recordSaved = false;
     }
+
     public String getType() {
         return this.type;
     }
 
     public void setStartDate(Timestamp startDate) {
         this.startDate = startDate;
+        this.recordSaved = false;
     }
+
     public Timestamp getStartDate() {
         return this.startDate;
     }
 
     public void setEndDate(Timestamp endDate) {
         this.endDate = endDate;
+        this.recordSaved = false;
     }
+
     public Timestamp getEndDate() {
         return this.endDate;
     }
 
-    public void setLength(int length) {
-        this.length = length;
+    public void setLength(Integer length) {
+        if(length == null || length > 0) {
+            this.length = length;
+            this.recordSaved = false;
+        }
     }
+
     public Integer getLength() {
         return this.length;
     }
 
     public void setRecType(String recType) {
         this.recType = recType;
+        this.recordSaved = false;
     }
+
     public String getRecType() {
         return this.recType;
     }
 
     public void setLocation(String location) {
         this.location = location;
+        this.recordSaved = false;
     }
+
     public String getLocation() {
         return this.location;
     }
 
     public void setNote(String note) {
         this.note = note;
+        this.recordSaved = false;
     }
+
     public String getNote() {
         return this.note;
     }
 
     public void setPossibleMark(double possibleMark) {
         this.possibleMark = possibleMark;
+        this.recordSaved = false;
     }
+
     public Double getPossibleMark() {
         return this.possibleMark;
     }
 
-    public void setEarnedMark(double earnedMark) { this.earnedMark = earnedMark; }
-    public Double getEarnedMark() { return this.earnedMark; }
+    public void setEarnedMark(double earnedMark) {
+        this.earnedMark = earnedMark;
+        this.recordSaved = false;
+    }
+
+    public Double getEarnedMark() {
+        return this.earnedMark;
+    }
 
     /**
      * Save the course session's details to the database.
@@ -212,7 +248,7 @@ public class CourseSession {
         params[5] = this.endDate;
         types[5] = Types.TIMESTAMP;
         params[6] = this.length;
-        types[6] = Types.INTEGER;
+        types[6] = Types.BIGINT;
         params[7] = this.recType;
         types[7] = Types.VARCHAR;
         params[8] = this.location;
@@ -226,7 +262,7 @@ public class CourseSession {
         // execute query
         if(Database.update(sql, params, types)){
             // get session ID
-            sql = "SELECT sessionID FROM courseSession WHERE courseID = ?, sessionName = ?, sessionType = ?, startDate = ?, endDate = ?, recType = ?";
+            sql = "SELECT sessionID FROM courseSession WHERE courseID = ? AND sessionName = ? AND sessionType = ? AND startDate = ? AND endDate = ? AND recType = ?";
             params = new Object[6];
             types = new int[6];
             params[0] = this.courseID;
@@ -240,7 +276,7 @@ public class CourseSession {
             params[4] = this.endDate;
             types[4] = Types.TIMESTAMP;
             params[5] = this.recType;
-            types[5] = Types.TIMESTAMP;
+            types[5] = Types.VARCHAR;
             ResultSet rs = Database.query(sql, params, types); // if fetching the sessionID fails, this object will no longer be able to save data to the database (i.e. save() will always return false)
             try {
                 if (rs.first()) {

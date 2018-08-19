@@ -45,7 +45,8 @@ CREATE TABLE semester (
     startDate DATETIME NOT NULL,
     endDate DATETIME NOT NULL,
     PRIMARY KEY (semesterID),
-    FOREIGN KEY (userID) REFERENCES user(userID)
+    FOREIGN KEY (userID) REFERENCES user(userID),
+    UNIQUE KEY semester_uniq (userID, startDate, endDate)
 );
 
 CREATE TABLE course (
@@ -69,7 +70,7 @@ CREATE TABLE courseSession (
     sessionType VARCHAR(10) NOT NULL,
     startDate DateTime NOT NULL,
     endDate DateTime NOT NULL,
-    length int NULL, # duration of session in seconds (only required for recurring events) 
+    length bigint NULL, # duration of session in seconds (only required for recurring events) 
     recType VARCHAR(40) NOT NULL,
     location VARCHAR(25) NULL,
     note VARCHAR(500) NULL,

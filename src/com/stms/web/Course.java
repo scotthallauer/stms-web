@@ -38,7 +38,7 @@ public class Course {
      * Loads all associated course sessions into memory.
      * @param courseID the course's unique ID in the database
      */
-    Course(int courseID) throws Exception {
+    public Course(int courseID) throws Exception {
         // check if database is connected
         if(!Database.isConnected()) {
             throw new SQLException("Database is not connected.");
@@ -60,6 +60,8 @@ public class Course {
             if(rs.wasNull()) this.code = null;
             this.colour = rs.getString("colour");
             if(rs.wasNull()) this.colour = null;
+            this.recordExists = true;
+            this.recordSaved = true;
         }else{
             throw new NullPointerException("No Course exists with the courseID " + courseID);
         }
@@ -104,12 +106,17 @@ public class Course {
         return this.sessions;
     }
 
+    public Integer getCourseID() {
+        return this.courseID;
+    }
+
     public Integer getSemesterID1(){
         return this.semesterID1;
     }
 
     public void setSemesterID1(int semesterID1){
         this.semesterID1 = semesterID1;
+        this.recordSaved = false;
     }
 
     public Integer getSemesterID2(){
@@ -118,14 +125,7 @@ public class Course {
 
     public void setSemesterID2(int semesterID2){
         this.semesterID2 = semesterID2;
-    }
-
-    public Integer getCourseID() {
-        return this.courseID;
-    }
-
-    public void setCourseID(int courseID) {
-        this.courseID = courseID;
+        this.recordSaved = false;
     }
 
     public String getName() {
@@ -134,6 +134,7 @@ public class Course {
 
     public void setName(String name) {
         this.name = name;
+        this.recordSaved = false;
     }
 
     public String getCode() {
@@ -142,6 +143,7 @@ public class Course {
 
     public void setCode(String code) {
         this.code = code;
+        this.recordSaved = false;
     }
 
     public String getColour() {
@@ -150,6 +152,7 @@ public class Course {
 
     public void setColour(String colour) {
         this.colour = colour;
+        this.recordSaved = false;
     }
 
     /**
@@ -202,7 +205,7 @@ public class Course {
         // execute query
         if(Database.update(sql, params, types)){
             // get course ID
-            sql = "SELECT courseID FROM course WHERE semesterID1 = ?, semesterID2 = ?, courseName = ?, courseCode = ?";
+            sql = "SELECT courseID FROM course WHERE semesterID1 = ? AND semesterID2 = ? AND courseName = ? AND courseCode = ?";
             params = new Object[4];
             types = new int[4];
             params[0] = this.semesterID1;

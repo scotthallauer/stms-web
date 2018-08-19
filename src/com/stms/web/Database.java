@@ -54,6 +54,14 @@ public class Database{
     }
 
     /**
+     * Method to get the database Connection object (this can be used to pass the connection to other libraries which need to use it)
+     * @return the database connection
+     */
+    public static Connection getConnection(){
+        return conn;
+    }
+
+    /**
      * Method to execute a SQL query statement (with no parameters) using the previously connected database.
      * @param sql the SQL query statement to execute
      * @return the ResultSet from a successful query, null otherwise
