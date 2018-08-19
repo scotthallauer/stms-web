@@ -17,14 +17,12 @@ public class Priority {
     private int priority;
     private int prioritylevel;
     private int assignmentID;
-    private Database DB;
 
     Priority(int assignmentID){
         this.assignmentID = assignmentID;
         Date dueDate = null;
-        DB = new Database();
         String sql = "SELECT dueDate FROM stms.courseAssignment WHERE assignmentID = " + assignmentID + ";";
-        ResultSet rs = DB.query(sql);
+        ResultSet rs = Database.query(sql);
         try{
              if(rs.next()){
                  dueDate = rs.getTimestamp(1);
