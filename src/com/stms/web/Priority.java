@@ -9,7 +9,7 @@ import java.lang.Math;
 /**
  * This class takes a course session ID as the parameter and calculates the priority for the session.
  *
- * Coded by Jonathon Everatt
+ * C oded by Jonathon Everatt
  */
 
 public class Priority {
@@ -68,6 +68,9 @@ public class Priority {
         System.out.println(s);
         int temp = Integer.parseInt(s);
         System.out.println("" + temp);
+		if (temp > 150){
+			temp = 150;
+		}
         return  temp;
     }
 
