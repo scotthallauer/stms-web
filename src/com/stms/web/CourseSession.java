@@ -75,9 +75,7 @@ public class CourseSession {
         }
     }
 
-    public void setSessionID(int sessionID){
-        this.sessionID = sessionID;
-    }
+    public void setSessionID(int sessionID){ this.sessionID = sessionID; }
     public Integer getSessionID() {
         return this.sessionID;
     }
@@ -85,7 +83,6 @@ public class CourseSession {
     public void setSessionPID(int sessionPID){
         this.sessionPID = sessionPID;
     }
-
     public Integer getSessionPID() {
         return this.sessionPID;
     }
@@ -100,7 +97,6 @@ public class CourseSession {
     public void setName(String name) {
         this.name = name;
     }
-
     public String getName() {
         return this.name;
     }
@@ -111,12 +107,14 @@ public class CourseSession {
     public String getType() {
         return this.type;
     }
+
     public void setStartDate(Timestamp startDate) {
         this.startDate = startDate;
     }
     public Timestamp getStartDate() {
         return this.startDate;
     }
+
     public void setEndDate(Timestamp endDate) {
         this.endDate = endDate;
     }
@@ -127,7 +125,6 @@ public class CourseSession {
     public void setLength(int length) {
         this.length = length;
     }
-
     public Integer getLength() {
         return this.length;
     }
@@ -135,7 +132,6 @@ public class CourseSession {
     public void setRecType(String recType) {
         this.recType = recType;
     }
-
     public String getRecType() {
         return this.recType;
     }
@@ -157,18 +153,12 @@ public class CourseSession {
     public void setPossibleMark(double possibleMark) {
         this.possibleMark = possibleMark;
     }
-
     public Double getPossibleMark() {
         return this.possibleMark;
     }
 
-    public void setEarnedMark(double earnedMark) {
-        this.earnedMark = earnedMark;
-    }
-
-    public Double getEarnedMark() {
-        return this.earnedMark;
-    }
+    public void setEarnedMark(double earnedMark) { this.earnedMark = earnedMark; }
+    public Double getEarnedMark() { return this.earnedMark; }
 
     /**
      * Save the course session's details to the database.

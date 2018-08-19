@@ -75,7 +75,7 @@ public class StudySession {
         if (this.recordSaved) {
             return true;
         }
-        // if the record was created successfully in the database (on a previous call to save(), but was unable to retrieve the sessionID thereafter), then cannot save
+        // if the record was created successfully in the database (on a previous call to save(), but was unable to retrieve the PsessionID thereafter), then cannot save
         if (this.recordExists && this.PsessionID == null) {
             return false;
         }

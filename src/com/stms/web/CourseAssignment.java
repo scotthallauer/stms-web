@@ -66,4 +66,140 @@ public class CourseAssignment {
             throw new NullPointerException("No CourseAssignment exists with the assignmentID " + assignmentID);
         }
     }
+
+    public void setAssignmentID(int assignmentID){
+        this.assignmentID = assignmentID;
+    }
+    public Integer getAssignmentID() {
+        return this.assignmentID;
+    }
+
+    public void setCourseID(int courseID){
+        this.courseID = courseID;
+    }
+    public Integer getCourseID(){
+        return this.courseID;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getName() {
+        return this.name;
+    }
+
+    public void setDueDate(Timestamp dueDate) {
+        this.dueDate = dueDate;
+    }
+    public Timestamp getDueDate() {
+        return this.dueDate;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+    public Integer getPriority() {
+        return this.priority;
+    }
+
+    public void setPossibleMark(double possibleMark) {
+        this.possibleMark = possibleMark;
+    }
+    public Double getPossibleMark() {
+        return this.possibleMark;
+    }
+
+    public void setEarnedMark(double earnedMark) { this.earnedMark = earnedMark; }
+    public Double getEarnedMark() { return this.earnedMark; }
+
+    public void setWeighting(double weighting) { this.weighting = weighting; }
+    public Double getWeighting() { return this.weighting; }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+    public String getNote() {
+        return this.note;
+    }
+
+    /**
+     * Save the course assignment's details to the database.
+     * @return true if successful, false otherwise.
+     */
+    public boolean save(){
+        // check if database is connected
+        if(!Database.isConnected()) {
+            return false;
+        }
+        // don't need to save to database, there have been no changes
+        if(this.recordSaved){
+            return true;
+        }
+        // if the record was created successfully in the database (on a previous call to save(), but was unable to retrieve the assignmentID thereafter), then cannot save
+        if(this.recordExists && this.assignmentID == null){
+            return false;
+        }
+        // prepare query statement
+        String sql;
+        // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
+        if(!this.recordExists) {
+            sql = "INSERT INTO courseAssignment (courseID, name, dueDate, priority, possibleMark, earnedMark, weighting, note) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        } else {
+            sql = "UPDATE courseAssignment SET courseID = ?, name = ?, dueDate = ?, priority = ?, possibleMark = ?, earnedMark = ?, "
+                    + "weighting = ?, note = ? WHERE assignmentID = ?";
+        }
+        // prepare query parameters
+        Object[] params;
+        int[] types;
+        if(!this.recordExists){
+            params = new Object[8];
+            types = new int[8];
+        }else{
+            params = new Object[9];
+            types = new int[9];
+            params[8] = this.assignmentID;
+            types[8] = Types.INTEGER;
+        }
+        params[0] = this.courseID;
+        types[0] = Types.INTEGER;
+        params[1] = this.name;
+        types[1] = Types.VARCHAR;
+        params[2] = this.dueDate;
+        types[2] = Types.TIMESTAMP;
+        params[3] = this.priority;
+        types[3] = Types.INTEGER;
+        params[4] = this.possibleMark;
+        types[4] = Types.DOUBLE;
+        params[5] = this.earnedMark;
+        types[5] = Types.DOUBLE;
+        params[6] = this.weighting;
+        types[6] = Types.DOUBLE;
+        params[7] = this.note;
+        types[7] = Types.VARCHAR;
+        // execute query
+        if(Database.update(sql, params, types)){
+            // get assignment ID
+            sql = "SELECT assignmentID FROM courseAssignment WHERE courseID = ?, name = ?, dueDate = ?";
+            params = new Object[3];
+            types = new int[3];
+            params[0] = this.courseID;
+            types[0] = Types.INTEGER;
+            params[1] = this.name;
+            types[1] = Types.VARCHAR;
+            params[2] = this.dueDate;
+            types[2] = Types.TIMESTAMP;
+            ResultSet rs = Database.query(sql, params, types); // if fetching the assignmentID fails, this object will no longer be able to save data to the database (i.e. save() will always return false)
+            try {
+                if (rs.first()) {
+                    this.assignmentID = rs.getInt("assignmentID");
+                }
+            }catch (Exception e){}
+            this.recordExists = true;
+            this.recordSaved = true;
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

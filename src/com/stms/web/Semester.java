@@ -86,7 +86,6 @@ public class Semester {
     public void setSemesterID(int semesterID) {
         this.semesterID = semesterID;
     }
-
     public int getSemesterID() {
         return this.semesterID;
     }
@@ -94,7 +93,6 @@ public class Semester {
     public void setUserID(int userID) {
         this.userID = userID;
     }
-
     public int getUserID() {
         return this.userID;
     }
@@ -102,7 +100,6 @@ public class Semester {
     public void setName(String name) {
         this.name = name;
     }
-
     public String getName() {
         return this.name;
     }
@@ -110,7 +107,6 @@ public class Semester {
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
-
     public Date getStartDate() {
         return this.startDate;
     }
@@ -118,7 +114,6 @@ public class Semester {
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
-
     public Date getEndDate() {
         return this.endDate;
     }
