@@ -85,6 +85,7 @@ CREATE TABLE courseAssignment (
     courseID int NOT NULL,
     Assignmentname VARCHAR(25) NOT NULL,
     dueDate DateTime NOT NULL,
+    priority int NOT NULL,
     PRIMARY KEY (assignmentID),
     FOREIGN KEY (courseID) REFERENCES course(courseID)
 );
