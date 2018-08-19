@@ -95,6 +95,7 @@ CREATE TABLE studySession (
     semesterID int NOT NULL,
     startTime DateTime NOT NULL,
     endTime DateTime NOT NULL,
+    confirmed boolean NOT NULL,
     note VARCHAR(200) NULL,
     PRIMARY KEY (PsessionID),
     FOREIGN KEY (semesterID) REFERENCES semester(semesterID)

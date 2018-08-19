@@ -21,8 +21,8 @@ public class StudySession {
     private Integer semesterID;
     private Timestamp startDate;
     private Timestamp endDate;
+    private boolean confirmed;
     private String note;
-    //private boolean confirmed;
 
     // CONSTRUCTORS //
 
@@ -55,6 +55,7 @@ public class StudySession {
             this.semesterID = rs.getInt("semesterID");
             this.startDate = rs.getTimestamp("startDate");
             this.endDate = rs.getTimestamp("endDate");
+            this.confirmed = rs.getBoolean("confirmed");
             this.note = rs.getString("note");
         } else{
             throw new NullPointerException("No CourseSession exists with the sessionID " + PsessionID);
@@ -82,21 +83,21 @@ public class StudySession {
         String sql;
         // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
         if (!this.recordExists) {
-            sql = "INSERT INTO studySession (semesterID, startDate, endDate, note) VALUES (?, ?, ?, ?)";
+            sql = "INSERT INTO studySession (semesterID, startDate, endDate, confirmed, note) VALUES (?, ?, ?, ?, ?)";
         } else {
-            sql = "UPDATE studySession SET semesterID = ?, startDate = ?, endDte = ?, note = ? WHERE PsessionID = ?";
+            sql = "UPDATE studySession SET semesterID = ?, startDate = ?, endDate = ?, confirmed = ?, note = ? WHERE PsessionID = ?";
         }
         // prepare query parameters
         Object[] params;
         int[] types;
         if (!this.recordExists) {
-            params = new Object[4];
-            types = new int[4];
-        } else {
             params = new Object[5];
             types = new int[5];
-            params[4] = this.PsessionID;
-            types[4] = Types.INTEGER;
+        } else {
+            params = new Object[6];
+            types = new int[6];
+            params[5] = this.PsessionID;
+            types[5] = Types.INTEGER;
         }
         params[0] = this.semesterID;
         types[0] = Types.INTEGER;
@@ -104,8 +105,10 @@ public class StudySession {
         types[1] = Types.TIMESTAMP;
         params[2] = this.endDate;
         types[2] = Types.TIMESTAMP;
-        params[3] = this.note;
-        types[3] = Types.VARCHAR;
+        params[3] = this.confirmed;
+        types[3] = Types.BOOLEAN;
+        params[4] = this.note;
+        types[4] = Types.VARCHAR;
         // execute query
         if (Database.update(sql, params, types)) {
             // get study session ID
@@ -160,6 +163,9 @@ public class StudySession {
     public Timestamp getEndDate() {
         return this.endDate;
     }
+
+    public void setConfirmed(boolean bool) { this.confirmed = bool;}
+    public boolean getConfirmed() { return this.confirmed;}
 
     public void setNote(String note) {
         this.note = note;
