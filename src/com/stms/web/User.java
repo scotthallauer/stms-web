@@ -44,7 +44,7 @@ public class User {
     }
 
     /**
-     * Parameterised constructor to create a user using their email. If an account with the provided does not exist, an exception will be thrown.
+     * Parameterised constructor to create a user using their email. If an account with the provided email does not exist, an exception will be thrown.
      * @param email the account email address of an existing user
      */
     public User(String email) throws Exception {

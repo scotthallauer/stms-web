@@ -41,7 +41,7 @@ public class CourseSession {
     }
 
     /**
-     * Parameterised constructor used to create and fetch an existing course sessions from the database.
+     * Parameterised constructor used to create and fetch any existing course sessions from the database.
      * @param sessionID the course session's unique ID in the database
      */
     CourseSession(int sessionID) throws Exception {
