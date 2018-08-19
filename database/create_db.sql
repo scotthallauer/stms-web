@@ -83,9 +83,13 @@ CREATE TABLE courseSession (
 CREATE TABLE courseAssignment (
 	assignmentID int NOT NULL AUTO_INCREMENT,
     courseID int NOT NULL,
-    Assignmentname VARCHAR(25) NOT NULL,
+    assignmentName VARCHAR(25) NOT NULL,
     dueDate DateTime NOT NULL,
-    priority int NOT NULL,
+    priority int NULL,
+    possibleMark double NULL,
+    earnedMark double NULL,
+    weighting double NULL,
+    note VARCHAR(500) NULL,
     PRIMARY KEY (assignmentID),
     FOREIGN KEY (courseID) REFERENCES course(courseID)
 );
@@ -95,7 +99,7 @@ CREATE TABLE studySession (
     semesterID int NOT NULL,
     startTime DateTime NOT NULL,
     endTime DateTime NOT NULL,
-    confirmed boolean NOT NULL,
+    confirmed boolean NULL,
     note VARCHAR(200) NULL,
     PRIMARY KEY (PsessionID),
     FOREIGN KEY (semesterID) REFERENCES semester(semesterID)
