@@ -25,6 +25,7 @@ public class CourseAssignment {
     private Double earnedMark;
     private Double weighting;
     private String note;
+    private boolean complete;
 
     // CONSTRUCTORS //
 
@@ -62,6 +63,7 @@ public class CourseAssignment {
             this.earnedMark = rs.getDouble("earnedMark");
             this.weighting = rs.getDouble("weighting");
             this.note = rs.getString("note");
+            this.complete = rs.getBoolean("complete");
         } else{
             throw new NullPointerException("No CourseAssignment exists with the assignmentID " + assignmentID);
         }
@@ -122,6 +124,9 @@ public class CourseAssignment {
         return this.note;
     }
 
+    public void setCompleted(boolean bool) { this.complete = bool;}
+    public boolean getCompleted() { return this.complete;}
+
     /**
      * Save the course assignment's details to the database.
      * @return true if successful, false otherwise.
@@ -143,23 +148,23 @@ public class CourseAssignment {
         String sql;
         // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
         if(!this.recordExists) {
-            sql = "INSERT INTO courseAssignment (courseID, name, dueDate, priority, possibleMark, earnedMark, weighting, note) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO courseAssignment (courseID, name, dueDate, priority, possibleMark, earnedMark, weighting, note, complete) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         } else {
             sql = "UPDATE courseAssignment SET courseID = ?, name = ?, dueDate = ?, priority = ?, possibleMark = ?, earnedMark = ?, "
-                    + "weighting = ?, note = ? WHERE assignmentID = ?";
+                    + "weighting = ?, note = ?, complete = ? WHERE assignmentID = ?";
         }
         // prepare query parameters
         Object[] params;
         int[] types;
         if(!this.recordExists){
-            params = new Object[8];
-            types = new int[8];
-        }else{
             params = new Object[9];
             types = new int[9];
-            params[8] = this.assignmentID;
-            types[8] = Types.INTEGER;
+        }else{
+            params = new Object[10];
+            types = new int[10];
+            params[9] = this.assignmentID;
+            types[9] = Types.INTEGER;
         }
         params[0] = this.courseID;
         types[0] = Types.INTEGER;
@@ -177,6 +182,8 @@ public class CourseAssignment {
         types[6] = Types.DOUBLE;
         params[7] = this.note;
         types[7] = Types.VARCHAR;
+        params[8] = this.complete;
+        types[8] = Types.BOOLEAN;
         // execute query
         if(Database.update(sql, params, types)){
             // get assignment ID

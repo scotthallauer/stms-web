@@ -21,7 +21,10 @@ CREATE TABLE task (
 	taskID int NOT NULL AUTO_INCREMENT,
     userID int NOT NULL,
     taskName VARCHAR(25) NOT NULL,
-    taskExplain VARCHAR(200) NOT NULL,
+    deadline DateTime NULL,
+    complete boolean NOT NULL, 
+    priority int NOT NULL,
+    note VARCHAR(200) NOT NULL,
     PRIMARY KEY (taskID),
     FOREIGN KEY (userID) REFERENCES user(userID)
 );
@@ -91,18 +94,19 @@ CREATE TABLE courseAssignment (
     earnedMark double NULL,
     weighting double NULL,
     note VARCHAR(500) NULL,
+    complete boolean NOT NULL,
     PRIMARY KEY (assignmentID),
     FOREIGN KEY (courseID) REFERENCES course(courseID)
 );
 
 CREATE TABLE studySession (
-	PsessionID int NOT NULL AUTO_INCREMENT,
+	sSessionID int NOT NULL AUTO_INCREMENT,
     semesterID int NOT NULL,
     startTime DateTime NOT NULL,
     endTime DateTime NOT NULL,
     confirmed boolean NULL,
     note VARCHAR(200) NULL,
-    PRIMARY KEY (PsessionID),
+    PRIMARY KEY (sSessionID),
     FOREIGN KEY (semesterID) REFERENCES semester(semesterID)
 );
 

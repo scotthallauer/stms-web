@@ -17,7 +17,7 @@ public class StudySession {
     private Boolean recordExists;
     private Boolean recordSaved;
 
-    private Integer PsessionID;
+    private Integer sSessionID;
     private Integer semesterID;
     private Timestamp startDate;
     private Timestamp endDate;
@@ -38,27 +38,27 @@ public class StudySession {
      * Parameterised constructor used to create and fetch any existing study sessions from the database.
      * @param PsessionID the study session's unique ID in the database
      */
-    StudySession(int PsessionID) throws Exception {
+    StudySession(int sSessionID) throws Exception {
         // check if database is connected
         if(!Database.isConnected()) {
             throw new SQLException("Database is not connected.");
         }
         // query database to get study session details (if study session exists)
-        String sql = "SELECT * FROM studySession WHERE PsessionID = ?";
+        String sql = "SELECT * FROM studySession WHERE sSessionID = ?";
         Object[] params = new Object[1];
         int[] types = new int[1];
-        params[0] = PsessionID;
+        params[0] = sSessionID;
         types[0] = Types.INTEGER;
         ResultSet rs = Database.query(sql, params, types);
         if (rs.first()) {
-            this.PsessionID = rs.getInt("PsessionID");
+            this.sSessionID = rs.getInt("sSessionID");
             this.semesterID = rs.getInt("semesterID");
             this.startDate = rs.getTimestamp("startDate");
             this.endDate = rs.getTimestamp("endDate");
             this.confirmed = rs.getBoolean("confirmed");
             this.note = rs.getString("note");
         } else{
-            throw new NullPointerException("No CourseSession exists with the sessionID " + PsessionID);
+            throw new NullPointerException("No CourseSession exists with the sSessionID " + sSessionID);
         }
     }
 
@@ -76,7 +76,7 @@ public class StudySession {
             return true;
         }
         // if the record was created successfully in the database (on a previous call to save(), but was unable to retrieve the PsessionID thereafter), then cannot save
-        if (this.recordExists && this.PsessionID == null) {
+        if (this.recordExists && this.sSessionID == null) {
             return false;
         }
         // prepare query statement
@@ -85,7 +85,7 @@ public class StudySession {
         if (!this.recordExists) {
             sql = "INSERT INTO studySession (semesterID, startDate, endDate, confirmed, note) VALUES (?, ?, ?, ?, ?)";
         } else {
-            sql = "UPDATE studySession SET semesterID = ?, startDate = ?, endDate = ?, confirmed = ?, note = ? WHERE PsessionID = ?";
+            sql = "UPDATE studySession SET semesterID = ?, startDate = ?, endDate = ?, confirmed = ?, note = ? WHERE sSessionID = ?";
         }
         // prepare query parameters
         Object[] params;
@@ -96,7 +96,7 @@ public class StudySession {
         } else {
             params = new Object[6];
             types = new int[6];
-            params[5] = this.PsessionID;
+            params[5] = this.sSessionID;
             types[5] = Types.INTEGER;
         }
         params[0] = this.semesterID;
@@ -112,7 +112,7 @@ public class StudySession {
         // execute query
         if (Database.update(sql, params, types)) {
             // get study session ID
-            sql = "SELECT PsessionID from studySession WHERE semesterID = ?, startDate = ?, endDate = ?";
+            sql = "SELECT sSessionID from studySession WHERE semesterID = ?, startDate = ?, endDate = ?";
             params = new Object[3];
             types = new int[3];
             params[0] = this.semesterID;
@@ -124,7 +124,7 @@ public class StudySession {
             ResultSet rs = Database.query(sql, params, types); // if fetching the courseID fails, this object will no longer be able to save data to the database (i.e. save() will always return false)
             try {
                 if (rs.first()) {
-                    this.PsessionID = rs.getInt("PsessionID");
+                    this.sSessionID = rs.getInt("sSessionID");
                 }
             } catch (Exception e) {
             }
@@ -136,11 +136,11 @@ public class StudySession {
         }
     }
 
-    public void setSessionID(int PsessionID){
-        this.PsessionID = PsessionID;
+    public void setStudySessionID(int sSessionID){
+        this.sSessionID = sSessionID;
     }
-    public Integer getSessionID() {
-        return this.PsessionID;
+    public Integer getStudySessionID() {
+        return this.sSessionID;
     }
 
     public void setSemesterID(int semesterID) {
