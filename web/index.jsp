@@ -18,6 +18,7 @@
         <script src="./js/libraries/dhtmlxScheduler/ext/dhtmlxscheduler_readonly.js" type="text/javascript"></script>
 		<script src="./js/libraries/sweetalert/sweetalert.min.js" type="text/javascript"></script>
 		<script src="./js/libraries/loadingModal/jquery.loadingModal.min.js" type="text/javascript"></script>
+		<script src="./js/libraries/moment.js/moment.js" type="text/javascript"></script>
 		<script src="./js/app.js" type="text/javascript"></script>
 	</head>
 	<body>

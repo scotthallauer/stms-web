@@ -86,9 +86,20 @@ dhtmlxEvent(window, 'load', function(){
     scheduler.config.repeat_date = "%d/%m/%Y";
     scheduler.config.scroll_hour = 5;
     scheduler.config.include_end_by = true;
+    scheduler.config.edit_on_create = true;
+    scheduler.config.details_on_create = true;
     scheduler.config.details_on_dblclick = true;
 
     stms_sidebar.cells("p1_calendar").attachScheduler(new Date(), 'week');
+
+    // Add a create button to the top right of the calendar
+    $("div.dhx_cal_navline").append("<div class='dhx_cal_create_button' aria-label='Create' role='button'>Create</div>");
+    $("div.dhx_cal_create_button").click(function () {
+        scheduler.addEventNow({
+            start_date: moment().startOf("hour").toDate(),
+            end_date: moment().startOf("hour").add(1, "hour").toDate()
+        });
+    })
 
     // configure scheduler to only show "details" button when event is readonly, otherwise show "edit" and "delete" icon
     scheduler.attachEvent("onClick", function(id){
@@ -113,10 +124,6 @@ dhtmlxEvent(window, 'load', function(){
             return true;
         }
     });
-
-    scheduler.attachEvent("onEventDeleted", function(id, ev){
-        console.log("event " + id + " deleted.");
-    })
 
     scheduler.load("./ajax/connect_scheduler.jsp", "json");
     dp = new dataProcessor("./ajax/connect_scheduler.jsp");

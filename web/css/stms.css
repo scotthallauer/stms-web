@@ -148,3 +148,51 @@ div#stms_header{
 div.dhxsidebar_item_text{
     font-size: 13px;
 }
+
+/* Customise scheduler header layout (because we are adding a create button) */
+div.dhx_cal_tab.day_tab{
+    display: none
+}
+
+div.dhx_cal_tab.week_tab{
+    border-radius: 2px 0 0 2px;
+    left: 16px !important;
+}
+div.dhx_cal_tab.month_tab{
+    left: 103px !important;
+}
+div.dhx_cal_prev_button{
+    right: auto;
+    left: 205px;
+}
+div.dhx_cal_today_button{
+    right: auto;
+    left: 240px;
+}
+div.dhx_cal_next_button{
+    right: auto;
+    left: 325px;
+}
+div.dhx_cal_create_button{
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0288d1;
+    right: 16px;
+    background-image: none;
+    background-position: -62px 0;
+    background-repeat: no-repeat;
+    height: 30px;
+    width: 80px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    line-height: 30px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+div.dhx_cal_create_button:hover{
+    border: 1px solid transparent;
+    background-color: rgba(0,0,0,.1);
+    transition: all .1s ease-in-out;
+}

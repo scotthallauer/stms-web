@@ -114,6 +114,9 @@ public class User {
 
     public Semester[] getSemesters(){
         this.loadSemesters();
+        if(this.semesters == null){
+            this.semesters = new Semester[0];
+        }
         return this.semesters;
     }
 

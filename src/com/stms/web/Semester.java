@@ -101,6 +101,9 @@ public class Semester {
 
     public Course[] getCourses () {
         this.loadCourses();
+        if(this.courses == null){
+            this.courses = new Course[0];
+        }
         return this.courses;
     }
 

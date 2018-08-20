@@ -47,7 +47,10 @@ public class Database{
      */
     public static boolean isConnected(){
         try{
-            return conn.isValid(2);
+            if(!conn.isValid(2)){
+                connect();
+            }
+            return true;
         }catch(Exception e){
             return false;
         }

@@ -11,23 +11,27 @@
     if(method.equals("GET")){
 
         User user = (User)session.getAttribute("user");
-        Semester semester = user.getSemesters()[1];
-        Course course = semester.getCourses()[0];
-        CourseSession[] sessions = course.getSessions();
+        Semester[] semesters = user.getSemesters();
 
         JSONArray ja = new JSONArray();
-        for(int i = 0 ; i < sessions.length ; i++){
-            JSONObject jo = new JSONObject();
-            jo.put("id", String.valueOf(sessions[i].getSessionID()));
-            jo.put("event_pid", String.valueOf(sessions[i].getSessionPID()));
-            jo.put("text", sessions[i].getName());
-            jo.put("start_date", sessions[i].getStartDate().toString());
-            jo.put("end_date", sessions[i].getEndDate().toString());
-            jo.put("event_length", String.valueOf(sessions[i].getLength()));
-            jo.put("rec_type", sessions[i].getRecType());
-            jo.put("color", course.getColour());
-            jo.put("textColor", "#FFFFFF");
-            ja.put(jo);
+        for(int i = 0 ; i < semesters.length ; i++) {
+            Course[] courses = semesters[i].getCourses();
+            for (int j = 0; j < courses.length; j++) {
+                CourseSession[] sessions = courses[j].getSessions();
+                for (int k = 0; k < sessions.length; k++) {
+                    JSONObject jo = new JSONObject();
+                    jo.put("id", String.valueOf(sessions[k].getSessionID()));
+                    jo.put("event_pid", String.valueOf(sessions[k].getSessionPID()));
+                    jo.put("text", sessions[k].getName());
+                    jo.put("start_date", sessions[k].getStartDate().toString());
+                    jo.put("end_date", sessions[k].getEndDate().toString());
+                    jo.put("event_length", String.valueOf(sessions[k].getLength()));
+                    jo.put("rec_type", sessions[k].getRecType());
+                    jo.put("color", courses[j].getColour());
+                    jo.put("textColor", "#FFFFFF");
+                    ja.put(jo);
+                }
+            }
         }
         out.print(ja);
     }

@@ -103,6 +103,9 @@ public class Course {
 
     public CourseSession[] getSessions () {
         this.loadCourseSessions();
+        if(this.sessions == null){
+            this.sessions = new CourseSession[0];
+        }
         return this.sessions;
     }
 
