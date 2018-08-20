@@ -1,4 +1,7 @@
-package com.stms.web;import java.sql.ResultSet;
+package com.stms.web;
+
+import java.sql.ResultSet;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.time.*;
@@ -18,44 +21,49 @@ public class Priority {
     private int assignmentID;
     private Database DB;
     private Date today;
+    private DateUtil DU;
 
-    Priority(int assignmentID, String Type){
-        this.assignmentID = assignmentID;
-        LocalDate dueDate = null;
-        String sql = "";
-        if (Type.equals("Assignment")){
-            sql = "SELECT dueDate FROM stms.courseAssignment WHERE assignmentID = " + assignmentID + ";";
-        } else if (Type.equals("Test")){
-            sql = "SELECT * FROM stms.courseSession WHERE sessionID = " + assignmentID + ";";
-        } else {
-            System.out.println("Error if else block");
-        }
-        ResultSet rs = DB.query(sql);
-        try{
-             if(rs.next()){
-                 dueDate = rs.getDate(1).toLocalDate();
-             }
-        } catch (SQLException e){
-            System.out.println("Error in resultSet");
-            e.printStackTrace();
-        }
-        DateUtil du = new DateUtil();
-        du.calcDayNumInYear(dueDate);
+    /**
+     *  Constructor for the class. Initializes  Date Utils and the priority level
+     */
+    Priority() {
+        this.prioritylevel = 0;
+        DU = new DateUtil();
 
-        //SQL query format is correct and returns a date
-        System.out.println("The dueDate is " + dueDate.toString());
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        this.today = new Date();
-        System.out.println(dateFormat.format(this.today) + "HERE");
-
-        System.out.println(this.today.toString());
-        setPriorityLevel("High");
-        priority = CalcPriority(dueDate);
-        System.out.println("done");
     }
 
+    /**
+     *  Main method for the class takes in the Due date and calculates the amount of days till it is due
+     *  Then assigns a priority level to the duedate and returns.
+     *
+     * @param due Due date of the assignment that needs priority calculated
+     * @return The priority for the assignment on curve 100x^0.5 or 150 if due in less than 2 days
+     */
+    public int CalcPriority(LocalDate due){
+        int daysLeft = DU.calcDayNumInYear(due) - DU.calcDayNumInYear(DU.getDateToday());
+        System.out.println(daysLeft);
+        if(daysLeft < 2){
+            //Max absolutely top level priority must be completed
+            return 150;
+        }
 
+        double prio;
+        prio = 100 + daysLeft;
+        prio = Math.pow(prio, 0.5);
+        prio += prioritylevel;
+        //Current equation = 100x^1/2 + priolevel
+        String s = "" + prio;
+        if(s.indexOf('.') > 0){
+            s = s.substring(0,s.indexOf('.'));
+        }
+        int temp = Integer.parseInt(s);
+        return  temp;
+    }
+
+    /**
+     * Set and get methods for the class
+     *
+     */
 
     private void setPriorityLevel(String level){
         if(level.equals("High")) {
@@ -67,28 +75,6 @@ public class Priority {
         } else{
             System.out.println("Not priority level set. Invalid input setPrio ");
         }
-    }
-
-    private int CalcPriority(LocalDate due){
-        DateUtil DU = new DateUtil();
-        int daysLeft = DU.calcDayNumInYear(due) - DU.calcDayNumInYear(DU.getDateToday());
-        System.out.println(daysLeft);
-
-        double prio;
-        prio = 100 + daysLeft;
-        prio = Math.pow(prio, 0.5);
-        System.out.println(prio);
-        prio += prioritylevel;
-        System.out.println(prio);
-        //Current equation = 100x^1/2 + priolevel
-        String s = "" + prio;
-        if(s.indexOf('.') > 0){
-            s = s.substring(0,s.indexOf('.'));
-        }
-        System.out.println(s);
-        int temp = Integer.parseInt(s);
-        System.out.println("" + temp);
-        return  temp;
     }
 
     public void setPriority(int priority){
@@ -107,4 +93,3 @@ public class Priority {
         return  assignmentID;
     }
 }
-
