@@ -15,7 +15,8 @@
 		<script src="./js/libraries/dhtmlxSuite/dhtmlx.js" type="text/javascript"></script>
 		<script src="./js/libraries/dhtmlxScheduler/dhtmlxscheduler.js" type="text/javascript"></script>
         <script src="./js/libraries/dhtmlxScheduler/ext/dhtmlxscheduler_recurring.js" type="text/javascript"></script>
-        <script src="./js/libraries/dhtmlxScheduler/ext/dhtmlxscheduler_readonly.js" type="text/javascript"></script>
+		<script src="./js/libraries/dhtmlxScheduler/ext/dhtmlxscheduler_readonly.js" type="text/javascript"></script>
+		<script src="./js/libraries/dhtmlxScheduler/ext/dhtmlxscheduler_editors.js" type="text/javascript"></script>
 		<script src="./js/libraries/sweetalert/sweetalert.min.js" type="text/javascript"></script>
 		<script src="./js/libraries/loadingModal/jquery.loadingModal.min.js" type="text/javascript"></script>
 		<script src="./js/libraries/moment.js/moment.js" type="text/javascript"></script>

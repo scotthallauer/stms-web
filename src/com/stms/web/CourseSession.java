@@ -19,7 +19,6 @@ public class CourseSession {
     private Integer sessionID;
     private Integer sessionPID;
     private Integer courseID;
-    private String name;
     private String type;
     private Timestamp startDate;
     private Timestamp endDate;
@@ -60,7 +59,6 @@ public class CourseSession {
             this.sessionID = rs.getInt("sessionID");
             this.sessionPID = rs.getInt("sessionPID");
             this.courseID = rs.getInt("courseID");
-            this.name = rs.getString("sessionName");
             this.type = rs.getString("sessionType");
             this.startDate = rs.getTimestamp("startDate");
             this.endDate = rs.getTimestamp("endDate");
@@ -102,15 +100,6 @@ public class CourseSession {
 
     public Integer getCourseID(){
         return this.courseID;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-        this.recordSaved = false;
-    }
-
-    public String getName() {
-        return this.name;
     }
 
     public void setType(String type) {
@@ -217,66 +206,62 @@ public class CourseSession {
         String sql;
         // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
         if(!this.recordExists){
-            sql = "INSERT INTO courseSession (sessionPID, courseID, sessionName, sessionType, startDate, endDate, length, recType, location, note, possibleMark, earnedMark) "
-                  + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, location, note, possibleMark, earnedMark) "
+                  + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }else{
-            sql = "UPDATE courseSession SET sessionPID = ?, courseID = ?, sessionName = ?, sessionType = ?, startDate = ?, endDate = ?, length = ?, "
+            sql = "UPDATE courseSession SET sessionPID = ?, courseID = ?, sessionType = ?, startDate = ?, endDate = ?, length = ?, "
                   + " recType = ?, location = ?, note = ?, possibleMark = ?, earnedMark = ? WHERE sessionID = ?";
         }
         // prepare query parameters
         Object[] params;
         int[] types;
         if(!this.recordExists){
+            params = new Object[11];
+            types = new int[11];
+        }else{
             params = new Object[12];
             types = new int[12];
-        }else{
-            params = new Object[13];
-            types = new int[13];
-            params[12] = this.sessionID;
-            types[12] = Types.INTEGER;
+            params[11] = this.sessionID;
+            types[11] = Types.INTEGER;
         }
         params[0] = this.sessionPID;
         types[0] = Types.INTEGER;
         params[1] = this.courseID;
         types[1] = Types.INTEGER;
-        params[2] = this.name;
+        params[2] = this.type;
         types[2] = Types.VARCHAR;
-        params[3] = this.type;
-        types[3] = Types.VARCHAR;
-        params[4] = this.startDate;
+        params[3] = this.startDate;
+        types[3] = Types.TIMESTAMP;
+        params[4] = this.endDate;
         types[4] = Types.TIMESTAMP;
-        params[5] = this.endDate;
-        types[5] = Types.TIMESTAMP;
-        params[6] = this.length;
-        types[6] = Types.BIGINT;
-        params[7] = this.recType;
+        params[5] = this.length;
+        types[5] = Types.BIGINT;
+        params[6] = this.recType;
+        types[6] = Types.VARCHAR;
+        params[7] = this.location;
         types[7] = Types.VARCHAR;
-        params[8] = this.location;
+        params[8] = this.note;
         types[8] = Types.VARCHAR;
-        params[9] = this.note;
-        types[9] = Types.VARCHAR;
-        params[10] = this.possibleMark;
+        params[9] = this.possibleMark;
+        types[9] = Types.DOUBLE;
+        params[10] = this.earnedMark;
         types[10] = Types.DOUBLE;
-        params[11] = this.earnedMark;
-        types[11] = Types.DOUBLE;
         // execute query
         if(Database.update(sql, params, types)){
             // get session ID
-            sql = "SELECT sessionID FROM courseSession WHERE courseID = ? AND sessionName = ? AND sessionType = ? AND startDate = ? AND endDate = ? AND recType = ?";
-            params = new Object[6];
-            types = new int[6];
+            sql = "SELECT sessionID FROM courseSession WHERE courseID = ? AND sessionType = ? AND startDate = ? AND endDate = ? AND recType = ?";
+            params = new Object[5];
+            types = new int[5];
             params[0] = this.courseID;
             types[0] = Types.INTEGER;
-            params[1] = this.name;
+            params[1] = this.type;
             types[1] = Types.VARCHAR;
-            params[2] = this.type;
-            types[2] = Types.VARCHAR;
-            params[3] = this.startDate;
+            params[2] = this.startDate;
+            types[2] = Types.TIMESTAMP;
+            params[3] = this.endDate;
             types[3] = Types.TIMESTAMP;
-            params[4] = this.endDate;
-            types[4] = Types.TIMESTAMP;
-            params[5] = this.recType;
-            types[5] = Types.VARCHAR;
+            params[4] = this.recType;
+            types[4] = Types.VARCHAR;
             ResultSet rs = Database.query(sql, params, types); // if fetching the sessionID fails, this object will no longer be able to save data to the database (i.e. save() will always return false)
             try {
                 if (rs.first()) {

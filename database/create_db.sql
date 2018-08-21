@@ -70,7 +70,6 @@ CREATE TABLE courseSession (
 	sessionID int NOT NULL AUTO_INCREMENT,
 	sessionPID int NOT NULL,
     courseID int NOT NULL,
-    sessionName VARCHAR(25) NOT NULL,
     sessionType VARCHAR(10) NOT NULL,
     startDate DateTime NOT NULL,
     endDate DateTime NOT NULL,
@@ -82,7 +81,7 @@ CREATE TABLE courseSession (
     earnedMark double NULL,
     PRIMARY KEY (sessionID),
     FOREIGN KEY (courseID) REFERENCES course(courseID),
-    UNIQUE KEY course_session_uniq (courseID, sessionName, sessionType, startDate, endDate, recType)
+    UNIQUE KEY course_session_uniq (courseID, sessionType, startDate, endDate, recType)
 );
 
 CREATE TABLE courseAssignment (

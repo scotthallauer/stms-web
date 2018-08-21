@@ -1,0 +1,6 @@
+red = #C3272B = rgb(195,39,43)
+orange = #F9690E = rgb(249,105,14)
+yellow = #FFA400 = rgb(255,164,0)
+green = #26A65B = rgb(38,166,91)
+blue = #22A7F0 = rgb(34,167,240)
+purple = #875F9A = rgb(135,95,154)

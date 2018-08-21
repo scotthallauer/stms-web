@@ -196,3 +196,16 @@ div.dhx_cal_create_button:hover{
     background-color: rgba(0,0,0,.1);
     transition: all .1s ease-in-out;
 }
+
+/* Customise DHTMLX scheduler lightbox controls (because they don't work like they're meant to) */
+.dhx_cal_light_wide .combo>div, .dhx_cal_light_wide .dhx_combo_box{
+    width: 331px !important;
+}
+
+div.dhxcombolist_material{
+    width: 329px !important;
+}
+
+input.dhx_repeat_date{
+    width: 100px;
+}

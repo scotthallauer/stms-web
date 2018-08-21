@@ -89,6 +89,23 @@ dhtmlxEvent(window, 'load', function(){
     scheduler.config.edit_on_create = true;
     scheduler.config.details_on_create = true;
     scheduler.config.details_on_dblclick = true;
+    scheduler.locale.labels.section_courses = "Course";
+    scheduler.locale.labels.section_types = "Type";
+
+    var types = [
+        {key: 1, label: 'Lecture'},
+        {key: 2, label: 'Tutorial'},
+        {key: 3, label: 'Practical'},
+        {key: 4, label: 'Test'},
+        {key: 5, label: 'Exam'}
+    ];
+
+    scheduler.config.lightbox.sections = [
+        {name: "courses", height: 30, type: "combo", map_to: "course_id", filtering: true, script_path: "./ajax/connect_course_combo.jsp"},
+        {name: "types", options: types, height: 30, type: "combo", map_to: "event_type", filtering: true},
+        {name: "recurring", height: 115, type: "recurring", map_to: "rec_type", button: "recurring"},
+        {name: "time", height: 72, type: "time", map_to: "auto"}
+    ];
 
     stms_sidebar.cells("p1_calendar").attachScheduler(new Date(), 'week');
 

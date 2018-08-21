@@ -33,29 +33,29 @@ VALUES (3, 'SECOND SEM', '2018-07-24', '2018-11-30');
 
 #course inserts
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
-VALUES (1, NULL, 'Comptuer Science', 'CSC3002F', '#22A7F0');
+VALUES (1, NULL, 'Computer Science', 'CSC3002F', 'blue');
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
-VALUES (1, NULL, 'Genetics', 'MCB3026F', '#26A65B');
+VALUES (1, NULL, 'Genetics', 'MCB3026F', 'green');
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour)  
-VALUES (2, NULL, 'Comptuer Science', 'CSC3003S', '#22A7F0');
+VALUES (2, NULL, 'Computer Science', 'CSC3003S', 'blue');
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
-VALUES (2, NULL, 'Genetics', 'MCB3023S', '#26A65B');
+VALUES (2, NULL, 'Genetics', 'MCB3023S', 'green');
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
-VALUES (4, NULL, 'Philosophy', 'PHI3023S', '#875F9A');
+VALUES (4, NULL, 'Philosophy', 'PHI3023S', 'purple');
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour)  
-VALUES (3, NULL, 'Comptuer Science', 'CSC3002F', '#22A7F0');
+VALUES (3, NULL, 'Computer Science', 'CSC3002F', 'blue');
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
-VALUES (4, NULL, 'Comptuer Science', 'CSC3002F', '#22A7F0');
+VALUES (4, NULL, 'Computer Science', 'CSC3003S', 'blue');
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
-VALUES (5, NULL, 'Comptuer Science :\'(', 'CSC3003S', '#22A7F0');
+VALUES (5, NULL, 'Computer Science :\'(', 'CSC3003S', 'blue');
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
-VALUES (5, NULL, 'Genetics', 'MCB3023S', '#26A65B');
+VALUES (5, NULL, 'Genetics', 'MCB3023S', 'green');
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
-VALUES (4, NULL, 'Genetics', 'MCB3026F', '#26A65B');
+VALUES (6, NULL, 'Genetics', 'MCB3026F', 'green');
 
-INSERT INTO courseSession (sessionPID, courseID, sessionName, sessionType, startDate, endDate, length, recType)
-VALUES (0, 3, 'CSC3002S', 'lecture', '2018-07-23 09:00:00', '2018-09-07 09:45:00', 2700, 'week_1___1,2,3,4,5#');
-INSERT INTO courseSession (sessionPID, courseID, sessionName, sessionType, startDate, endDate, length, recType)
-VALUES (0, 4, 'MCB3023S', 'lecture', '2018-07-23 11:00:00', '2018-09-07 11:45:00', 2700, 'week_1___1,2,3,4,5#');
-INSERT INTO courseSession (sessionPID, courseID, sessionName, sessionType, startDate, endDate, length, recType)
-VALUES (0, 5, 'PHI3023F', 'lecture', '2018-07-23 15:00:00', '2018-09-07 15:45:00', 2700, 'week_1___1,2,3,4,5#');
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
+VALUES (0, 3, 'lecture', '2018-07-23 09:00:00', '2018-09-07 09:45:00', 2700, 'week_1___1,2,3,4,5#');
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
+VALUES (0, 4, 'lecture', '2018-07-23 11:00:00', '2018-09-07 11:45:00', 2700, 'week_1___1,2,3,4,5#');
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
+VALUES (0, 5, 'lecture', '2018-07-23 15:00:00', '2018-09-07 15:45:00', 2700, 'week_1___1,2,3,4,5#');

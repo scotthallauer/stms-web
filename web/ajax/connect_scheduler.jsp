@@ -4,7 +4,29 @@
 <%@ page import="java.sql.Timestamp" %>
 <%! boolean authRequired = true; %>
 <%@ include file="../includes/session.jsp" %>
+<%!
+
+    public String getColourCode(String name){
+        if(name.equals("red")) {
+            return "#C3272B";
+        }else if(name.equals("orange")){
+            return "#F9690E";
+        }else if(name.equals("yellow")){
+            return "#FFA400";
+        }else if(name.equals("green")){
+            return "#26A65B";
+        }else if(name.equals("blue")){
+            return "#22A7F0";
+        }else if(name.equals("purple")){
+            return "#875F9A";
+        }else{
+            return "#95A5A6"; // grey
+        }
+    }
+
+%>
 <%
+
     String method = request.getMethod();
 
     // LOAD CALENDAR //
@@ -21,13 +43,14 @@
                 for (int k = 0; k < sessions.length; k++) {
                     JSONObject jo = new JSONObject();
                     jo.put("id", String.valueOf(sessions[k].getSessionID()));
+                    jo.put("course_id", courses[j].getCourseID());
                     jo.put("event_pid", String.valueOf(sessions[k].getSessionPID()));
-                    jo.put("text", sessions[k].getName());
+                    jo.put("text", courses[j].getName());
                     jo.put("start_date", sessions[k].getStartDate().toString());
                     jo.put("end_date", sessions[k].getEndDate().toString());
                     jo.put("event_length", String.valueOf(sessions[k].getLength()));
                     jo.put("rec_type", sessions[k].getRecType());
-                    jo.put("color", courses[j].getColour());
+                    jo.put("color", getColourCode(courses[j].getColour()));
                     jo.put("textColor", "#FFFFFF");
                     ja.put(jo);
                 }
@@ -47,13 +70,18 @@
         }catch(Exception e){
             eventID = null;
         }
+        Integer eventCourseID;
+        try {
+            eventCourseID = Integer.valueOf(request.getParameter("course_id"));
+        }catch(Exception e){
+            eventCourseID = null;
+        }
         Integer eventPID;
         try{
             eventPID = Integer.valueOf(request.getParameter("event_pid"));
         }catch(Exception e){
             eventPID = null;
         }
-        Integer eventCourseID = 3;
         String eventText = request.getParameter("text");
         String eventType = "lecture";
         Timestamp eventStartDate = Timestamp.valueOf(request.getParameter("start_date"));
@@ -72,7 +100,6 @@
             CourseSession cs = new CourseSession();
             cs.setSessionPID(eventPID);
             cs.setCourseID(eventCourseID);
-            cs.setName(eventText);
             cs.setType(eventType);
             cs.setStartDate(eventStartDate);
             cs.setEndDate(eventEndDate);
@@ -93,7 +120,6 @@
 
             CourseSession cs = new CourseSession(eventID);
             cs.setSessionPID(eventPID);
-            cs.setName(eventText);
             cs.setStartDate(eventStartDate);
             cs.setEndDate(eventEndDate);
             cs.setLength(eventLength);
@@ -117,7 +143,6 @@
             eventRecType = "none";
             CourseSession cs = new CourseSession(eventID);
             cs.setSessionPID(eventPID);
-            cs.setName(eventText);
             cs.setStartDate(eventStartDate);
             cs.setEndDate(eventEndDate);
             cs.setLength(eventLength);
