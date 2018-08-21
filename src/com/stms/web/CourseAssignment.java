@@ -69,15 +69,13 @@ public class CourseAssignment {
         }
     }
 
-    public void setAssignmentID(int assignmentID){
-        this.assignmentID = assignmentID;
-    }
     public Integer getAssignmentID() {
         return this.assignmentID;
     }
 
     public void setCourseID(int courseID){
         this.courseID = courseID;
+        this.recordSaved = false;
     }
     public Integer getCourseID(){
         return this.courseID;
@@ -85,6 +83,7 @@ public class CourseAssignment {
 
     public void setName(String name) {
         this.name = name;
+        this.recordSaved = false;
     }
     public String getName() {
         return this.name;
@@ -92,13 +91,13 @@ public class CourseAssignment {
 
     public void setDueDate(Timestamp dueDate) {
         this.dueDate = dueDate;
+        this.recordSaved = false;
     }
-    public Timestamp getDueDate() {
-        return this.dueDate;
-    }
+    public Timestamp getDueDate() { return this.dueDate; }
 
     public void setPriority(int priority) {
         this.priority = priority;
+        this.recordSaved = false;
     }
     public Integer getPriority() {
         return this.priority;
@@ -106,25 +105,36 @@ public class CourseAssignment {
 
     public void setPossibleMark(double possibleMark) {
         this.possibleMark = possibleMark;
+        this.recordSaved = false;
     }
     public Double getPossibleMark() {
         return this.possibleMark;
     }
 
-    public void setEarnedMark(double earnedMark) { this.earnedMark = earnedMark; }
+    public void setEarnedMark(double earnedMark) {
+        this.earnedMark = earnedMark;
+        this.recordSaved = false;
+    }
     public Double getEarnedMark() { return this.earnedMark; }
 
-    public void setWeighting(double weighting) { this.weighting = weighting; }
+    public void setWeighting(double weighting) {
+        this.weighting = weighting;
+        this.recordSaved = false;
+    }
     public Double getWeighting() { return this.weighting; }
 
     public void setNote(String note) {
         this.note = note;
+        this.recordSaved = false;
     }
     public String getNote() {
         return this.note;
     }
 
-    public void setCompleted(boolean bool) { this.complete = bool;}
+    public void setCompleted(boolean bool) {
+        this.complete = bool;
+        this.recordSaved = false;
+    }
     public boolean getCompleted() { return this.complete;}
 
     /**

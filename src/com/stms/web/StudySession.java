@@ -19,8 +19,8 @@ public class StudySession {
 
     private Integer sSessionID;
     private Integer semesterID;
-    private Timestamp startDate;
-    private Timestamp endDate;
+    private Timestamp startTime;
+    private Timestamp endTime;
     private boolean confirmed;
     private String note;
 
@@ -36,7 +36,7 @@ public class StudySession {
 
     /**
      * Parameterised constructor used to create and fetch any existing study sessions from the database.
-     * @param PsessionID the study session's unique ID in the database
+     * @param sSessionID the study session's unique ID in the database
      */
     StudySession(int sSessionID) throws Exception {
         // check if database is connected
@@ -53,8 +53,8 @@ public class StudySession {
         if (rs.first()) {
             this.sSessionID = rs.getInt("sSessionID");
             this.semesterID = rs.getInt("semesterID");
-            this.startDate = rs.getTimestamp("startDate");
-            this.endDate = rs.getTimestamp("endDate");
+            this.startTime = rs.getTimestamp("startTime");
+            this.endTime = rs.getTimestamp("endTime");
             this.confirmed = rs.getBoolean("confirmed");
             this.note = rs.getString("note");
         } else{
@@ -83,9 +83,9 @@ public class StudySession {
         String sql;
         // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
         if (!this.recordExists) {
-            sql = "INSERT INTO studySession (semesterID, startDate, endDate, confirmed, note) VALUES (?, ?, ?, ?, ?)";
+            sql = "INSERT INTO studySession (semesterID, startTime, endTime, confirmed, note) VALUES (?, ?, ?, ?, ?)";
         } else {
-            sql = "UPDATE studySession SET semesterID = ?, startDate = ?, endDate = ?, confirmed = ?, note = ? WHERE sSessionID = ?";
+            sql = "UPDATE studySession SET semesterID = ?, startTime = ?, endTime = ?, confirmed = ?, note = ? WHERE sSessionID = ?";
         }
         // prepare query parameters
         Object[] params;
@@ -101,9 +101,9 @@ public class StudySession {
         }
         params[0] = this.semesterID;
         types[0] = Types.INTEGER;
-        params[1] = this.startDate;
+        params[1] = this.startTime;
         types[1] = Types.TIMESTAMP;
-        params[2] = this.endDate;
+        params[2] = this.endTime;
         types[2] = Types.TIMESTAMP;
         params[3] = this.confirmed;
         types[3] = Types.BOOLEAN;
@@ -112,14 +112,14 @@ public class StudySession {
         // execute query
         if (Database.update(sql, params, types)) {
             // get study session ID
-            sql = "SELECT sSessionID from studySession WHERE semesterID = ?, startDate = ?, endDate = ?";
+            sql = "SELECT sSessionID from studySession WHERE semesterID = ?, startTime = ?, endTime = ?";
             params = new Object[3];
             types = new int[3];
             params[0] = this.semesterID;
             types[0] = Types.INTEGER;
-            params[1] = this.startDate;
+            params[1] = this.startTime;
             types[1] = Types.TIMESTAMP;
-            params[2] = this.endDate;
+            params[2] = this.endTime;
             types[2] = Types.TIMESTAMP;
             ResultSet rs = Database.query(sql, params, types); // if fetching the courseID fails, this object will no longer be able to save data to the database (i.e. save() will always return false)
             try {
@@ -136,39 +136,41 @@ public class StudySession {
         }
     }
 
-    public void setStudySessionID(int sSessionID){
-        this.sSessionID = sSessionID;
-    }
     public Integer getStudySessionID() {
         return this.sSessionID;
     }
 
     public void setSemesterID(int semesterID) {
         this.semesterID = semesterID;
+        this.recordSaved = false;
     }
     public Integer getSemesterID() {
         return this.semesterID;
     }
 
-    public void setStartDate(Timestamp startDate) {
-        this.startDate = startDate;
+    public void setStartTime(Timestamp startTime) {
+        this.startTime = startTime;
+        this.recordSaved = false;
     }
-    public Timestamp getStartDate() {
-        return this.startDate;
-    }
-
-    public void setEndDate(Timestamp endDate) {
-        this.endDate = endDate;
-    }
-    public Timestamp getEndDate() {
-        return this.endDate;
+    public Timestamp getStartTime() {
+        return this.startTime;
     }
 
-    public void setConfirmed(boolean bool) { this.confirmed = bool;}
+    public void setEndTime(Timestamp endTime) {
+        this.endTime = endTime;
+        this.recordSaved = false;
+    }
+    public Timestamp getEndTime () { return this.endTime; }
+
+    public void setConfirmed(boolean bool) {
+        this.confirmed = bool;
+        this.recordSaved = false;
+    }
     public boolean getConfirmed() { return this.confirmed;}
 
     public void setNote(String note) {
         this.note = note;
+        this.recordSaved = false;
     }
     public String getNote() {
         return this.note;

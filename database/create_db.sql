@@ -26,7 +26,8 @@ CREATE TABLE task (
     priority int NOT NULL,
     note VARCHAR(200) NOT NULL,
     PRIMARY KEY (taskID),
-    FOREIGN KEY (userID) REFERENCES user(userID)
+    FOREIGN KEY (userID) REFERENCES user(userID),
+    UNIQUE KEY task_uniq (userID, taskName, deadline)
 );
 
 CREATE TABLE calendarEvent (
@@ -96,7 +97,8 @@ CREATE TABLE courseAssignment (
     note VARCHAR(500) NULL,
     complete boolean NOT NULL,
     PRIMARY KEY (assignmentID),
-    FOREIGN KEY (courseID) REFERENCES course(courseID)
+    FOREIGN KEY (courseID) REFERENCES course(courseID),
+    UNIQUE KEY course_assignment_uniq (courseID, assignmentName, dueDate)
 );
 
 CREATE TABLE studySession (
@@ -107,6 +109,7 @@ CREATE TABLE studySession (
     confirmed boolean NULL,
     note VARCHAR(200) NULL,
     PRIMARY KEY (sSessionID),
-    FOREIGN KEY (semesterID) REFERENCES semester(semesterID)
+    FOREIGN KEY (semesterID) REFERENCES semester(semesterID),
+    UNIQUE KEY study_session_uniq (semesterID, startTime, endTime)
 );
 
