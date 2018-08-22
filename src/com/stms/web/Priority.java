@@ -20,14 +20,14 @@ public class Priority {
     private int assignmentID;
     private Database DB;
     private Date today;
-    private Utilities DU;
+    private Utilities Util;
 
     /**
      *  Constructor for the class. Initializes  Date Utils and the priority level
      */
     Priority() {
         this.prioritylevel = 0;
-        DU = new Utilities();
+        Util = new Utilities();
 
     }
 
@@ -39,7 +39,7 @@ public class Priority {
      * @return The priority for the assignment on curve 100x^0.5 or 150 if due in less than 2 days
      */
     public int CalcPriority(LocalDate due){
-        int daysLeft = DU.calcDayNum(due) - DU.calcDayNum(DU.getDateToday());
+        int daysLeft = Util.calcDayNum(due) - Util.calcDayNum(Util.getDateToday());
         System.out.println(daysLeft);
         if(daysLeft < 2){
             //Max absolutely top level priority must be completed
