@@ -1,7 +1,6 @@
 package com.stms.web;
 
 import java.sql.ResultSet;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.time.*;
@@ -21,12 +20,14 @@ public class Priority {
     private int assignmentID;
     private Database DB;
     private Date today;
+    private Utilities DU;
 
     /**
      *  Constructor for the class. Initializes  Date Utils and the priority level
      */
     Priority() {
         this.prioritylevel = 0;
+        DU = new Utilities();
 
     }
 
@@ -38,7 +39,7 @@ public class Priority {
      * @return The priority for the assignment on curve 100x^0.5 or 150 if due in less than 2 days
      */
     public int CalcPriority(LocalDate due){
-        int daysLeft = Utilities.calcDayNumInYear(due) - Utilities.calcDayNumInYear(Utilities.getDateToday());
+        int daysLeft = DU.calcDayNum(due) - DU.calcDayNum(DU.getDateToday());
         System.out.println(daysLeft);
         if(daysLeft < 2){
             //Max absolutely top level priority must be completed
