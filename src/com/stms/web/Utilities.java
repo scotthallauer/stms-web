@@ -71,7 +71,7 @@ public class Utilities {
         return new Timestamp(new Date().getTime());
     }
     
-    public int daysUntil(LocalDate date){
+    public static int daysUntil(LocalDate date){
         LocalDate today = getDateToday();
         int sum = calcDayNumInYear(date);
         sum -= calcDayNumInYear(today);
@@ -81,8 +81,8 @@ public class Utilities {
             return -1;
         }
     }
-	
-	/**
+
+    /**
      * This method checks to see whether or not the DHTLMX Has scheduled a session in said time period
      *
      * @param rrule The DHTMLX repeating String
@@ -106,7 +106,7 @@ public class Utilities {
      * @param date1 LocalDate you want the DayNum for
      * @return The number of the day in the year corresponding to input date
      */
-    public int calcDayNumInYear(LocalDate date1){
+    public static int calcDayNumInYear(LocalDate date1){
         //Date1 is due date and date 2 is
         //date in format YYYY-MM-DD
         String s = date1.toString();
@@ -159,7 +159,7 @@ public class Utilities {
      * @param DayNum The day number in the year supposed to be retrieved from the method above
      * @return The Date in a LocalDate variable
      */
-    public LocalDate CalcDateFromDayNum(int DayNum){
+    public static LocalDate CalcDateFromDayNum(int DayNum){
         LocalDate toRe;
         if (DayNum <= 31){
             toRe = LocalDate.of(2018,1,DayNum);
@@ -193,22 +193,11 @@ public class Utilities {
     }
 
     /**
-     * Getters and setters for this class
-     */
-    public void setYear(int year){
-        this.year = year;
-    }
-
-    public int getYear(){
-        return this.year;
-    }
-
-    /**
      * Gets and returns the current date in the form of LocalDate
      *
      * @return Date today
      */
-    public LocalDate getDateToday(){
+    public static LocalDate getDateToday(){
         DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDate toReturn = LocalDate.now();
         System.out.println(toReturn.toString());
