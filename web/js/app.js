@@ -1,8 +1,10 @@
 // Set-up the page layout when the full HTML document has been downloaded
 dhtmlxEvent(window, 'load', function(){
 
-    // Outer page layout
-    var stms_layout = new dhtmlXLayoutObject({
+    ////////////////////////////////
+    // OVERALL APPLICATION LAYOUT //
+    ////////////////////////////////
+    var stms_app_layout = new dhtmlXLayoutObject({
 
         parent:         document.body,
         pattern:        "1C",
@@ -25,7 +27,7 @@ dhtmlxEvent(window, 'load', function(){
     });
 
     // Custom header
-    stms_layout.attachHeader("stms_header");
+    stms_app_layout.attachHeader("stms_header");
 
     // Pop-up for when user clicks their name in the top right
     var stms_account_popup = new dhtmlXPopup();
@@ -52,7 +54,7 @@ dhtmlxEvent(window, 'load', function(){
     });
 
     // Sidebar for page navigation
-    var stms_sidebar = stms_layout.cells("a").attachSidebar({
+    var stms_sidebar = stms_app_layout.cells("a").attachSidebar({
 
         parent:         document.body,
         skin:           "material",
@@ -72,15 +74,18 @@ dhtmlxEvent(window, 'load', function(){
             },
 
             {
-                id:         "p2_assignments",
+                id:         "p2_tasks",
                 text:       "Tasks",
-                icon:       "assignment_icon.png"
+                icon:       "task_icon.png"
             }
 
         ]
 
     });
 
+    ///////////////////
+    // CALENDAR PAGE //
+    ///////////////////
     scheduler.config.xml_date = "%Y-%m-%d %H:%i:%s";
     scheduler.config.api_date = "%Y-%m-%d %H:%i:%s";
     scheduler.config.repeat_date = "%d/%m/%Y";
@@ -89,20 +94,13 @@ dhtmlxEvent(window, 'load', function(){
     scheduler.config.edit_on_create = true;
     scheduler.config.details_on_create = true;
     scheduler.config.details_on_dblclick = true;
+    scheduler.config.time_step = 15;
     scheduler.locale.labels.section_courses = "Course";
     scheduler.locale.labels.section_types = "Type";
 
-    var types = [
-        {key: 1, label: 'Lecture'},
-        {key: 2, label: 'Tutorial'},
-        {key: 3, label: 'Practical'},
-        {key: 4, label: 'Test'},
-        {key: 5, label: 'Exam'}
-    ];
-
     scheduler.config.lightbox.sections = [
-        {name: "courses", height: 30, type: "combo", map_to: "course_id", filtering: true, script_path: "./ajax/connect_course_combo.jsp"},
-        {name: "types", options: types, height: 30, type: "combo", map_to: "event_type", filtering: true},
+        {name: "courses", height: 30, type: "combo", map_to: "course_id", filtering: false, script_path: "./ajax/connect_course_combo.jsp"},
+        {name: "types", height: 30, type: "combo", map_to: "event_type", filtering: false, script_path: "./ajax/connect_type_combo.jsp"},
         {name: "recurring", height: 115, type: "recurring", map_to: "rec_type", button: "recurring"},
         {name: "time", height: 72, type: "time", map_to: "auto"}
     ];
@@ -113,10 +111,11 @@ dhtmlxEvent(window, 'load', function(){
     $("div.dhx_cal_navline").append("<div class='dhx_cal_create_button' aria-label='Create' role='button'>Create</div>");
     $("div.dhx_cal_create_button").click(function () {
         scheduler.addEventNow({
+            text: "New Session",
             start_date: moment().startOf("hour").toDate(),
             end_date: moment().startOf("hour").add(1, "hour").toDate()
         });
-    })
+    });
 
     // configure scheduler to only show "details" button when event is readonly, otherwise show "edit" and "delete" icon
     scheduler.attachEvent("onClick", function(id){
@@ -168,5 +167,73 @@ dhtmlxEvent(window, 'load', function(){
         url: ""
     })
     */
+
+    ////////////////
+    // TASKS PAGE //
+    ////////////////
+    var stms_task_layout = stms_sidebar.cells("p2_tasks").attachLayout({
+
+        pattern:        "2U",
+        skin:           "material",
+
+        offsets: {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        },
+
+        cells: [
+
+            {
+                id:         "a",
+                text:       "To-Do List",
+                fix_size:   [true, true]
+            },
+            {
+                id:         "b",
+                fix_size:   [true, true]
+            }
+        ]
+
+    });
+
+    stms_task_layout.setSeparatorSize(0, 5);
+
+    // when window resizes, set the two columns to 50% width
+    stms_app_layout.attachEvent("onResizeFinish", function(){
+        var totalWidth = 0;
+        totalWidth = stms_task_layout.cells("a").getWidth();
+        totalWidth += stms_task_layout.cells("b").getWidth();
+        stms_task_layout.cells("a").setWidth(totalWidth/2);
+        stms_task_layout.cells("b").setWidth(totalWidth/2);
+    });
+
+    var stms_assignment_tabbar = stms_task_layout.cells("b").attachTabbar({
+
+        tabs: [
+            {
+                id:         "a1",
+                text:       "Upcoming Assignments",
+                active:     true
+            },
+            {
+                id:         "a2",
+                text:       "Completed Assignments"
+            }
+        ]
+
+    });
+
+    var stms_assignment_list_1 = stms_assignment_tabbar.tabs("a1").attachList({
+        type:{
+            template:"<span style='font-weight: bold'>#course#: #name#</span><br/>Priority: #priority#"
+        }
+    });
+    stms_assignment_list_1.add({
+        course: "CSC3002S",
+        name: "Progress Report",
+        priority: "Medium"
+    });
 
 });

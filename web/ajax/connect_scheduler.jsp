@@ -45,6 +45,7 @@
                     jo.put("id", String.valueOf(sessions[k].getSessionID()));
                     jo.put("course_id", courses[j].getCourseID());
                     jo.put("event_pid", String.valueOf(sessions[k].getSessionPID()));
+                    jo.put("event_type", String.valueOf(sessions[k].getType()));
                     jo.put("text", courses[j].getName());
                     jo.put("start_date", sessions[k].getStartDate().toString());
                     jo.put("end_date", sessions[k].getEndDate().toString());
@@ -82,8 +83,12 @@
         }catch(Exception e){
             eventPID = null;
         }
-        String eventText = request.getParameter("text");
-        String eventType = "lecture";
+        String eventType;
+        try {
+            eventType = String.valueOf(request.getParameter("event_type")).toLowerCase();
+        }catch(Exception e){
+            eventType = null;
+        }
         Timestamp eventStartDate = Timestamp.valueOf(request.getParameter("start_date"));
         Timestamp eventEndDate = Timestamp.valueOf(request.getParameter("end_date"));
         Integer eventLength;
@@ -120,6 +125,8 @@
 
             CourseSession cs = new CourseSession(eventID);
             cs.setSessionPID(eventPID);
+            cs.setCourseID(eventCourseID);
+            cs.setType(eventType);
             cs.setStartDate(eventStartDate);
             cs.setEndDate(eventEndDate);
             cs.setLength(eventLength);
@@ -143,6 +150,8 @@
             eventRecType = "none";
             CourseSession cs = new CourseSession(eventID);
             cs.setSessionPID(eventPID);
+            cs.setCourseID(eventCourseID);
+            cs.setType(eventType);
             cs.setStartDate(eventStartDate);
             cs.setEndDate(eventEndDate);
             cs.setLength(eventLength);

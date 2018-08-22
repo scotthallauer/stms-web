@@ -1,6 +1,6 @@
 USE stms;
 
-SET @userID = 2;
+SET @userID = 1;
 
 SELECT startDate, endDate, recType, length
 	FROM courseSession

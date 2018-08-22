@@ -209,3 +209,11 @@ div.dhxcombolist_material{
 input.dhx_repeat_date{
     width: 100px;
 }
+
+/* Customise DHTMLX tabbar so that tabs on task page stretch to fill 50% width of column */
+div.dhxtabbar_tabs_cont_left{
+    width: 100% !important;
+}
+div.dhxtabbar_tab{
+    width: 50% !important;
+}

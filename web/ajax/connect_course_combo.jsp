@@ -1,8 +1,6 @@
 <%@ page import="com.stms.web.*" %>
 <%@ page import="org.json.*" %>
 <%@ page import="java.sql.Types" %>
-<%@ page import="java.sql.Timestamp" %>
-<%@ page import="javax.xml.crypto.Data" %>
 <%@ page import="java.sql.ResultSet" %>
 <%! boolean authRequired = true; %>
 <%@ include file="../includes/session.jsp" %>

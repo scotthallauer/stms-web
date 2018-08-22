@@ -28,7 +28,6 @@ scheduler.form_blocks.combo = {
         r.onchange && e._combo.attachEvent("onChange", r.onchange), r.options_height && e._combo.setOptionHeight(r.options_height);
         var i = e._combo;
         if (i.enableFilteringMode(r.filtering, r.script_path || null, !!r.cache), r.script_path) {
-            i.load(r.script_path);
             var s = a[r.map_to];
             s ? r.cached_options[s] ? (i.addOption(s, r.cached_options[s]), i.disable(1), i.selectOption(0), i.disable(0)) : scheduler.$ajax.get(r.script_path + "?id=" + s + "&uid=" + scheduler.uid(), function(e) {
                 var t, a = e.xmlDoc.responseText;

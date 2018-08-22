@@ -49,6 +49,7 @@ public class Database{
         try{
             if(!conn.isValid(2)){
                 connect();
+                query("USE stms;");
             }
             return true;
         }catch(Exception e){
