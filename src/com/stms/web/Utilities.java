@@ -81,6 +81,24 @@ public class Utilities {
             return -1;
         }
     }
+	
+	/**
+     * This method checks to see whether or not the DHTLMX Has scheduled a session in said time period
+     *
+     * @param rrule The DHTMLX repeating String
+     * @param day The integer value of the checking day Mon = 1 and Sun = 7
+     * @return true if not scheduled on said day else false
+     */
+
+    public boolean checkDHT(String rrule, char day){
+        rrule = rrule.substring(rrule.indexOf(',') - 1);
+        System.out.println(rrule);
+        if (rrule.indexOf(day) != -1){
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * Takes the date in the form of LocalDate and returns the number of the day in the year
