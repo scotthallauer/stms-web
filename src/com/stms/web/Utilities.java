@@ -90,7 +90,7 @@ public class Utilities {
      * @return true if not scheduled on said day else false
      */
 
-    public boolean checkDHT(String rrule, char day){
+    public static boolean checkDHT(String rrule, char day){
         rrule = rrule.substring(rrule.indexOf(',') - 1);
         System.out.println(rrule);
         if (rrule.indexOf(day) != -1){
