@@ -1,4 +1,5 @@
 package com.stms.web;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -40,7 +41,7 @@ public class Scheduler {
      * @return Amount of hours created or negative if no session created
      */
     public int generateSessions(int numOfHours, LocalDate dueDate) {
-        DaysTilDue = Util.calcDayNumInYear(dueDate) - Util.calcDayNumInYear(Util.getDateToday());
+        DaysTilDue = Util.calcDayNumInYearinYear(dueDate) - Util.calcDayNumInYearinYear(Util.getDateToday());
         if (Util.getDateToday().isAfter(dueDate)) {
             System.out.println("Due date has passed you chop nugget");
             return -1;
@@ -104,20 +105,23 @@ public class Scheduler {
             e.printStackTrace();
         }
         ResultSet rs2;
-        /*try{
+        try{
             while (rs.next()){
                 SemesterID = rs.getInt("semesterID");
                 sql = "SELECT startTime, endTime FROM studySession WHERE semesterID = ?;";
                 params[0] = SemesterID;
                 rs2 = DB.query(sql, params, types);
-                LocalDateTime start = rs2.getTimestamp("startTime").toLocalDateTime();
-                LocalDateTime end = rs2.getTimestamp("endTime").toLocalDateTime();
-                ScheduleStudySessions(start, end);
+
+                if (rs2.getTimestamp("startTime") != null) {
+                    LocalDateTime start = rs2.getTimestamp("startTime").toLocalDateTime();
+                    LocalDateTime end = rs2.getTimestamp("endTime").toLocalDateTime();
+                    ScheduleStudySessions(start, end);
+                }
             }
         } catch (SQLException e){
             System.out.println("Fail on studySessions try catch");
             e.printStackTrace();
-        }*/
+        }
 
         for (int x = 0; x < DaysTilDue; x++){
             System.out.print("Day number " + x + " : ");
@@ -134,7 +138,7 @@ public class Scheduler {
             for (int y = 0; y < 24; y++){
                 if((timeTable[x][y]) && (hourCount < avghoursperDay) && (fullCount + hourCount < numOfHours)){
                     //Create new studysession
-                    LocalDate due = Util.CalcDateFromDayNum(Util.calcDayNumInYear(Util.getDateToday()) + x);
+                    LocalDate due = Util.CalcDateFromDayNum(Util.calcDayNumInYearinYear(Util.getDateToday()) + x);
                     LocalDateTime startTime = due.atTime(y, 0);
                     LocalDateTime endTime;
                     if (y == 23){
@@ -151,10 +155,11 @@ public class Scheduler {
                     toSchedule.setSemesterID(SemesterID);
                     toSchedule.setConfirmed(true);
                     toSchedule.setNote("Auto generated study session.");
-                    /*boolean flag = toSchedule.save();
+
+                    boolean flag = toSchedule.save();
                     if(!flag){
                         System.out.println("Failed to save session");
-                    }*/
+                    }
                     hourCount += 1;
                     System.out.println("Study Session created on day " + x + " starting at hour " + y);
                 }
@@ -176,7 +181,7 @@ public class Scheduler {
      * @param endTime End of the studySession
      */
     public void ScheduleStudySessions(LocalDateTime  startTime, LocalDateTime endTime){
-        int dayNum = Util.calcDayNumInYear(startTime.toLocalDate()) - Util.calcDayNumInYear(endTime.toLocalDate());
+        int dayNum = Util.calcDayNumInYearinYear(startTime.toLocalDate()) - Util.calcDayNumInYearinYear(endTime.toLocalDate());
         for (int x = startTime.getHour(); x < endTime.getHour(); x++){
             timeTable[dayNum][x] = false;
         }
@@ -201,8 +206,8 @@ public class Scheduler {
 
         for(int x = 0; x < DaysTilDue; x++){
 
-            if((Util.calcDayNumInYear(startTime.toLocalDate()) < Util.calcDayNumInYear(Util.getDateToday()) + x)
-                    && (Util.calcDayNumInYear(endTime.toLocalDate()) > Util.calcDayNumInYear(Util.getDateToday()) + x)){
+            if((Util.calcDayNumInYearinYear(startTime.toLocalDate()) < Util.calcDayNumInYearinYear(Util.getDateToday()) + x)
+                    && (Util.calcDayNumInYearinYear(endTime.toLocalDate()) > Util.calcDayNumInYearinYear(Util.getDateToday()) + x)){
                 for (int y = startHour; y < count + startHour; y++){
                     timeTable[x][y] = false;
                     System.out.println("I have set day " + x + " to false and also hour " + y);
@@ -282,4 +287,3 @@ public class Scheduler {
         return UserID;
     }
 }
-
