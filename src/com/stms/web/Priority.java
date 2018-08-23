@@ -40,7 +40,7 @@ public class Priority {
      * @return The prioDuerity for the assignment on curve 100x^0.5 or 150 if due in less than 2 days
      */
     public int CalcPriority(LocalDate due){
-        int daysLeft = Util.calcDayNum(due) - Util.calcDayNum(Util.getDateToday());
+        int daysLeft = Util.calcDayNumInYear(due) - Util.calcDayNumInYear(Util.getDateToday());
         System.out.println(daysLeft + " is the amount of days left");
         if(daysLeft < 2){
             //Max absolutely top level priority must be completed

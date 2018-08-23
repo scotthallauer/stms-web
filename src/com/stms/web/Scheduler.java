@@ -40,7 +40,7 @@ public class Scheduler {
      * @return Amount of hours created or negative if no session created
      */
     public int generateSessions(int numOfHours, LocalDate dueDate) {
-        DaysTilDue = Util.calcDayNum(dueDate) - Util.calcDayNum(Util.getDateToday());
+        DaysTilDue = Util.calcDayNumInYear(dueDate) - Util.calcDayNumInYear(Util.getDateToday());
         if (Util.getDateToday().isAfter(dueDate)) {
             System.out.println("Due date has passed you chop nugget");
             return -1;
@@ -134,7 +134,7 @@ public class Scheduler {
             for (int y = 0; y < 24; y++){
                 if((timeTable[x][y]) && (hourCount < avghoursperDay) && (fullCount + hourCount < numOfHours)){
                     //Create new studysession
-                    LocalDate due = Util.CalcDateFromDayNum(Util.calcDayNum(Util.getDateToday()) + x);
+                    LocalDate due = Util.CalcDateFromDayNum(Util.calcDayNumInYear(Util.getDateToday()) + x);
                     LocalDateTime startTime = due.atTime(y, 0);
                     LocalDateTime endTime;
                     if (y == 23){
@@ -176,7 +176,7 @@ public class Scheduler {
      * @param endTime End of the studySession
      */
     public void ScheduleStudySessions(LocalDateTime  startTime, LocalDateTime endTime){
-        int dayNum = Util.calcDayNum(startTime.toLocalDate()) - Util.calcDayNum(endTime.toLocalDate());
+        int dayNum = Util.calcDayNumInYear(startTime.toLocalDate()) - Util.calcDayNumInYear(endTime.toLocalDate());
         for (int x = startTime.getHour(); x < endTime.getHour(); x++){
             timeTable[dayNum][x] = false;
         }
@@ -201,8 +201,8 @@ public class Scheduler {
 
         for(int x = 0; x < DaysTilDue; x++){
 
-            if((Util.calcDayNum(startTime.toLocalDate()) < Util.calcDayNum(Util.getDateToday()) + x)
-                    && (Util.calcDayNum(endTime.toLocalDate()) > Util.calcDayNum(Util.getDateToday()) + x)){
+            if((Util.calcDayNumInYear(startTime.toLocalDate()) < Util.calcDayNumInYear(Util.getDateToday()) + x)
+                    && (Util.calcDayNumInYear(endTime.toLocalDate()) > Util.calcDayNumInYear(Util.getDateToday()) + x)){
                 for (int y = startHour; y < count + startHour; y++){
                     timeTable[x][y] = false;
                     System.out.println("I have set day " + x + " to false and also hour " + y);
