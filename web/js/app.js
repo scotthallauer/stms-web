@@ -209,23 +209,25 @@ dhtmlxEvent(window, 'load', function(){
         stms_task_layout.cells("b").setWidth(totalWidth/2);
     });
 
+    stms_task_layout.cells("a").attachObject("stms_tasks");
+
     var stms_assignment_tabbar = stms_task_layout.cells("b").attachTabbar({
 
         tabs: [
             {
-                id:         "a1",
+                id:         "b1",
                 text:       "Upcoming Assignments",
                 active:     true
             },
             {
-                id:         "a2",
+                id:         "b2",
                 text:       "Completed Assignments"
             }
         ]
 
     });
 
-    var stms_assignment_list_1 = stms_assignment_tabbar.tabs("a1").attachList({
+    var stms_assignment_list_1 = stms_assignment_tabbar.tabs("b1").attachList({
         type:{
             template:"<span style='font-weight: bold'>#course#: #name#</span><br/>Priority: #priority#"
         }
@@ -235,5 +237,9 @@ dhtmlxEvent(window, 'load', function(){
         name: "Progress Report",
         priority: "Medium"
     });
+
+    // hide loading screen after app has finished loading
+    $("div#stms_loader").hide();
+    $("body").loadingModal("hide");
 
 });
