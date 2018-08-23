@@ -1,7 +1,7 @@
 package com.stms.web;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,7 +13,14 @@ public class Scheduler {
     private int UserID;
     private Database DB;
     private boolean timeTable[][];
-    int DaysTilDue;
+    private int DaysTilDue;
+    private int SemesterID;
+
+
+    /**
+     * Constructors for the class. One that is blank and another that passes the UserID to the class.
+     * The userID is necessary for the class to execute but also has a set method to access it.
+     */
 
     Scheduler(){
         Util = new Utilities();
@@ -87,8 +94,15 @@ public class Scheduler {
 
         sql = "SELECT semesterID FROM semester WHERE userID = ?;";
 
-        rs = DB.query(sql, params, types);
-        int SemesterID;
+        try {
+            rs = DB.query(sql, params, types);
+            if (rs.next()){
+                SemesterID = rs.getInt("semesterID");
+            }
+            //FIX THE SEMESTERID GENERATION HERE COULD BE INVALID SEMESTER
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
         ResultSet rs2;
         /*try{
             while (rs.next()){
@@ -120,6 +134,27 @@ public class Scheduler {
             for (int y = 0; y < 24; y++){
                 if((timeTable[x][y]) && (hourCount < avghoursperDay) && (fullCount + hourCount < numOfHours)){
                     //Create new studysession
+                    LocalDate due = Util.CalcDateFromDayNum(Util.calcDayNum(Util.getDateToday()) + x);
+                    LocalDateTime startTime = due.atTime(y, 0);
+                    LocalDateTime endTime;
+                    if (y == 23){
+                        endTime = due.atTime(0, 0);
+                    }else {
+                        endTime = due.atTime(y+1, 0);
+                    }
+                    Timestamp timestamp = Timestamp.valueOf(startTime);
+                    StudySession toSchedule = new StudySession();
+                    toSchedule.setStartTime(timestamp);
+                    timestamp = Timestamp.valueOf(endTime);
+                    System.out.println(timestamp.toString() + " Testing");
+                    toSchedule.setEndTime(timestamp);
+                    toSchedule.setSemesterID(SemesterID);
+                    toSchedule.setConfirmed(true);
+                    toSchedule.setNote("Auto generated study session.");
+                    /*boolean flag = toSchedule.save();
+                    if(!flag){
+                        System.out.println("Failed to save session");
+                    }*/
                     hourCount += 1;
                     System.out.println("Study Session created on day " + x + " starting at hour " + y);
                 }
@@ -247,3 +282,4 @@ public class Scheduler {
         return UserID;
     }
 }
+
