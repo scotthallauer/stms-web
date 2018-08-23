@@ -8,50 +8,57 @@ import java.text.*;
 import java.lang.Math;
 
 /**
- * This class takes a course session ID as the parameter and calculates the priority for the session.
+ * This class takes a course session ID as the parameter and calculates the prioDuerity for the session.
  *
  * Coded by Jonathon Everatt
  */
 
 public class Priority {
 
-    private int priority;
-    private int prioritylevel;
+    private Double priority;
+    private Double prioWeight;
+    private Double prioritylevel;
     private int assignmentID;
     private Database DB;
     private Date today;
     private Utilities Util;
 
     /**
-     *  Constructor for the class. Initializes  Date Utils and the priority level
+     *  Constructor for the class. Initializes  Date Utils and the prioDuerity level
      */
     Priority() {
-        this.prioritylevel = 0;
+        this.prioritylevel = 0.0;
         Util = new Utilities();
 
     }
 
     /**
      *  Main method for the class takes in the Due date and calculates the amount of days till it is due
-     *  Then assigns a priority level to the duedate and returns.
+     *  Then assigns a prioDuerity level to the duedate and returns.
      *
-     * @param due Due date of the assignment that needs priority calculated
-     * @return The priority for the assignment on curve 100x^0.5 or 150 if due in less than 2 days
+     * @param due Due date of the assignment that needs prioDuerity calculated
+     * @return The prioDuerity for the assignment on curve 100x^0.5 or 150 if due in less than 2 days
      */
     public int CalcPriority(LocalDate due){
         int daysLeft = Util.calcDayNum(due) - Util.calcDayNum(Util.getDateToday());
-        System.out.println(daysLeft);
+        System.out.println(daysLeft + " is the amount of days left");
         if(daysLeft < 2){
             //Max absolutely top level priority must be completed
-            return 150;
+            return 100;
         }
 
-        double prio;
-        prio = 100 + daysLeft;
-        prio = Math.pow(prio, 0.5);
-        prio += prioritylevel;
-        //Current equation = 100x^1/2 + priolevel
-        String s = "" + prio;
+        double prioDue;
+        //y = 100(daysUntil -1) ^-.387
+        prioDue = daysLeft - 1;
+        //prioDue *= 100;
+        System.out.println(prioDue + " here we go 1");
+        prioDue = Math.pow(prioDue, -0.387);
+        prioDue *= 100;
+        System.out.println(prioDue + " here we go");
+
+        Double prio = (0.65 * prioDue) + (0.2 * prioritylevel) + (0.15 * prioWeight);
+        //Current equation = 100x^1/2 + prioDuelevel
+        String s = "" + prioDue;
         if(s.indexOf('.') > 0){
             s = s.substring(0,s.indexOf('.'));
         }
@@ -64,19 +71,23 @@ public class Priority {
      *
      */
 
-    private void setPriorityLevel(String level){
+    public void setWeigthing(Double prioWeight){
+        this.prioWeight = prioWeight;
+    }
+
+    public void setPriorityLevel(String level){ //If easier can set this to int with levels of 1,2,3
         if(level.equals("High")) {
-            this.prioritylevel = 20;
+            this.prioritylevel = 1.0;
         } else if (level.equals("Medium")) {
-            this.prioritylevel = 10;
+            this.prioritylevel = (2/3) * 1.0;
         }  else if (level.equals("Low")) {
-            this.prioritylevel = 1;
+            this.prioritylevel = (1/3) * 1.0;
         } else{
-            System.out.println("Not priority level set. Invalid input setPrio ");
+            System.out.println("Not priority  level set. Invalid input setPrio ");
         }
     }
 
-    public void setPriority(int priority){
+    public void setPriority(Double priority){
         this.priority = priority;
     }
 
@@ -84,7 +95,7 @@ public class Priority {
         this.assignmentID = assignmentID;
     }
 
-    public int getPriority(){
+    public Double getPriority(){
         return priority;
     }
 
