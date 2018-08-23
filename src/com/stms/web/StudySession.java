@@ -112,7 +112,7 @@ public class StudySession {
         // execute query
         if (Database.update(sql, params, types)) {
             // get study session ID
-            sql = "SELECT sSessionID from studySession WHERE semesterID = ?, startTime = ?, endTime = ?";
+            sql = "SELECT sSessionID from studySession WHERE semesterID = ? AND startTime = ? AND endTime = ?";
             params = new Object[3];
             types = new int[3];
             params[0] = this.semesterID;
@@ -176,3 +176,4 @@ public class StudySession {
         return this.note;
     }
 }
+
