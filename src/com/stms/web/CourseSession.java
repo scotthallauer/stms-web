@@ -92,7 +92,7 @@ public class CourseSession {
     }
 
     public void setCourseID(Integer courseID){
-        if(courseID != null && courseID > 1) {
+        if(courseID != null && courseID >= 1) {
             this.courseID = courseID;
             this.recordSaved = false;
         }
@@ -103,8 +103,10 @@ public class CourseSession {
     }
 
     public void setType(String type) {
-        this.type = type.toLowerCase();
-        this.recordSaved = false;
+        if(type != null && type.length() > 1) {
+            this.type = type.toLowerCase();
+            this.recordSaved = false;
+        }
     }
 
     public String getType() {

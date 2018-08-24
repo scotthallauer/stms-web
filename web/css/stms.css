@@ -195,7 +195,7 @@ div.dhx_cal_create_button:hover{
 }
 
 /* Customise DHTMLX scheduler lightbox controls (because they don't work like they're meant to) */
-.dhx_cal_light_wide .combo>div, .dhx_cal_light_wide .dhx_combo_box{
+.dhx_cal_light_wide .combo>div, .dhx_cal_light_wide .dhx_combo_box, input.dhxcombo_input{
     width: 331px !important;
 }
 

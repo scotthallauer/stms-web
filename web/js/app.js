@@ -141,12 +141,19 @@ dhtmlxEvent(window, 'load', function(){
         }
     });
 
-    // if the course session "type" is null, then the user has entered a custom value
-    // this method fetches that value and correctly assigns it as the combo box value so that it gets submitted with the form
-    // ...it's a bit of a workaround because DHTMLX does not handle this like it's supposed to :(
+    // This method does two things:
+    // (1) Updates the client-side version of the calendar event with the right details when the user saves it
+    // (2) Enables custom session types - if the course session "type" is null, then the user has entered a custom value
+    //     this method fetches that value and correctly assigns it as the combo box value so that it gets submitted with the form
+    //     ...it's a bit of a workaround because DHTMLX does not handle this like it's supposed to :(
     scheduler.attachEvent("onEventSave", function(id, ev, is_new){
+        var type = $("div.dhx_cal_light div.dhx_wrap_section:nth-of-type(2) input[name=types]").val().toLowerCase();
+            type = type.charAt(0).toUpperCase() + type.substr(1);
+        var course_name = $("div.dhx_cal_light div.dhx_wrap_section:nth-of-type(1) input[type=text]").val();
+        course_name = course_name.substr(course_name.indexOf("-")+1);
+        ev.text = course_name + " - " + type;
         if(ev.event_type == null) {
-            ev.event_type = $("div.dhx_cal_light div.dhx_wrap_section:nth-of-type(2) input[name=types]").val().toLowerCase();
+            ev.event_type = type.toLowerCase();
         }
         return true;
     });

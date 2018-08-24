@@ -46,7 +46,7 @@
                     jo.put("course_id", courses[j].getCourseID());
                     jo.put("event_pid", String.valueOf(sessions[k].getSessionPID()));
                     jo.put("event_type", String.valueOf(sessions[k].getType()));
-                    jo.put("text", courses[j].getName());
+                    jo.put("text", courses[j].getName() + " - " + Utilities.capitalise(sessions[k].getType()));
                     jo.put("start_date", sessions[k].getStartDate().toString());
                     jo.put("end_date", sessions[k].getEndDate().toString());
                     jo.put("event_length", String.valueOf(sessions[k].getLength()));
@@ -86,6 +86,9 @@
         String eventType;
         try {
             eventType = String.valueOf(request.getParameter("event_type")).toLowerCase();
+            if(eventType.length() < 1){
+                eventType = null;
+            }
         }catch(Exception e){
             eventType = null;
         }
