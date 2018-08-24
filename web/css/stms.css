@@ -78,14 +78,6 @@ div#stms_login_container, div#stms_register_container{
             }
 
 /* APPLICATION LAYOUT */
-/* Cover to hide the page until the app has finished loading */
-div#stms_loader{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: #FFFFFF;
-    z-index: 10;
-}
 
 /* Hide the default header at the top of the DHTMLX layout cell*/
 div.dhx_cell_hdr{
@@ -207,6 +199,10 @@ div.dhx_cal_create_button:hover{
     width: 331px !important;
 }
 
+input.dhxcombo_input[readonly=true]{
+    cursor: default;
+}
+
 div.dhxcombolist_material{
     width: 329px !important;
 }
@@ -242,7 +238,7 @@ div#stms_tasks_header{
 
 div#stms_tasks_cont{
     box-sizing: border-box;
-    padding: 10px;
+    padding: 15px 10px;
 }
     div#stms_tasks_cont h3{
         margin: 0;
@@ -251,43 +247,74 @@ div#stms_tasks_cont{
         font-size: 20px;
     }
     div#stms_tasks_cont h4{
+        margin: 25px 0 10px 0;
         font-family: Roboto, Arial, Helvetica;
         font-style: italic;
         font-weight: normal;
         font-size: 15px;
     }
-    div.stms_priority_icon{
-        display: inline-block;
-        vertical-align: middle;
-        box-sizing: border-box;
-        border-width: 2px;
-        border-style: solid;
-        font-size: 14px;
-        font-weight: bold;
-        width: 24px;
-        height: 24px;
-        line-height: 24px;
-        text-align: center;
-        border-radius: 12px;
+    table.stms_task_suggestion_list{
+        width: 100%;
+        font-family: Roboto, Arial, Helvetica;
     }
-        div.stms_priority_icon_high{
-            background-color: rgba(255, 0, 0, 0.1);
-            color: red;
-            font-family: Roboto, Arial, Helvetica;
-            border-color: red;
+        table.stms_task_suggestion_list td{
+            border-bottom: 10px solid transparent;
         }
-        div.stms_priority_icon_medium{
-            background-color: rgba(255, 165, 0, 0.1);
-            color: orange;
-            font-family: Roboto, Arial, Helvetica;
-            border-color: orange;
+        table.stms_task_suggestion_list td.stms_task_suggestion_priority{
+            width: 34px;
         }
-        div.stms_priority_icon_low{
-            background-color: rgba(0, 255, 0, 0.1);
-            color: green;
-            font-family: Roboto, Arial, Helvetica;
-            border-color: green;
+        table.stms_task_suggestion_list td.stms_task_suggestion_date{
+            text-align: right;
         }
+            div.stms_priority_icon{
+                display: inline-block;
+                vertical-align: middle;
+                box-sizing: border-box;
+                border-width: 2px;
+                border-style: solid;
+                font-size: 14px;
+                font-weight: bold;
+                width: 24px;
+                height: 24px;
+                line-height: 24px;
+                text-align: center;
+                border-radius: 12px;
+                margin: 0 10px;
+            }
+                div.stms_priority_icon_high{
+                    background-color: rgba(255, 0, 0, 0.1);
+                    color: red;
+                    border-color: red;
+                }
+                div.stms_priority_icon_medium{
+                    background-color: rgba(255, 165, 0, 0.1);
+                    color: orange;
+                    border-color: orange;
+                }
+                div.stms_priority_icon_low{
+                    background-color: rgba(0, 255, 0, 0.1);
+                    color: green;
+                    border-color: green;
+                }
+            span.stms_priority_text{
+                line-height: 24px;
+                vertical-align: middle;
+            }
+                span.stms_priority_text_high{
+                    color: red;
+                    font-weight: bold;
+                    font-size: 20px;
+                }
+                span.stms_priority_text_medium{
+                    color: orange;
+                    font-weight: bold;
+                    font-size: 16px;
+                }
+                span.stms_priority_text_low{
+                    color: green;
+                    font-weight: normal;
+                    font-size: 14px;
+                }
 
 div.dhxtabbar_tabs_cont_left{
     width: 100% !important;

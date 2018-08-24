@@ -141,6 +141,16 @@ dhtmlxEvent(window, 'load', function(){
         }
     });
 
+    // if the course session "type" is null, then the user has entered a custom value
+    // this method fetches that value and correctly assigns it as the combo box value so that it gets submitted with the form
+    // ...it's a bit of a workaround because DHTMLX does not handle this like it's supposed to :(
+    scheduler.attachEvent("onEventSave", function(id, ev, is_new){
+        if(ev.event_type == null) {
+            ev.event_type = $("div.dhx_cal_light div.dhx_wrap_section:nth-of-type(2) input[name=types]").val().toLowerCase();
+        }
+        return true;
+    });
+
     scheduler.load("./ajax/connect_scheduler.jsp", "json");
     dp = new dataProcessor("./ajax/connect_scheduler.jsp");
     dp.init(scheduler);

@@ -44,8 +44,7 @@ scheduler.form_blocks['combo']={
 			node._combo.setOptionHeight(config.options_height);
 		var combo = node._combo;
 		combo.enableFilteringMode(config.filtering, config.script_path||null, !!config.cache);
-		//combo.readonly(config.script_path == "./ajax/connect_course_combo.jsp");
-        combo.readonly(true); // temporary code... might come back to implement custom types later
+		combo.readonly(config.script_path == "./ajax/connect_course_combo.jsp");
 		/*
 		if(config.script_path == "./ajax/connect_type_combo.jsp") {
             combo.allowFreeText(true);
