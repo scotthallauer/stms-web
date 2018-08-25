@@ -46,12 +46,22 @@
                     jo.put("course_id", courses[j].getCourseID());
                     jo.put("event_pid", String.valueOf(sessions[k].getSessionPID()));
                     jo.put("event_type", String.valueOf(sessions[k].getType()));
-                    jo.put("text", courses[j].getName() + " - " + Utilities.capitalise(sessions[k].getType()));
+                    if(courses[j].getCode() != null){
+                        jo.put("text", courses[j].getCode() + " - " + Utilities.capitalise(sessions[k].getType()));
+                    }else {
+                        jo.put("text", courses[j].getName() + " - " + Utilities.capitalise(sessions[k].getType()));
+                    }
+                    if(sessions[k].getPriority() != null && sessions[k].getWeighting() != null){
+                        jo.put("event_grade", String.valueOf(sessions[k].getPriority()) + "," + String.valueOf(sessions[k].getWeighting()));
+                        jo.put("color", "red");
+                    }else{
+                        jo.put("event_grade", "0,0");
+                        jo.put("color", getColourCode(courses[j].getColour()));
+                    }
                     jo.put("start_date", sessions[k].getStartDate().toString());
                     jo.put("end_date", sessions[k].getEndDate().toString());
                     jo.put("event_length", String.valueOf(sessions[k].getLength()));
                     jo.put("rec_type", sessions[k].getRecType());
-                    jo.put("color", getColourCode(courses[j].getColour()));
                     jo.put("textColor", "#FFFFFF");
                     ja.put(jo);
                 }
@@ -92,6 +102,23 @@
         }catch(Exception e){
             eventType = null;
         }
+        Integer eventPriority;
+        try{
+            eventPriority = Integer.valueOf(request.getParameter("event_grade").split(",")[0]);
+            if(eventPriority == 0){
+                eventPriority = null;
+            }
+        }catch(Exception e){
+            eventPriority = null;
+        }
+        Double eventWeighting = null;
+        if(eventPriority != null){
+            try{
+                eventWeighting = Double.valueOf(request.getParameter("event_grade").split(",")[1]);
+            }catch(Exception e){
+                eventWeighting = null;
+            }
+        }
         Timestamp eventStartDate = Timestamp.valueOf(request.getParameter("start_date"));
         Timestamp eventEndDate = Timestamp.valueOf(request.getParameter("end_date"));
         Integer eventLength;
@@ -109,6 +136,8 @@
             cs.setSessionPID(eventPID);
             cs.setCourseID(eventCourseID);
             cs.setType(eventType);
+            cs.setPriority(eventPriority);
+            cs.setWeighting(eventWeighting);
             cs.setStartDate(eventStartDate);
             cs.setEndDate(eventEndDate);
             cs.setLength(eventLength);
@@ -130,6 +159,8 @@
             cs.setSessionPID(eventPID);
             cs.setCourseID(eventCourseID);
             cs.setType(eventType);
+            cs.setPriority(eventPriority);
+            cs.setWeighting(eventWeighting);
             cs.setStartDate(eventStartDate);
             cs.setEndDate(eventEndDate);
             cs.setLength(eventLength);
@@ -155,6 +186,8 @@
             cs.setSessionPID(eventPID);
             cs.setCourseID(eventCourseID);
             cs.setType(eventType);
+            cs.setPriority(eventPriority);
+            cs.setWeighting(eventWeighting);
             cs.setStartDate(eventStartDate);
             cs.setEndDate(eventEndDate);
             cs.setLength(eventLength);

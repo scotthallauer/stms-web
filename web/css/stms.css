@@ -194,9 +194,26 @@ div.dhx_cal_create_button:hover{
     transition: all .1s ease-in-out;
 }
 
+/* Customise DHTMLX scheduler lightbox to work on smaller screens */
+div.dhx_cal_light{
+    width: 480px !important;
+}
+    div.dhx_cal_ltitle{
+        margin: 0;
+    }
+    div.dhx_cal_larea{
+        max-height: 400px; /* this must be set automatically based on window height */
+        overflow: auto;
+        padding: 20px 0 0 0;
+    }
+        div.dhx_cal_larea div.dhx_wrap_section,  div.dhx_cal_larea div.dhx_cal_lsection,
+        div.dhx_cal_larea div.dhxcombo_material, div.dhx_cal_larea input{
+            background: transparent;
+        }
+
 /* Customise DHTMLX scheduler lightbox controls (because they don't work like they're meant to) */
 .dhx_cal_light_wide .combo>div, .dhx_cal_light_wide .dhx_combo_box, input.dhxcombo_input{
-    width: 331px !important;
+    width: 335px !important;
 }
 
 input.dhxcombo_input[readonly=true]{
@@ -209,6 +226,26 @@ div.dhxcombolist_material{
 
 input.dhx_repeat_date{
     width: 100px;
+}
+
+/* Custom lightbox section for users to enter information about a course's grading */
+div#stms_lightbox_grading input[type=checkbox]{
+    margin: 10px;
+}
+div#stms_lightbox_grading select, div#stms_lightbox_grading input[type=number]{
+    width: 100px;
+    height: 32px;
+    margin: 0 5px 0 10px;
+    box-sizing: border-box;
+    font-size: 14px;
+    padding: 2px 2px 2px 8px;
+    border: 1px solid rgba(0,0,0,.08);
+}
+div.stms_lightbox_grading_hidden tr:last-of-type{
+    display: none;
+}
+div.stms_lightbox_grading_hidden td:nth-of-type(2), div.stms_lightbox_grading_hidden td:last-of-type{
+    display: none;
 }
 
 /* Make font size smaller on popup to fix "Edit occurrence" button exceeding its width for editing recurring events */

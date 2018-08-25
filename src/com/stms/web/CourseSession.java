@@ -26,6 +26,8 @@ public class CourseSession {
     private String recType;
     private String location;
     private String note;
+    private Integer priority;
+    private Double weighting;
     private Double possibleMark;
     private Double earnedMark;
 
@@ -64,8 +66,19 @@ public class CourseSession {
             this.endDate = rs.getTimestamp("endDate");
             this.length = rs.getInt("length");
             this.recType = rs.getString("recType");
+            if(rs.wasNull()){
+                this.recType = null;
+            }
             this.location = rs.getString("location");
             this.note = rs.getString("note");
+            this.priority = rs.getInt("priority");
+            if(rs.wasNull()){
+                this.priority = null;
+            }
+            this.weighting = rs.getDouble("weighting");
+            if(rs.wasNull()){
+                this.weighting = null;
+            }
             this.possibleMark = rs.getDouble("possibleMark");
             this.earnedMark = rs.getDouble("earnedMark");
             this.recordExists = true;
@@ -143,8 +156,10 @@ public class CourseSession {
     }
 
     public void setRecType(String recType) {
-        this.recType = recType;
-        this.recordSaved = false;
+        if(recType == null || recType.length() > 0) {
+            this.recType = recType;
+            this.recordSaved = false;
+        }
     }
 
     public String getRecType() {
@@ -167,6 +182,28 @@ public class CourseSession {
 
     public String getNote() {
         return this.note;
+    }
+
+    public void setPriority(Integer priority){
+        if(priority == null || (priority >= 1 && priority <= 3)){
+            this.priority = priority;
+            this.recordSaved = false;
+        }
+    }
+
+    public Integer getPriority(){
+        return this.priority;
+    }
+
+    public void setWeighting(Double weighting){
+        if(weighting == null || (weighting >= 0.0 && weighting <= 100.0)){
+            this.weighting = weighting;
+            this.recordSaved = false;
+        }
+    }
+
+    public Double getWeighting(){
+        return this.weighting;
     }
 
     public void setPossibleMark(double possibleMark) {
@@ -208,23 +245,23 @@ public class CourseSession {
         String sql;
         // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
         if(!this.recordExists){
-            sql = "INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, location, note, possibleMark, earnedMark) "
-                  + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, location, note, priority, weighting, possibleMark, earnedMark) "
+                  + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }else{
             sql = "UPDATE courseSession SET sessionPID = ?, courseID = ?, sessionType = ?, startDate = ?, endDate = ?, length = ?, "
-                  + " recType = ?, location = ?, note = ?, possibleMark = ?, earnedMark = ? WHERE sessionID = ?";
+                  + " recType = ?, location = ?, note = ?, priority = ?, weighting = ?, possibleMark = ?, earnedMark = ? WHERE sessionID = ?";
         }
         // prepare query parameters
         Object[] params;
         int[] types;
         if(!this.recordExists){
-            params = new Object[11];
-            types = new int[11];
+            params = new Object[13];
+            types = new int[13];
         }else{
-            params = new Object[12];
-            types = new int[12];
-            params[11] = this.sessionID;
-            types[11] = Types.INTEGER;
+            params = new Object[14];
+            types = new int[14];
+            params[13] = this.sessionID;
+            types[13] = Types.INTEGER;
         }
         params[0] = this.sessionPID;
         types[0] = Types.INTEGER;
@@ -244,10 +281,14 @@ public class CourseSession {
         types[7] = Types.VARCHAR;
         params[8] = this.note;
         types[8] = Types.VARCHAR;
-        params[9] = this.possibleMark;
-        types[9] = Types.DOUBLE;
-        params[10] = this.earnedMark;
+        params[9] = this.priority;
+        types[9] = Types.INTEGER;
+        params[10] = this.weighting;
         types[10] = Types.DOUBLE;
+        params[11] = this.possibleMark;
+        types[11] = Types.DOUBLE;
+        params[12] = this.earnedMark;
+        types[12] = Types.DOUBLE;
         // execute query
         if(Database.update(sql, params, types)){
             // get session ID

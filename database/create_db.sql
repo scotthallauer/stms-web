@@ -74,9 +74,11 @@ CREATE TABLE courseSession (
     startDate DateTime NOT NULL,
     endDate DateTime NOT NULL,
     length bigint NULL, # duration of session in seconds (only required for recurring events) 
-    recType VARCHAR(40) NOT NULL,
+    recType VARCHAR(40) NULL,
     location VARCHAR(25) NULL,
     note VARCHAR(500) NULL,
+    priority int NULL,
+    weighting double NULL,
     possibleMark double NULL,
     earnedMark double NULL,
     PRIMARY KEY (sessionID),

@@ -55,6 +55,8 @@ VALUES (6, NULL, 'Genetics', 'MCB3026F', 'green');
 
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
 VALUES (0, 3, 'lecture', '2018-07-23 09:00:00', '2018-09-07 09:45:00', 2700, 'week_1___1,2,3,4,5#');
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, priority, weighting)
+VALUES (1, 3, 'test', '2018-08-29 09:00:00', '2018-08-29 09:45:00', 1535526000, NULL, 3, 7.5);
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
 VALUES (0, 4, 'lecture', '2018-07-23 11:00:00', '2018-09-07 11:45:00', 2700, 'week_1___1,2,3,4,5#');
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
