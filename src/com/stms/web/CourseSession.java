@@ -278,4 +278,28 @@ public class CourseSession {
         }
     }
 
+    /**
+     * Delete the course session's details from the database.
+     * @return true if successful, false otherwise.
+     */
+    private boolean deleteCourseSession () {
+        // check if database is connected
+        if(!Database.isConnected()) {
+            return false;
+        }
+        String sql = "DELETE FROM courseSession WHERE sessionID = ?";
+        Object[] params;
+        int[] types;
+        params = new Object[1];
+        types = new int[1];
+        params[0] = this.sessionID;
+        types[0] = Types.INTEGER;
+        if(Database.update(sql, params, types)) {
+            return true;
+        } else {
+            System.out.println("Failed to delete course session for courseSessionID: " + this.sessionID + ".");
+            return false;
+        }
+    }
+
 }

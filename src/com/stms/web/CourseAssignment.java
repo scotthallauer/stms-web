@@ -219,4 +219,28 @@ public class CourseAssignment {
             return false;
         }
     }
+
+    /**
+     * Delete the assignment's details from the database.
+     * @return true if successful, false otherwise.
+     */
+    private boolean deleteAssignment () {
+        // check if database is connected
+        if(!Database.isConnected()) {
+            return false;
+        }
+        String sql = "DELETE FROM courseAssignment WHERE assignmentID = ?";
+        Object[] params;
+        int[] types;
+        params = new Object[1];
+        types = new int[1];
+        params[0] = this.assignmentID;
+        types[0] = Types.INTEGER;
+        if(Database.update(sql, params, types)) {
+            return true;
+        } else {
+            System.out.println("Failed to delete course assignment for courseAssignmentID: " + this.assignmentID + ".");
+            return false;
+        }
+    }
 }

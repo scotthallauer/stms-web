@@ -233,6 +233,44 @@ public class Course {
         }
     }
 
+    /**
+     * Delete the course's details from the database, along with all sessions and assignments related to it.
+     * @return true if successful, false otherwise.
+     */
+    private boolean deleteCourse () {
+        // check if database is connected
+        if(!Database.isConnected()) {
+            return false;
+        }
+        // the count will be used to make sure all three classes of objects related to the course are deleted from the database
+        int count = 0;
+
+        String sql = "DELETE FROM courseSession WHERE courseID = ?";
+        Object[] params;
+        int[] types;
+        params = new Object[1];
+        types = new int[1];
+        params[0] = this.courseID;
+        types[0] = Types.INTEGER;
+        if(Database.update(sql, params, types)) {
+            count++;
+        }
+        sql = "DELETE FROM courseAssignment WHERE courseID = ?";
+        if(Database.update(sql, params, types)) {
+            count++;
+        }
+        sql = "DELETE FROM course WHERE courseID = ?";
+        if(Database.update(sql, params, types)) {
+            count++;
+        }
+        if (count == 3) {
+            return true;
+        } else {
+            System.out.println("Failed to delete all database entries for Course (courseID: " + this.courseID + ").");
+            return false;
+        }
+    }
+
     // Methods still to be implemented
     /*
     public void addSession (CourseSession session) {

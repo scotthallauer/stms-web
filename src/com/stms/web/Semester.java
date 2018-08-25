@@ -218,13 +218,83 @@ public class Semester {
         }
     }
 
+    /**
+     * Delete the semester's details from the database, along with all information related to a semester,
+     * including courses, courseAssignments, courseSessions and studySessions.
+     * @return true if successful, false otherwise.
+     */
+    public boolean deleteSemester () {
+        // check if database is connected
+        if(!Database.isConnected()) {
+            return false;
+        }
+        // the count will be used to make sure all five classes of objects are deleted from the database
+        int count = 0;
+        String sql = "DELETE FROM semester WHERE semesterID = ?";
+        Object[] params;
+        int[] types;
+        params = new Object[1];
+        types = new int[1];
+        params[0] = this.semesterID;
+        types[0] = Types.INTEGER;
+        if(Database.update(sql, params, types)) {
+            count++;
+        }
+        sql = "DELETE FROM studySession WHERE semesterID = ?";
+        params = new Object[1];
+        types = new int[1];
+        params[0] = this.semesterID;
+        types[0] = Types.INTEGER;
+        if(Database.update(sql, params, types)) {
+            count++;
+        }
+        sql = "SELECT courseID FROM course WHERE semesterID1 = ? OR semesterID2 = ?";
+        params = new Object[2];
+        types = new int[2];
+        params[0] = semesterID;
+        types[0] = Types.INTEGER;
+        params[1] = this.semesterID;
+        types[1] = Types.INTEGER;
+        ResultSet rs = Database.query(sql, params, types);
+        try {
+            int deletedCourse;
+            while (rs.next()) {
+                sql = "DELETE FROM courseSession WHERE courseID = ?";
+                deletedCourse = rs.getInt(1);
+                params = new Object[1];
+                types = new int[1];
+                params[0] = deletedCourse;
+                types[0] = Types.INTEGER;
+                if(Database.update(sql, params, types)) {
+                    count++;
+                }
+                sql = "DELETE FROM courseAssignment WHERE courseID = ?";
+                if(Database.update(sql, params, types)) {
+                    count++;
+                }
+                sql = "DELETE FROM course WHERE courseID = ?";
+                if(Database.update(sql, params, types)) {
+                    count++;
+                }
+            }
+        } catch (Exception e){
+            System.out.println("Failed to load all courses for Semester (semesterID: " + this.semesterID + ") while deleting.");
+            e.printStackTrace();
+        }
+        if (count == 5) {
+            return true;
+        } else {
+            System.out.println("Failed to delete all database entries for semesterID: " + this.semesterID + ".");
+            return false;
+        }
+    }
+
+
     // Methods still to be implemented
     /*
     public void setCourses(Course[] crs) {
         this.courses = crs; }
 
-    public Course[] getCourses() {
-        return courses; }
 
     public void addCourse (Course course) {
     }

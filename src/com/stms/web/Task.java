@@ -195,4 +195,28 @@ public class Task {
             return false;
         }
     }
+
+    /**
+     * Delete the task's details from the database.
+     * @return true if successful, false otherwise.
+     */
+    private boolean deleteTask () {
+        // check if database is connected
+        if(!Database.isConnected()) {
+            return false;
+        }
+        String sql = "DELETE FROM task WHERE taskID = ?";
+        Object[] params;
+        int[] types;
+        params = new Object[1];
+        types = new int[1];
+        params[0] = this.taskID;
+        types[0] = Types.INTEGER;
+        if(Database.update(sql, params, types)) {
+            return true;
+        } else {
+            System.out.println("Failed to delete task for taskID: " + this.taskID + ".");
+            return false;
+        }
+    }
 }
