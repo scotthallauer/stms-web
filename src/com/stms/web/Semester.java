@@ -230,17 +230,9 @@ public class Semester {
         }
         // the count will be used to make sure all five classes of objects are deleted from the database
         int count = 0;
-        String sql = "DELETE FROM semester WHERE semesterID = ?";
+        String sql = "DELETE FROM studySession WHERE semesterID = ?";
         Object[] params;
         int[] types;
-        params = new Object[1];
-        types = new int[1];
-        params[0] = this.semesterID;
-        types[0] = Types.INTEGER;
-        if(Database.update(sql, params, types)) {
-            count++;
-        }
-        sql = "DELETE FROM studySession WHERE semesterID = ?";
         params = new Object[1];
         types = new int[1];
         params[0] = this.semesterID;
@@ -280,6 +272,14 @@ public class Semester {
         } catch (Exception e){
             System.out.println("Failed to load all courses for Semester (semesterID: " + this.semesterID + ") while deleting.");
             e.printStackTrace();
+        }
+        sql = "DELETE FROM semester WHERE semesterID = ?";
+        params = new Object[1];
+        types = new int[1];
+        params[0] = this.semesterID;
+        types[0] = Types.INTEGER;
+        if(Database.update(sql, params, types)) {
+            count++;
         }
         if (count == 5) {
             return true;

@@ -1,4 +1,4 @@
-package web.stms.com;
+package com.stms.web;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
