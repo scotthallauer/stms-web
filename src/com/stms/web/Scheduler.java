@@ -1,4 +1,4 @@
-package com.stms.web;
+package web.stms.com;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,6 +7,7 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Calendar;
 
 public class Scheduler {
 
@@ -16,6 +17,8 @@ public class Scheduler {
     private boolean timeTable[][];
     private int DaysTilDue;
     private int SemesterID;
+    private int toBed;
+    private int toWake;
 
 
     /**
@@ -25,11 +28,15 @@ public class Scheduler {
 
     Scheduler(){
         Util = new Utilities();
+        toBed = 0;
+        toWake = 8;
     }
 
     Scheduler(int UserID){
         this.UserID = UserID;
         Util = new Utilities();
+        toBed = 0;
+        toWake = 8;
     }
 
     /**
@@ -52,13 +59,14 @@ public class Scheduler {
         // where timeTable[day][hour]
         for (int x = 0; x<DaysTilDue;x++){
             for(int y = 0; y < 24; y++){
-                if (y < 8){ //Can edit for sleep arrangements
+                if (y < toWake){ //Can edit for sleep arrangements
                     timeTable[x][y] = false;
                 } else {//free time before checking scheduled sessions
                     timeTable[x][y] = true;
                 }
             }
         }
+
         //Major variables have all be intialized
 
         String sql = "SELECT startDate, endDate, recType, length\n" +
@@ -104,20 +112,23 @@ public class Scheduler {
         } catch (SQLException e){
             e.printStackTrace();
         }
+
         ResultSet rs2;
         try{
-            while (rs.next()){
-                SemesterID = rs.getInt("semesterID");
-                sql = "SELECT startTime, endTime FROM studySession WHERE semesterID = ?;";
-                params[0] = SemesterID;
-                rs2 = DB.query(sql, params, types);
+            if(rs != null) {
+                while (rs.next()) {
+                    //SemesterID = rs.getInt("semesterID");
+                    sql = "SELECT startTime, endTime FROM studySession WHERE semesterID = ?;";
+                    params[0] = SemesterID;
+                    rs2 = DB.query(sql, params, types);
 
-                if (rs2.getTimestamp("startTime") != null) {
-                    LocalDateTime start = rs2.getTimestamp("startTime").toLocalDateTime();
-                    LocalDateTime end = rs2.getTimestamp("endTime").toLocalDateTime();
-                    ScheduleStudySessions(start, end);
+                    while (rs2.next()) {
+                        LocalDateTime start = rs2.getTimestamp("startTime").toLocalDateTime();
+                        LocalDateTime end = rs2.getTimestamp("endTime").toLocalDateTime();
+                        ScheduleStudySessions(start, end);
+                        }
+                    }
                 }
-            }
         } catch (SQLException e){
             System.out.println("Fail on studySessions try catch");
             e.printStackTrace();
@@ -155,7 +166,7 @@ public class Scheduler {
                     toSchedule.setSemesterID(SemesterID);
                     toSchedule.setConfirmed(true);
                     toSchedule.setNote("Auto generated study session.");
-
+                    //Add some form of check for duplicate record
                     boolean flag = toSchedule.save();
                     if(!flag){
                         System.out.println("Failed to save session");
@@ -181,9 +192,14 @@ public class Scheduler {
      * @param endTime End of the studySession
      */
     public void ScheduleStudySessions(LocalDateTime  startTime, LocalDateTime endTime){
-        int dayNum = Util.calcDayNumInYear(startTime.toLocalDate()) - Util.calcDayNumInYear(endTime.toLocalDate());
-        for (int x = startTime.getHour(); x < endTime.getHour(); x++){
-            timeTable[dayNum][x] = false;
+        int dayNum = Util.calcDayNumInYear(startTime.toLocalDate()) - Util.calcDayNumInYear(Util.getDateToday());
+        if(dayNum >= 0){
+            for (int x = startTime.getHour(); x < endTime.getHour(); x++){
+                timeTable[dayNum][x] = false;
+            }
+        } else {
+            System.out.println("Study session has already been completed");
+            //Find a better fix
         }
     }
 
@@ -202,16 +218,27 @@ public class Scheduler {
             count += 1;
         }
         int startHour = startTime.getHour();
-        System.out.println(startHour + " where the start time is " + startTime.toString());
+        System.out.println(startHour + " where the start time is " + startTime.toString() + " and the end time is " + endTime.toString());
+        Calendar cal = Calendar.getInstance();
+        String s = cal.getTime().toString();
+        s = s.substring(0, 3);
+        recType = recType.substring(recType.indexOf(',')-1);
 
+        int DayNumWeek = dayToInt(s);
         for(int x = 0; x < DaysTilDue; x++){
-
-            if((Util.calcDayNumInYear(startTime.toLocalDate()) < Util.calcDayNumInYear(Util.getDateToday()) + x)
-                    && (Util.calcDayNumInYear(endTime.toLocalDate()) > Util.calcDayNumInYear(Util.getDateToday()) + x)){
-                for (int y = startHour; y < count + startHour; y++){
-                    timeTable[x][y] = false;
-                    System.out.println("I have set day " + x + " to false and also hour " + y);
+            String s1  = "" + DayNumWeek;
+            if(recType.indexOf(s1) != -1){
+                if((Util.calcDayNumInYear(startTime.toLocalDate()) < Util.calcDayNumInYear(Util.getDateToday()) + x)
+                        && (Util.calcDayNumInYear(endTime.toLocalDate()) > Util.calcDayNumInYear(Util.getDateToday()) + x)){
+                    for (int y = startHour; y < count + startHour; y++){
+                        timeTable[x][y] = false;
+                        System.out.println("I have set day " + x + " to false and also hour " + y);
+                    }
                 }
+            }
+            DayNumWeek += 1;
+            if (DayNumWeek == 8){
+                DayNumWeek = 1;
             }
         }
     }
@@ -258,21 +285,21 @@ public class Scheduler {
      * @param dayPrefix Prefix of the day from the calendar object e.g. mon
      * @return Corresponding char in numeric form for the prefix
      */
-    public char dayToChar(String dayPrefix){
+    public int dayToInt(String dayPrefix){
         if (dayPrefix.equals("Mon")){
-            return '1';
+            return 1;
         } else if (dayPrefix.equals("Tue")){
-            return '2';
+            return 2;
         } else if (dayPrefix.equals("Wed")){
-            return '3';
+            return 3;
         } else if (dayPrefix.equals("Thur")){
-            return '4';
+            return 4;
         } else if (dayPrefix.equals("Fri")){
-            return  '5';
+            return 5;
         } else if (dayPrefix.equals("Sat")){
-            return '6';
+            return 6;
         } else if (dayPrefix.equals("Sun")){
-            return  '7';
+            return 7;
         } else{
             System.out.println("Invalid input");
             return '0';
@@ -285,5 +312,13 @@ public class Scheduler {
 
     public int getUserID(){
         return UserID;
+    }
+
+    public  void setBedTime(int bedTime){
+        toBed = bedTime;
+    }
+
+    public void setWakeTime(int wake){
+        toWake = wake;
     }
 }
