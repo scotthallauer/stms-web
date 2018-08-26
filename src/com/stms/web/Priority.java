@@ -40,6 +40,11 @@ public class Priority {
      * @return The prioDuerity for the assignment on curve 100x^0.5 or 150 if due in less than 2 days
      */
     public int CalcPriority(LocalDate due, String priorityLevel, Double Weighting){
+		
+		if (Weighting == null){
+            int x = CalcPriority(due, priorityLevel);
+            return x;
+        }
 
         setPriorityLevel(priorityLevel);
 
