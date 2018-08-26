@@ -359,3 +359,34 @@ div.dhxtabbar_tabs_cont_left{
 div.dhxtabbar_tab{
     width: 50% !important;
 }
+div.gridbox{
+    overflow: auto;
+}
+div.dhx_task_create_button{
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    font-style: normal;
+    color: #0288d1;
+    float: right;
+    margin-top: -10px;
+    background-image: none;
+    background-position: -62px 0;
+    background-repeat: no-repeat;
+    height: 30px;
+    width: 80px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    line-height: 30px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+div.dhx_task_create_button:hover{
+    border: 1px solid transparent;
+    background-color: rgba(0,0,0,.1);
+    transition: all .1s ease-in-out;
+}
+div.dhtmlxcalendar_time_cont{
+    display: none !important;
+}

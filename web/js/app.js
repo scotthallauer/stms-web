@@ -260,22 +260,6 @@ dhtmlxEvent(window, 'load', function(){
         }
         return true;
     });
-    //scheduler.load("./ajax/load_calendar.xml", "xml");
-
-    /*
-    $(".dhx_cal_container").loadingModal({
-        position: "auto",
-        color: "#fff",
-        opacity: "0.7",
-        backgroundColor: "rgb(0,0,0)",
-        animation: "doubleBounce"
-    });
-    $(".dhx_cal_container").loadingModal("show");
-
-    $.ajax({
-        url: ""
-    })
-    */
 
     ////////////////
     // TASKS PAGE //
@@ -309,16 +293,50 @@ dhtmlxEvent(window, 'load', function(){
 
     stms_task_layout.setSeparatorSize(0, 5);
 
-    // when window resizes, set the two columns to 50% width
+    // when window resizes, set the two columns to 50% width and update task grid dimensions
     stms_app_layout.attachEvent("onResizeFinish", function(){
         var totalWidth = 0;
         totalWidth = stms_task_layout.cells("a").getWidth();
         totalWidth += stms_task_layout.cells("b").getWidth();
         stms_task_layout.cells("a").setWidth(totalWidth/2);
         stms_task_layout.cells("b").setWidth(totalWidth/2);
+        var taskListWidth = (totalWidth/2)-22;
+        var taskListHeight = stms_task_layout.cells("a").getHeight()-$("table.stms_task_suggestion_list").height()-203;
+        taskListResize(taskListWidth, taskListHeight);
     });
 
     stms_task_layout.cells("a").attachObject("stms_tasks");
+
+    var stms_task_grid = new dhtmlXGridObject("stms_tasks_grid"); // global variable because we need to access it from the taskListResize() function
+    stms_task_grid.setImagePath("../js/libraries/dhtmlxSuite/imgs/");
+    stms_task_grid.setHeader("Done,Task,Due");
+    stms_task_grid.setNoHeader(true);
+    stms_task_grid.setInitWidths("40,,100");
+    stms_task_grid.setColAlign("center,left,right");
+    stms_task_grid.setColTypes("ch,ed,dhxCalendar");
+    stms_task_grid.setColSorting("int,str,date");
+    stms_task_grid.setDateFormat("%d/%m/%Y");
+    stms_task_grid.enableAutoHeight(true);
+    stms_task_grid.enableAutoWidth(true);
+    stms_task_grid.init();
+    var initialWidth = stms_task_layout.cells("a").getWidth()-22;
+    var initialHeight = stms_task_layout.cells("a").getHeight()-$("table.stms_task_suggestion_list").height()-203;
+    taskListResize(initialWidth, initialHeight);
+
+    // enable create button at the top of the task list
+    $("div.dhx_task_create_button").click(function () {
+        var newID = (new Date()).valueOf();
+        stms_task_grid.addRow(newID, "", 0);
+    });
+
+    var data = {
+        rows:[
+            { id:1, data: ["0", "Hand in plagiarism form", "27/08/2018"]},
+            { id:2, data: ["0", "Pay for lab coat", "29/08/2018"]},
+            { id:3, data: ["0", "Set up study timetable", "02/09/2018"]}
+        ]
+    };
+    stms_task_grid.parse(data,"json");
 
     var stms_assignment_tabbar = stms_task_layout.cells("b").attachTabbar({
 
@@ -380,6 +398,15 @@ function lightboxResize(){
     }else{
         $("div.dhx_cal_larea").css("box-shadow", "");
         $("div.dhx_cal_larea").css("margin-bottom", "0");
+    }
+}
+
+function taskListResize(newWidth, newHeight){
+    if(newHeight > 0) {
+        $("div#stms_tasks_grid").css("max-height", newHeight);
+    }
+    if(newWidth > 0) {
+        $("div#stms_tasks_grid").width(newWidth);
     }
 }
 
