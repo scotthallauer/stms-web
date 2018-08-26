@@ -307,17 +307,20 @@ dhtmlxEvent(window, 'load', function(){
 
     stms_task_layout.cells("a").attachObject("stms_tasks");
 
+    $("div#stms_tasks_cont h3").text(moment().format("dddd, Do MMMM"));
+
     var stms_task_grid = new dhtmlXGridObject("stms_tasks_grid"); // global variable because we need to access it from the taskListResize() function
     stms_task_grid.setImagePath("../js/libraries/dhtmlxSuite/imgs/");
     stms_task_grid.setHeader("Done,Task,Due");
     stms_task_grid.setNoHeader(true);
-    stms_task_grid.setInitWidths("40,,100");
+    stms_task_grid.setInitWidths("40,,150");
     stms_task_grid.setColAlign("center,left,right");
     stms_task_grid.setColTypes("ch,ed,dhxCalendar");
     stms_task_grid.setColSorting("int,str,date");
-    stms_task_grid.setDateFormat("%d/%m/%Y");
+    stms_task_grid.setDateFormat("%d/%m/%Y at %H:%i");
     stms_task_grid.enableAutoHeight(true);
     stms_task_grid.enableAutoWidth(true);
+    stms_task_grid.enableEditEvents(true,true,true);
     stms_task_grid.init();
     var initialWidth = stms_task_layout.cells("a").getWidth()-22;
     var initialHeight = stms_task_layout.cells("a").getHeight()-$("table.stms_task_suggestion_list").height()-203;
@@ -326,14 +329,54 @@ dhtmlxEvent(window, 'load', function(){
     // enable create button at the top of the task list
     $("div.dhx_task_create_button").click(function () {
         var newID = (new Date()).valueOf();
-        stms_task_grid.addRow(newID, "", 0);
+        var newDate = moment().add(1, 'days').format("DD/MM/YYYY [at 12:00]");
+        stms_task_grid.addRow(newID, "0,," + newDate, 0);
+    });
+
+    stms_task_grid.attachEvent("onRowAdded", function(rID){
+        $("div#stms_tasks_grid").removeClass("gridbox_empty");
+        $("div#stms_tasks_none").removeClass("gridbox_empty");
+        stms_task_grid.selectCell(0, 1);
+        stms_task_grid.editCell();
+        setTimeout( // weird workaround to focus cell (honestly have no clue why it doesn't work without the timeout)
+            function() {
+                $("div#stms_tasks_grid tr.rowselected td.cellselected").trigger("click");
+            },
+        0);
+    });
+
+    stms_task_grid.attachEvent("onCheck", function(rID, cInd, state){
+        stms_task_grid.selectRowById(rID);
+        if(state){
+            stms_task_grid.cells(rID, 1).setDisabled(true);
+            stms_task_grid.cells(rID, 2).setDisabled(true);
+            $("div#stms_tasks_grid tr.rowselected").addClass("stms_task_disabled");
+            setTimeout(function(){
+                    if(stms_task_grid.cells(rID, 0).isChecked()){
+                        stms_task_grid.deleteRow(rID);
+                    }
+                },
+                2000
+            )
+        }else{
+            stms_task_grid.cells(rID, 1).setDisabled(false);
+            stms_task_grid.cells(rID, 2).setDisabled(false);
+            $("div#stms_tasks_grid tr.rowselected").removeClass("stms_task_disabled");
+        }
+    });
+
+    stms_task_grid.attachEvent("onAfterRowDeleted", function(id, pid){
+       if(stms_task_grid.getRowsNum() <= 0){
+           $("div#stms_tasks_grid").addClass("gridbox_empty");
+           $("div#stms_tasks_none").addClass("gridbox_empty");
+       }
     });
 
     var data = {
         rows:[
-            { id:1, data: ["0", "Hand in plagiarism form", "27/08/2018"]},
-            { id:2, data: ["0", "Pay for lab coat", "29/08/2018"]},
-            { id:3, data: ["0", "Set up study timetable", "02/09/2018"]}
+            { id:1, data: ["0", "Hand in plagiarism form", "27/08/2018 at 12:00"]},
+            { id:2, data: ["0", "Pay for lab coat", "29/08/2018 at 12:00"]},
+            { id:3, data: ["0", "Set up study timetable", "02/09/2018 at 12:00"]}
         ]
     };
     stms_task_grid.parse(data,"json");

@@ -64,6 +64,7 @@
 				</table>
 				<h4>Your Tasks<div class='dhx_task_create_button' aria-label='Create' role='button'>Create</div></h4>
 				<div id="stms_tasks_grid"></div>
+				<div id="stms_tasks_none">No Tasks</div>
 			</div>
 		</div>
 	</body>

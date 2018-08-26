@@ -70,7 +70,7 @@ CREATE TABLE courseSession (
 	sessionID int NOT NULL AUTO_INCREMENT,
 	sessionPID int NOT NULL,
     courseID int NOT NULL,
-    sessionType VARCHAR(10) NOT NULL,
+    sessionType VARCHAR(30) NOT NULL,
     startDate DateTime NOT NULL,
     endDate DateTime NOT NULL,
     length bigint NULL, # duration of session in seconds (only required for recurring events) 
