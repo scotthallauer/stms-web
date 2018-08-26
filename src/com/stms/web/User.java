@@ -1,6 +1,9 @@
 package com.stms.web;
 
+import javax.rmi.CORBA.Util;
+import javax.swing.*;
 import java.sql.*;
+import static java.sql.Types.*;
 import java.util.LinkedList;
 import java.security.MessageDigest;
 import java.util.Random;
@@ -9,20 +12,25 @@ import java.util.Random;
  * User class for Student Time Management System
  * Used to create new and edit existing user accounts in the database.
  * Offers additional functionality such as login verfication.
- * @author Jonathon Everatt, Scott Hallauer and Jessica Bourn
- * @version 16/08/2018
+ * @author Scott Hallauer, Jonathon Everatt and Jessica Bourn
+ * @version 18/08/2018
  */
 public class User {
 
     // ATTRIBUTES //
 
-    private int userID;
+    private Boolean recordExists;
+    private Boolean recordSaved;
+
+    private Integer userID;
     private String firstName;
-    private String lastNames;
+    private String lastName;
     private String email;
-    private boolean activated;
+    private Boolean activated;
     private String pwdHash;
     private String pwdSalt;
+    private String tokenCode;
+    private Timestamp tokenDate;
     private Semester[] semesters;
 
     // CONSTRUCTOR //
@@ -30,36 +38,44 @@ public class User {
     /**
      * Blank constructor used to create and insert new user accounts in the database.
      */
-    public User() {}
+    public User() {
+        this.recordExists = false;
+        this.recordSaved = false;
+    }
 
     /**
-     * Parameterised constructor to create a user using their email. If an account with the provided does not exist, an exception will be thrown.
+     * Parameterised constructor to create a user using their email. If an account with the provided email does not exist, an exception will be thrown.
      * @param email the account email address of an existing user
      */
     public User(String email) throws Exception {
-        // connect to database
-        System.out.println("User constructor has been called.");
-        Database db = new Database();
-        if(db.isConnected()) {
-            // query database to get user account details (if user exists)
-            ResultSet rs = db.query("SELECT * FROM user WHERE email = '" + email + "';");
-            if (rs.first()) {
-                this.userID = rs.getInt("userID");
-                this.firstName = rs.getString("firstName");
-                this.lastNames = rs.getString("lastNames");
-                this.email = rs.getString("email");
-                this.activated = rs.getBoolean("activated");
-                this.pwdHash = rs.getString("pwdHash");
-                this.pwdSalt = rs.getString("pwdSalt");
-            }else{
-                throw new NullPointerException();
-            }
-            System.out.println("Successfully loaded User (userID: " + userID + ") from database.");
-            this.loadSemesters();
-        }else{
-            throw new SQLException();
+        // check if database is connected
+        if(!Database.isConnected()) {
+            throw new SQLException("Database is not connected.");
         }
-        System.out.println("User object has been constructed");
+        // query database to get user account details (if user exists)
+        String sql = "SELECT * FROM user WHERE email = ?";
+        Object[] params = new Object[1];
+        int[] types = new int[1];
+        params[0] = email;
+        types[0] = Types.VARCHAR;
+        ResultSet rs = Database.query(sql, params, types);
+        if (rs.first()) {
+            this.userID = rs.getInt("userID");
+            this.firstName = rs.getString("firstName");
+            this.lastName = rs.getString("lastName");
+            this.email = rs.getString("email");
+            this.activated = rs.getBoolean("activated");
+            this.pwdHash = rs.getString("pwdHash");
+            this.pwdSalt = rs.getString("pwdSalt");
+            this.tokenCode = rs.getString("tokenCode");
+            if(rs.wasNull()) this.tokenCode = null;
+            this.tokenDate = rs.getTimestamp("tokenDate");
+            if(rs.wasNull()) this.tokenDate = null;
+            this.recordExists = true;
+            this.recordSaved = true;
+        }else{
+            throw new NullPointerException("No User exists with the email " + email);
+        }
     }
 
     // METHODS //
@@ -67,10 +83,17 @@ public class User {
     /**
      * Loads all of the semesters for the user into an array stored as an attribute.
      */
-    private void loadSemesters(){
-        Database db = new Database();
-        String sql = "SELECT * FROM semester WHERE userID = " + this.userID + ";";
-        ResultSet rs = db.query(sql);
+    private void loadSemesters() {
+        // check if database is connected
+        if(!Database.isConnected()) {
+            return;
+        }
+        String sql = "SELECT * FROM semester WHERE userID = ?";
+        Object[] params = new Object[1];
+        int[] types = new int[1];
+        params[0] = this.userID;
+        types[0] = Types.INTEGER;
+        ResultSet rs = Database.query(sql, params, types);
         try {
             // set length of array
             if(rs.last()){
@@ -84,67 +107,21 @@ public class User {
                 }while(rs.next());
             }
         } catch (Exception e){
-            System.out.println("Failed to load all semesters for user (userID: " + this.userID + ")");
+            System.out.println("Failed to load all semesters for User (userID: " + this.userID + ").");
             e.printStackTrace();
         }
     }
 
-    /**
-     * Checks if the supplied password matches the hashed password in the database.
-     * @param password the plaintext password to check
-     * @return true if the password matches, false otherwise
-     */
-    public boolean checkPassword(String password) {
-        String checkPassword = HashPassword(password, this.pwdSalt);
-        return checkPassword.equals(this.pwdHash);
+    public Semester[] getSemesters(){
+        this.loadSemesters();
+        if(this.semesters == null){
+            this.semesters = new Semester[0];
+        }
+        return this.semesters;
     }
 
-    /**
-     * This method is used to hash a password that the user inputs
-     * It is used in both create account and log in use case.
-     * Uses SHA - 256 hashing to hash a password
-     *
-     * @param Hash password that will be hashed
-     * @param Salt Salt for the user gotten from the DB
-     * @return Hashed password including salt
-     */
-    public String HashPassword(String Hash, String Salt){
-        // arbitrary decision to put salt at the end
-        String pass = Hash + Salt;
-        // Hash algorithm gotten from
-        // https://stackoverflow.com/questions/5531455/how-to-hash-some-string-with-sha256-in-java
-        try{
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(pass.getBytes("UTF-8"));
-            StringBuffer hexString = new StringBuffer();
-
-            for (int i = 0; i < hash.length; i++) {
-                String hex = Integer.toHexString(0xff & hash[i]);
-                if(hex.length() == 1) hexString.append('0');
-                hexString.append(hex);
-            }
-
-            return hexString.toString();
-        } catch(Exception ex){
-            throw new RuntimeException(ex);
-        }
-    }
-
-	/**
-     * Used in create an account sequence to generate a random salt for the user's account
-     * @return the unique salt to be used for password hashing
-     */
-    public String genSalt(){
-        byte[] salt = new byte[8];
-        Random r = new Random();
-        r.nextBytes(salt);
-        String Salt ="";
-        for (int x = 0; x < 8; x++){
-            Salt = Salt + salt[x];
-        }
-        System.out.println("The Salt key has been generated");
-
-        return Salt;
+    public Integer getUserID(){
+        return this.userID;
     }
 
     public String getFirstName(){
@@ -153,55 +130,179 @@ public class User {
 
     public void setFirstName(String firstName){
         this.firstName = firstName;
+        this.recordSaved = false;
     }
 
-    public String getLastNames(){
-        return this.lastNames;
+    public String getLastName(){
+        return this.lastName;
     }
 
-    public void setLastNames(String lastNames){
-        this.lastNames = lastNames;
+    public void setLastName(String lastName){
+        this.lastName = lastName;
+        this.recordSaved = false;
     }
 
     public String getInitials(){
-        return String.valueOf(this.firstName.charAt(0)) + String.valueOf(this.lastNames.charAt(0));
+        return String.valueOf(this.firstName.charAt(0)) + String.valueOf(this.lastName.charAt(0));
     }
 
     public String getEmail(){
         return this.email;
     }
 
-    public void setEmail(String email){
-        this.email = email;
-    }
-
-    public boolean isActivated(){
-        return this.activated;
-    }
-
-    /**
-     * Save the user's details to the database.
-     * @return true if successful, false otherwise.
-     */
-    private boolean saveToDB(){
-        Database db = new Database();
-        if(db.isConnected()) {
-            String sql = "INSERT INTO user (firstName,lastNames,email,activated,pwdHash,pwdSalt) " +
-                    "VALUES ('" + this.firstName + "','" + this.lastNames + "','" + this.email + "'," + this.activated + ",'" + this.pwdHash + "','" + this.pwdSalt + "');";
-            db.update(sql);
+    public boolean setEmail(String email){
+        if(Utilities.validateEmail(email)) {
+            this.email = email;
+            this.recordSaved = false;
             return true;
         }else{
             return false;
         }
     }
 
-    // Methods still to be implemented
-    /*
-    public boolean forgotPassword (String email) {
+    public String getTokenCode() {
+        return this.tokenCode;
     }
 
-    public Semester[] getSemesters() {
+    public Timestamp getTokenDate(){
+        return this.tokenDate;
     }
-    */
+
+    private void generateToken(){
+        this.tokenCode = Utilities.randomString(64);
+        this.tokenDate = Utilities.getCurrentTimestamp();
+        this.recordSaved = false;
+    }
+
+    private void clearToken(){
+        if(this.tokenCode != null || this.tokenDate != null) {
+            this.tokenCode = null;
+            this.tokenDate = null;
+            this.recordSaved = false;
+        }
+    }
+
+    /**
+     * Checks if the supplied password matches the hashed password in the database.
+     * @param plaintext the plaintext password to check
+     * @return true if the password matches, false otherwise
+     */
+    public boolean checkPassword(String plaintext) {
+        try {
+            String checkHash = Utilities.hashPassword(plaintext, this.pwdSalt);
+            String realHash = this.pwdHash;
+            return checkHash.equals(realHash);
+        }catch (Exception e){
+            return false;
+        }
+    }
+
+    public boolean setPassword(String plaintext){
+        try {
+            String salt = Utilities.randomString(15);
+            String hash = Utilities.hashPassword(plaintext, salt);
+            this.pwdSalt = salt;
+            this.pwdHash = hash;
+            return true;
+        }catch(Exception e){
+            return false;
+        }
+    }
+
+    public boolean forgotPassword () {
+        this.generateToken();
+        if(this.save()) {
+            // SEND EMAIL WITH TOKEN
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean isActivated(){
+        return this.activated;
+    }
+
+    public void setActivated(boolean activated){
+        this.activated = activated;
+        this.recordSaved = false;
+    }
+
+    /**
+     * Save the user's details to the database.
+     * @return true if successful, false otherwise.
+     */
+    public boolean save(){
+        // check if database is connected
+        if(!Database.isConnected()) {
+            return false;
+        }
+        // don't need to save to database, there have been no changes
+        if(this.recordSaved){
+            return true;
+        }
+        // if the record was created successfully in the database (on a previous call to save(), but was unable to retrieve the userID thereafter), then cannot save
+        if(this.recordExists && this.userID == null){
+            return false;
+        }
+        // prepare query statement
+        String sql;
+        // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
+        if(!this.recordExists){
+            sql = "INSERT INTO user (firstName, lastName, email, activated, pwdHash, pwdSalt, tokenCode, tokenDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        }else{
+            sql = "UPDATE user SET firstName = ?, lastName = ?, email = ?, activated = ?, pwdHash = ?, pwdSalt = ?, tokenCode = ?, tokenDate = ? WHERE userID = ?";
+        }
+        // prepare query parameters
+        Object[] params;
+        int[] types;
+        if(!this.recordExists){
+            params = new Object[8];
+            types = new int[8];
+            this.activated = false;
+            this.generateToken(); // token for activation link
+        }else{
+            params = new Object[9];
+            types = new int[9];
+            params[8] = this.userID;
+            types[8] = Types.INTEGER;
+        }
+        params[0] = this.firstName;
+        types[0] = Types.VARCHAR;
+        params[1] = this.lastName;
+        types[1] = Types.VARCHAR;
+        params[2] = this.email;
+        types[2] = Types.VARCHAR;
+        params[3] = this.activated;
+        types[3] = Types.BIT;
+        params[4] = this.pwdHash;
+        types[4] = Types.VARCHAR;
+        params[5] = this.pwdSalt;
+        types[5] = Types.VARCHAR;
+        params[6] = this.tokenCode;
+        types[6] = Types.VARCHAR;
+        params[7] = this.tokenDate;
+        types[7] = Types.TIMESTAMP;
+        // execute query
+        if(Database.update(sql, params, types)){
+            // get user ID
+            sql = "SELECT userID FROM user WHERE email = ?";
+            params = new Object[1];
+            types = new int[1];
+            params[0] = this.email;
+            types[0] = Types.VARCHAR;
+            ResultSet rs = Database.query(sql, params, types); // if fetching the userID fails, this object will no longer be able to save data to the database (i.e. save() will always return false)
+            try {
+                if (rs.first()) {
+                    this.userID = rs.getInt("userID");
+                }
+            }catch (Exception e){}
+            this.recordExists = true;
+            this.recordSaved = true;
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
 

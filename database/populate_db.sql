@@ -1,110 +1,73 @@
 USE stms;
 
-INSERT INTO user (firstName, lastNames, email, activated, pwdHash, pwdSalt) 
-values ('Scott', 'Hallauer', 'scott.hallauer@gmail.com', 1, '7eb9f680bf2c5914ff32d5acca123aa7ed4f82f8572ab6b12a7aec4edc8610e0', 'gh90845hg093hqp'); 
+INSERT INTO user (firstName, lastName, email, activated, pwdHash, pwdSalt) 
+values ('Scott', 'Hallauer', 'scott.hallauer@gmail.com', 1, '225c245490a5385b2a034f7c1ebcbe7a034e44e26871163a32fb20e2f76a3f01', 'KxZ65ezpqs86tlM'); 
 # password is password
 
-INSERT INTO user (firstName, lastNames, email, activated, pwdHash, pwdSalt) 
-VALUES ('Jonathon', 'Everatt', 'EVRJON003@myuct.ac.za',1,'5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5','5');
-#password is 1234
+INSERT INTO user (firstName, lastName, email, activated, pwdHash, pwdSalt) 
+VALUES ('Jonathon', 'Everatt', 'EVRJON003@myuct.ac.za',1,'d6a4c76e085cf2f4130ba94188883ec6fff9e91a9546887a0ee8f55066be8d37','JKMCNTAc7xNoR3b');
+#password is 12345678
 
-INSERT INTO user (firstName, lastNames, email, activated, pwdHash, pwdSalt) 
-VALUES ('Jessica','Bourn','BRNJES018@myuct.ac.za',0,'18650c5730d77b32f0910983fdff30c75f91eeaa70378a51c35240249f3fbf81','81552974381271');
-#password is p3gasus 
+INSERT INTO user (firstName, lastName, email, activated, pwdHash, pwdSalt) 
+VALUES ('Jessica','Bourn','BRNJES018@myuct.ac.za',1,'8eac3fdf96fde1d740de6d1309b94eb8ce80a0d2232b14d1900384fc30202f6b','IjlSlQWnDwbD1Ee');
+#password is p3gasuss 
 
-#Semester inserts
+#semester inserts
 INSERT INTO semester (userID,semesterName,startDate,endDate) 
-VALUES (1,'Jan-June 2018', 20180119, 20180624);
-
-INSERT INTO semester (userID,semesterName,startDate,endDate) 
-VALUES (1, 'July-Dec', 20180724, 20181130);
+VALUES (1,'1st Semester', '2018-01-19', '2018-06-24');
 
 INSERT INTO semester (userID,semesterName,startDate,endDate) 
-VALUES (2,'Jan-June 2018', 20180119, 20180624);
+VALUES (1, '2nd Semester', '2018-07-24', '2018-11-30');
 
 INSERT INTO semester (userID,semesterName,startDate,endDate) 
-VALUES (3, 'Jan-June 2018', 20180119, 20180624);
+VALUES (2,'Jan-June 2018', '2018-01-19', '2018-06-24');
 
 INSERT INTO semester (userID,semesterName,startDate,endDate) 
-VALUES (3,  'July-Dec', 20180724, 20181130);
+VALUES (2, 'July-Dec 2018', '2018-07-24', '2018-11-30');
+
+INSERT INTO semester (userID,semesterName,startDate,endDate) 
+VALUES (3, 'FIRST SEM', '2018-01-19', '2018-06-24');
+
+INSERT INTO semester (userID,semesterName,startDate,endDate) 
+VALUES (3, 'SECOND SEM', '2018-07-24', '2018-11-30');
 
 #course inserts
-INSERT INTO course (semesterID,courseName,courseCode,semester1,semester2) 
-VALUES (1,'Comsci', 'CSC3002F',1,NULL);
-INSERT INTO course (semesterID,courseName,courseCode,semester1,semester2) 
-VALUES (1, 'Genetics', 'MCB 3001 F',1, NULL);
-INSERT INTO course (semesterID,courseName,courseCode,semester1,semester2) 
-VALUES (2, 'Comsci', 'CSC3003S', 2, NULL);
-INSERT INTO course (semesterID,courseName,courseCode,semester1,semester2) 
-VALUES (2, 'Genetics', 'MCB3023S',2, NULL);
-INSERT INTO course (semesterID,courseName,courseCode,semester1,semester2) 
-VALUES (3, 'Philosophy', 'PHI3023F', 3, NULL);
-INSERT INTO course (semesterID,courseName,courseCode,semester1,semester2) 
-VALUES (3, 'Comsci', 'CSC3002F', 3, NULL);
-INSERT INTO course (semesterID,courseName,courseCode,semester1,semester2) 
-VALUES (4, 'Comsci', 'CSC3002F', 4, NULL);
-INSERT INTO course (semesterID,courseName,courseCode,semester1,semester2) 
-VALUES (5, 'Comsci', 'CSC3003S', 5, NULL);
-INSERT INTO course (semesterID,courseName,courseCode,semester1,semester2) 
-VALUES (5, 'Genetics', 'MCB3023S',5, NULL);
-INSERT INTO course (semesterID,courseName,courseCode,semester1,semester2) 
-VALUES (4, 'Genetics', 'MCB 3001 F',4, NULL);
+INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
+VALUES (1, NULL, 'Computer Science', 'CSC3002F', 'blue');
+INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
+VALUES (1, NULL, 'Genetics', 'MCB3026F', 'green');
+INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour)  
+VALUES (2, NULL, 'Computer Science', 'CSC3003S', 'blue');
+INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
+VALUES (2, NULL, 'Genetics', 'MCB3023S', 'green');
+INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
+VALUES (4, NULL, 'Philosophy', 'PHI3023S', 'purple');
+INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour)  
+VALUES (3, NULL, 'Computer Science', 'CSC3002F', 'blue');
+INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
+VALUES (4, NULL, 'Computer Science', 'CSC3003S', 'blue');
+INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
+VALUES (5, NULL, 'Computer Science :\'(', 'CSC3003S', 'blue');
+INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
+VALUES (5, NULL, 'Genetics', 'MCB3023S', 'green');
+INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
+VALUES (6, NULL, 'Genetics', 'MCB3026F', 'green');
+INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
+VALUES (2, NULL, 'Genetics', 'MCB3012Z', 'red');
 
-#CourseSession inserts
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (1, 'Lecture', 'Lecture', '2018-03-06 20:11:00',  '2018-03-06 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (1, 'Lecture', 'Lecture', '2018-03-07 20:11:00',  '2018-03-07 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (1, 'Lecture', 'Lecture', '2018-03-08 20:11:00',  '2018-03-08 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (1, 'Lecture', 'Lecture', '2018-03-09 20:11:00',  '2018-03-09 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (1, 'Lecture', 'Lecture', '2018-03-12 20:11:00',  '2018-03-12 10:00','Menizies 10','1','' );
-
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (3, 'Lecture', 'Lecture', '2018-08-06 20:11:00',  '2018-08-06 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (3, 'Lecture', 'Lecture', '2018-08-07 20:11:00',  '2018-08-07 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (3, 'Lecture', 'Lecture', '2018-08-08 20:11:00',  '2018-08-08 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (3, 'Lecture', 'Lecture', '2018-08-09 20:11:00',  '2018-08-09 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (3, 'Lecture', 'Lecture', '2018-08-12 20:11:00',  '2018-08-12 10:00','Menizies 10','1','' );
-
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (6, 'Lecture', 'Lecture', '2018-08-06 20:11:00',  '2018-08-06 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (6, 'Lecture', 'Lecture', '2018-08-07 20:11:00',  '2018-08-07 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (6, 'Lecture', 'Lecture', '2018-08-08 20:11:00',  '2018-08-08 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (6, 'Lecture', 'Lecture', '2018-08-09 20:11:00',  '2018-08-09 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (6, 'Lecture', 'Lecture', '2018-08-12 20:11:00',  '2018-08-12 10:00','Menizies 10','1','' );
-
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (7, 'Lecture', 'Lecture', '2018-03-06 20:11:00',  '2018-03-06 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (7, 'Lecture', 'Lecture', '2018-03-07 20:11:00',  '2018-03-07 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (7, 'Lecture', 'Lecture', '2018-03-08 20:11:00',  '2018-03-08 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (7, 'Lecture', 'Lecture', '2018-03-09 20:11:00',  '2018-03-09 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (7, 'Lecture', 'Lecture', '2018-03-12 20:11:00',  '2018-03-12 10:00','Menizies 10','1','' );
-
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (8, 'Lecture', 'Lecture', '2018-08-06 20:11:00',  '2018-08-06 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (8, 'Lecture', 'Lecture', '2018-08-07 20:11:00',  '2018-08-07 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (8, 'Lecture', 'Lecture', '2018-08-08 20:11:00',  '2018-08-08 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (8, 'Lecture', 'Lecture', '2018-08-09 20:11:00',  '2018-08-09 10:00','Menizies 10','1','' );
-INSERT INTO coursesession (courseID,sessionName,sessionType,startTime,endTime,location,rrule,note)
-VALUES (8, 'Lecture', 'Lecture', '2018-08-12 20:11:00',  '2018-08-12 10:00','Menizies 10','1','' );
-
-
-
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
+VALUES (0, 3, 'lecture', '2018-07-23 09:00:00', '2018-09-07 09:45:00', 2700, 'week_1___1,2,3,4,5#');
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, priority, weighting)
+VALUES (1, 3, 'test', '2018-08-29 09:00:00', '2018-08-29 09:45:00', 1535526000, NULL, 3, 7.5);
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
+VALUES (0, 4, 'lecture', '2018-07-23 11:00:00', '2018-09-07 11:45:00', 2700, 'week_1___1,2,3,4,5#');
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
+VALUES (0, 5, 'lecture', '2018-07-23 15:00:00', '2018-09-07 15:45:00', 2700, 'week_1___1,2,3,4,5#');
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
+VALUES (0, 5, 'lecture', '2018-07-23 11:00:00', '2018-08-25 12:00:00', 2700, 'week_1___1,2,3,4,5#');
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
+VALUES (0, 5, 'lecture', '2018-07-23 07:00:00', '2018-08-25 8:00:00', 2700, 'week_1___1,2,3,4,5#');
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
+VALUES (0, 5, 'lecture', '2018-07-23 09:00:00', '2018-08-25 10:00:00', 2700, 'week_1___1,2,3,4,5#');
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
+VALUES (0, 5, 'lecture', '2018-07-23 16:00:00', '2018-08-25 17:00:00', 2700, 'week_1___1,2,3,4,5#');

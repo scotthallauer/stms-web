@@ -41,8 +41,6 @@ dhtmlxEvent(window, 'load', function(){
 
     function submit_form(){
         stms_login_form.send("./ajax/process_login.jsp", "post", function(loader, response){
-            // when we get the AJAX response, hide the loading screen
-            $("body").loadingModal("hide");
             // display error message if login failed, otherwise redirect user to app
             switch(parseInt(response)){
                 // login successful
@@ -51,6 +49,7 @@ dhtmlxEvent(window, 'load', function(){
                     break;
                 // login failed - account not activated
                 case 1:
+                    $("body").loadingModal("hide");
                     swal({
                         icon: "warning",
                         title: "Inactive Account",
@@ -59,6 +58,7 @@ dhtmlxEvent(window, 'load', function(){
                     break;
                 // login failed - incorrect credentials
                 case 2:
+                    $("body").loadingModal("hide");
                     swal({
                         icon: "error",
                         title: "Invalid Login",
@@ -67,11 +67,13 @@ dhtmlxEvent(window, 'load', function(){
                     break;
                 // login failed - server error
                 case 3:
+                    $("body").loadingModal("hide");
                     swal({
                         icon: "error",
                         title: "Server Error",
                         text: "Please try again later."
                     });
+                    break;
             }
         });
     }

@@ -77,15 +77,11 @@ div#stms_login_container, div#stms_register_container{
                 text-decoration: underline;
             }
 
-/* APPLICATION PAGE */
+/* APPLICATION LAYOUT */
+
 /* Hide the default header at the top of the DHTMLX layout cell*/
 div.dhx_cell_hdr{
     display: none;
-}
-
-/* Make font size smaller on popup to fix "Edit occurrence" button exceeding its width for editing recurring events */
-.dhtmlx_popup_button div {
-    font-size: 13px;
 }
 
 /* Custom application header */
@@ -147,4 +143,265 @@ div#stms_header{
 
 div.dhxsidebar_item_text{
     font-size: 13px;
+}
+
+/* CALENDAR PAGE */
+/* Customise scheduler header layout (because we are adding a create button) */
+div.dhx_cal_tab.day_tab{
+    display: none
+}
+
+div.dhx_cal_tab.week_tab{
+    border-radius: 2px 0 0 2px;
+    left: 16px !important;
+}
+div.dhx_cal_tab.month_tab{
+    left: 103px !important;
+}
+div.dhx_cal_prev_button{
+    right: auto;
+    left: 205px;
+}
+div.dhx_cal_today_button{
+    right: auto;
+    left: 240px;
+}
+div.dhx_cal_next_button{
+    right: auto;
+    left: 325px;
+}
+div.dhx_cal_create_button{
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0288d1;
+    right: 16px;
+    background-image: none;
+    background-position: -62px 0;
+    background-repeat: no-repeat;
+    height: 30px;
+    width: 80px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    line-height: 30px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+div.dhx_cal_create_button:hover{
+    border: 1px solid transparent;
+    background-color: rgba(0,0,0,.1);
+    transition: all .1s ease-in-out;
+}
+
+/* Customise DHTMLX scheduler lightbox to work on smaller screens */
+div.dhx_cal_light{
+    width: 480px !important;
+}
+    div.dhx_cal_ltitle{
+        margin: 0;
+    }
+    div.dhx_cal_larea{
+        max-height: 400px; /* this must be set automatically based on window height */
+        overflow: auto;
+        padding: 20px 0 0 0;
+    }
+        div.dhx_cal_larea div.dhx_wrap_section,  div.dhx_cal_larea div.dhx_cal_lsection,
+        div.dhx_cal_larea div.dhxcombo_material, div.dhx_cal_larea input{
+            background: transparent;
+        }
+
+/* Customise DHTMLX scheduler lightbox controls (because they don't work like they're meant to) */
+.dhx_cal_light_wide .combo>div, .dhx_cal_light_wide .dhx_combo_box, input.dhxcombo_input{
+    width: 335px !important;
+}
+
+input.dhxcombo_input[readonly=true]{
+    cursor: default;
+}
+
+div.dhxcombolist_material{
+    width: 332px !important;
+}
+
+input.dhx_repeat_date{
+    width: 100px;
+}
+
+/* Custom lightbox section for users to enter information about a course's grading */
+div#stms_lightbox_grading input[type=checkbox]{
+    margin: 10px;
+}
+div#stms_lightbox_grading select, div#stms_lightbox_grading input[type=number]{
+    width: 100px;
+    height: 32px;
+    margin: 0 5px 0 10px;
+    box-sizing: border-box;
+    font-size: 14px;
+    padding: 2px 2px 2px 8px;
+    border: 1px solid rgba(0,0,0,.08);
+}
+div.stms_lightbox_grading_hidden tr:last-of-type{
+    display: none;
+}
+div.stms_lightbox_grading_hidden td:nth-of-type(2), div.stms_lightbox_grading_hidden td:last-of-type{
+    display: none;
+}
+
+/* Make font size smaller on popup to fix "Edit occurrence" button exceeding its width for editing recurring events */
+.dhtmlx_popup_button div {
+    font-size: 13px;
+}
+
+/* TASKS PAGE */
+/* Customise DHTMLX tabbar so that tabs on task page stretch to fill 50% width of column */
+div#stms_tasks_header{
+    box-sizing: border-box;
+    background-color: #FAFAFA;
+    height: 43px;
+    line-height: 43px;
+    padding-left: 10px;
+    border-bottom: 2px solid #39c;
+}
+    div#stms_tasks_header h2{
+        margin: 0;
+        color: #39c;
+        text-align: center;
+        font-family: Roboto, Arial, Helvetica;
+        font-weight: normal;
+        font-size: 14px;
+        text-transform: uppercase;
+    }
+
+div#stms_tasks_cont{
+    box-sizing: border-box;
+    padding: 15px 10px;
+}
+    div#stms_tasks_cont h3{
+        margin: 0;
+        font-family: Roboto, Arial, Helvetica;
+        font-weight: bold;
+        font-size: 20px;
+    }
+    div#stms_tasks_cont h4{
+        margin: 25px 0 10px 0;
+        font-family: Roboto, Arial, Helvetica;
+        font-style: italic;
+        font-weight: normal;
+        font-size: 15px;
+    }
+    table.stms_task_suggestion_list{
+        width: 100%;
+        font-family: Roboto, Arial, Helvetica;
+    }
+        table.stms_task_suggestion_list td{
+            border-bottom: 10px solid transparent;
+        }
+        table.stms_task_suggestion_list td.stms_task_suggestion_priority{
+            width: 34px;
+        }
+        table.stms_task_suggestion_list td.stms_task_suggestion_date{
+            text-align: right;
+        }
+            div.stms_priority_icon{
+                display: inline-block;
+                vertical-align: middle;
+                box-sizing: border-box;
+                border-width: 2px;
+                border-style: solid;
+                font-size: 14px;
+                font-weight: bold;
+                width: 24px;
+                height: 24px;
+                line-height: 24px;
+                text-align: center;
+                border-radius: 12px;
+                margin: 0 10px;
+            }
+                div.stms_priority_icon_high{
+                    background-color: rgba(255, 0, 0, 0.1);
+                    color: red;
+                    border-color: red;
+                }
+                div.stms_priority_icon_medium{
+                    background-color: rgba(255, 165, 0, 0.1);
+                    color: orange;
+                    border-color: orange;
+                }
+                div.stms_priority_icon_low{
+                    background-color: rgba(0, 255, 0, 0.1);
+                    color: green;
+                    border-color: green;
+                }
+            span.stms_priority_text{
+                line-height: 24px;
+                vertical-align: middle;
+            }
+                span.stms_priority_text_high{
+                    color: red;
+                    font-weight: bold;
+                    font-size: 20px;
+                }
+                span.stms_priority_text_medium{
+                    color: orange;
+                    font-weight: bold;
+                    font-size: 16px;
+                }
+                span.stms_priority_text_low{
+                    color: green;
+                    font-weight: normal;
+                    font-size: 14px;
+                }
+
+div.dhxtabbar_tabs_cont_left{
+    width: 100% !important;
+}
+div.dhxtabbar_tab{
+    width: 50% !important;
+}
+div.gridbox{
+    overflow: auto;
+}
+div#stms_tasks_grid.gridbox_empty{
+    display: none;
+}
+div#stms_tasks_none{
+    display: none;
+}
+div#stms_tasks_none.gridbox_empty{
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-family: Roboto, Arial, Helvetica;
+    font-size: 12px;
+    color: #AAA;
+    margin: 30px 0;
+}
+div.dhx_task_create_button{
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    font-style: normal;
+    color: #0288d1;
+    float: right;
+    margin-top: -10px;
+    background-image: none;
+    background-position: -62px 0;
+    background-repeat: no-repeat;
+    height: 30px;
+    width: 80px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    line-height: 30px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+div.dhx_task_create_button:hover{
+    border: 1px solid transparent;
+    background-color: rgba(0,0,0,.1);
+    transition: all .1s ease-in-out;
+}
+div#stms_tasks_grid tr.stms_task_disabled{
+    text-decoration: line-through;
 }

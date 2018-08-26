@@ -44,7 +44,21 @@ scheduler.form_blocks['combo']={
 			node._combo.setOptionHeight(config.options_height);
 		var combo = node._combo;
 		combo.enableFilteringMode(config.filtering, config.script_path||null, !!config.cache);
-		
+		combo.readonly(config.script_path == "./ajax/connect_course_combo.jsp");
+		/*
+		if(config.script_path == "./ajax/connect_type_combo.jsp") {
+            combo.allowFreeText(true);
+            function setTypeComboValue(value){
+            	combo.setComboValue(value.toLowerCase());
+			}
+            combo.attachEvent("onChange", function(value, text){
+                setTypeComboValue(text);
+			});
+        }
+        */
+
+		combo.load(config.script_path, function(){
+
 		if (!config.script_path) { // script-side filtration is used
 			var all_options = [];
 			for (var i = 0; i < config.options.length; i++) {
@@ -64,6 +78,8 @@ scheduler.form_blocks['combo']={
 		} else { // server-side filtration is used
 			var selected_id = ev[config.map_to];
 			if (selected_id) {
+                combo.selectOption(combo.getIndexByValue(selected_id));
+				/*
 				if (config.cached_options[selected_id]) {
 					combo.addOption(selected_id, config.cached_options[selected_id]);
 					combo.disable(1);
@@ -87,10 +103,20 @@ scheduler.form_blocks['combo']={
 						combo.disable(0);
 					});
 				}
+				*/
+
 			} else {
-				combo.setComboValue("");
+				//combo.setComboValue("");
+				if(config.script_path == "./ajax/connect_type_combo.jsp") {
+                    combo.selectOption(combo.getIndexByValue('lecture'));
+                }else{
+                    combo.selectOption(0);
+				}
 			}
 		}
+
+        });
+
 	},
 	get_value:function(node,ev,config) {
 		var selected_id = node._combo.getSelectedValue(); // value = key
