@@ -95,7 +95,12 @@ public class Scheduler {
                 LocalDateTime endDate = rs.getTimestamp("endDate").toLocalDateTime();
                 int length = rs.getInt("length");
                 String recType = rs.getString("recType");
-                scheduleEvent(timeSlot, endDate,recType, length);
+                if (recType == null) {
+                    int DayCount = Util.calcDayNumInYear(timeSlot.toLocalDate()) - Util.calcDayNumInYear(Util.getDateToday());
+                    timeTable[DayCount][timeSlot.getHour()] = false;
+                }  else {
+                    scheduleEvent(timeSlot, endDate,recType, length);
+                }
             }
         } catch (SQLException e){
             e.printStackTrace();
