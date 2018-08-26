@@ -39,7 +39,12 @@ public class Priority {
      * @param due Due date of the assignment that needs prioDuerity calculated
      * @return The prioDuerity for the assignment on curve 100x^0.5 or 150 if due in less than 2 days
      */
-    public int CalcPriority(LocalDate due){
+    public int CalcPriority(LocalDate due, String priorityLevel, Double Weighting){
+
+        setPriorityLevel(priorityLevel);
+
+        setWeigthing(Weighting);
+
         int daysLeft = Util.calcDayNumInYear(due) - Util.calcDayNumInYear(Util.getDateToday());
         System.out.println(daysLeft + " is the amount of days left");
         if(daysLeft < 2){
@@ -51,14 +56,33 @@ public class Priority {
         //y = 100(daysUntil -1) ^-.387
         prioDue = daysLeft - 1;
         //prioDue *= 100;
-        System.out.println(prioDue + " here we go 1");
         prioDue = Math.pow(prioDue, -0.387);
         prioDue *= 100;
-        System.out.println(prioDue + " here we go");
 
-        Double prio = (0.65 * prioDue) + (0.2 * prioritylevel) + (0.15 * prioWeight);
+        Double prio = (0.65 * prioDue) + (20 * prioritylevel) + (0.15 * prioWeight);
         //Current equation = 100x^1/2 + prioDuelevel
-        String s = "" + prioDue;
+        String s = "" + prio;
+        if(s.indexOf('.') > 0){
+            s = s.substring(0,s.indexOf('.'));
+        }
+        int temp = Integer.parseInt(s);
+        return  temp;
+    }
+
+    public int CalcPriority(LocalDate due, String priorityLevel){
+        setPriorityLevel(priorityLevel);
+        int daysLeft = Util.calcDayNumInYear(due) - Util.calcDayNumInYear(Util.getDateToday());
+
+        double prioDue;
+        prioDue = daysLeft - 1;
+
+        prioDue = Math.pow(prioDue, -0.387);
+        prioDue *= 100;
+
+        Double prio = (0.70 * prioDue) + (30 * prioritylevel);
+
+        //Current equation = 100x^1/2 + prioDuelevel
+        String s = "" + prio;
         if(s.indexOf('.') > 0){
             s = s.substring(0,s.indexOf('.'));
         }
@@ -72,16 +96,20 @@ public class Priority {
      */
 
     public void setWeigthing(Double prioWeight){
-        this.prioWeight = prioWeight;
+        if(prioWeight < 1.0){
+            this.prioWeight = prioWeight * 100;
+        } else {
+            this.prioWeight = prioWeight; //In case it is entered as a decimal
+        }
     }
 
     public void setPriorityLevel(String level){ //If easier can set this to int with levels of 1,2,3
         if(level.equals("High")) {
             this.prioritylevel = 1.0;
         } else if (level.equals("Medium")) {
-            this.prioritylevel = (2/3) * 1.0;
+            this.prioritylevel = 0.66667;
         }  else if (level.equals("Low")) {
-            this.prioritylevel = (1/3) * 1.0;
+            this.prioritylevel = 0.33334;
         } else{
             System.out.println("Not priority  level set. Invalid input setPrio ");
         }
