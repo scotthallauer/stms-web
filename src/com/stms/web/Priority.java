@@ -39,11 +39,10 @@ public class Priority {
      * @param due Due date of the assignment that needs prioDuerity calculated
      * @return The prioDuerity for the assignment on curve 100x^0.5 or 150 if due in less than 2 days
      */
-    public int CalcPriority(LocalDate due, String priorityLevel, Double Weighting){
+    public double CalcPriority(LocalDate due, String priorityLevel, Double Weighting){
 		
 		if (Weighting == null){
-            int x = CalcPriority(due, priorityLevel);
-            return x;
+            return CalcPriority(due, priorityLevel);
         }
 
         setPriorityLevel(priorityLevel);
@@ -54,7 +53,7 @@ public class Priority {
         System.out.println(daysLeft + " is the amount of days left");
         if(daysLeft < 2){
             //Max absolutely top level priority must be completed
-            return 100;
+            return 100.0;
         }
 
         double prioDue;
@@ -64,17 +63,12 @@ public class Priority {
         prioDue = Math.pow(prioDue, -0.387);
         prioDue *= 100;
 
-        Double prio = (0.65 * prioDue) + (20 * prioritylevel) + (0.15 * prioWeight);
+        double prio = (0.65 * prioDue) + (20 * prioritylevel) + (0.15 * prioWeight);
         //Current equation = 100x^1/2 + prioDuelevel
-        String s = "" + prio;
-        if(s.indexOf('.') > 0){
-            s = s.substring(0,s.indexOf('.'));
-        }
-        int temp = Integer.parseInt(s);
-        return  temp;
+        return prio;
     }
 
-    public int CalcPriority(LocalDate due, String priorityLevel){
+    public double CalcPriority(LocalDate due, String priorityLevel){
         setPriorityLevel(priorityLevel);
         int daysLeft = Util.calcDayNumInYear(due) - Util.calcDayNumInYear(Util.getDateToday());
 
@@ -84,15 +78,10 @@ public class Priority {
         prioDue = Math.pow(prioDue, -0.387);
         prioDue *= 100;
 
-        Double prio = (0.70 * prioDue) + (30 * prioritylevel);
+        double prio = (0.70 * prioDue) + (30 * prioritylevel);
 
         //Current equation = 100x^1/2 + prioDuelevel
-        String s = "" + prio;
-        if(s.indexOf('.') > 0){
-            s = s.substring(0,s.indexOf('.'));
-        }
-        int temp = Integer.parseInt(s);
-        return  temp;
+        return  prio;
     }
 
     /**
