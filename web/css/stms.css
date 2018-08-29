@@ -255,6 +255,9 @@ div.stms_lightbox_grading_hidden td:nth-of-type(2), div.stms_lightbox_grading_hi
 
 /* TASKS PAGE */
 /* Customise DHTMLX tabbar so that tabs on task page stretch to fill 50% width of column */
+div#stms_tasks{
+    height: 100%;
+}
 div#stms_tasks_header{
     box-sizing: border-box;
     background-color: #FAFAFA;

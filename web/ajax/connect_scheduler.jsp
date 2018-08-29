@@ -51,7 +51,7 @@
                     }else {
                         jo.put("text", courses[j].getName() + " - " + Utilities.capitalise(sessions[k].getType()));
                     }
-                    if(sessions[k].getPriority() != null && sessions[k].getWeighting() != null){
+                    if(sessions[k].getPriority() != null){
                         jo.put("event_grade", String.valueOf(sessions[k].getPriority()) + "," + String.valueOf(sessions[k].getWeighting()));
                         jo.put("color", "red");
                     }else{
@@ -115,6 +115,9 @@
         if(eventPriority != null){
             try{
                 eventWeighting = Double.valueOf(request.getParameter("event_grade").split(",")[1]);
+                if(eventWeighting == 0){
+                    eventWeighting = null;
+                }
             }catch(Exception e){
                 eventWeighting = null;
             }

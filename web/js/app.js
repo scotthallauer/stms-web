@@ -86,9 +86,7 @@ dhtmlxEvent(window, 'load', function(){
     // prepare tasks page
     stms_sidebar.attachEvent("onSelect", function(id, lastId){
         if(id == "p2_tasks"){
-            var width = stms_task_layout.cells("a").getWidth()-22;
-            var height = stms_task_layout.cells("a").getHeight()-$("table#stms_task_suggestion_list").height()-203;
-            taskListResize(width, width);
+            taskListResize();
             loadSuggestions(); // suggestion list table
         }
     });
@@ -312,9 +310,7 @@ dhtmlxEvent(window, 'load', function(){
         totalWidth += stms_task_layout.cells("b").getWidth();
         stms_task_layout.cells("a").setWidth(totalWidth/2);
         stms_task_layout.cells("b").setWidth(totalWidth/2);
-        var taskListWidth = (totalWidth/2)-22;
-        var taskListHeight = stms_task_layout.cells("a").getHeight()-$("table#stms_task_suggestion_list").height()-203;
-        taskListResize(taskListWidth, taskListHeight);
+        taskListResize();
     });
 
     // TO-DO LIST COLUMN //
@@ -460,7 +456,9 @@ function lightboxResize(){
     }
 }
 
-function taskListResize(newWidth, newHeight){
+function taskListResize(){
+    var newWidth = $("div#stms_tasks").width()-22;
+    var newHeight = $("div#stms_tasks").height()-$("div#stms_task_suggestion_wrapper").height()-180;
     if(newHeight > 0) {
         $("div#stms_tasks_grid").css("max-height", newHeight);
     }
@@ -492,9 +490,14 @@ function loadSuggestions(){
     $.ajax({
         url: "./ajax/connect_task_suggestion.jsp"
     }).done(function(data){
-        $("table#stms_task_suggestion_list tbody").empty();
+        $("table#stms_task_suggestion_list tbody").empty(); // clear existing items in suggestion list (need to refresh)
         var suggestions = JSON.parse(data);
-        suggestions.sort(compareSuggestion);
+        suggestions.sort(compareSuggestion); // sort based on priority (high to low)
+        if(suggestions.length < 1){
+            $("div#stms_task_suggestion_wrapper").hide(); // if there are no suggestion, then hide the section
+        }else{
+            $("div#stms_task_suggestion_wrapper").show();
+        }
         for(var i = 0 ; i < suggestions.length ; i++){
             var priority = parseFloat(suggestions[i].priority);
             var relativeDate = moment(suggestions[i].dueDate).fromNow();
@@ -532,6 +535,7 @@ function loadSuggestions(){
                 "</tr>";
             }
             $("table#stms_task_suggestion_list tbody").append(html);
+            taskListResize();
         }
     });
 }

@@ -2,6 +2,7 @@
 <%@ page import="org.json.*" %>
 <%@ page import="java.time.LocalDate" %>
 <%@ page import="java.sql.Timestamp" %>
+<%@ page import="java.text.DecimalFormat" %>
 <%! boolean authRequired = true; %>
 <%@ include file="../includes/session.jsp" %>
 <%
@@ -39,7 +40,8 @@
                     if(weighting == null){
                         jo.put("weighting", "null");
                     }else {
-                        jo.put("weighting", String.valueOf(weighting));
+                        DecimalFormat decimal = new DecimalFormat("0.##");
+                        jo.put("weighting", decimal.format(weighting));
                     }
                     jo.put("dueDate", sessions[k].getStartDate().toString());
                     ja.put(jo);
