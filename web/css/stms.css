@@ -290,17 +290,17 @@ div#stms_tasks_cont{
         font-weight: normal;
         font-size: 15px;
     }
-    table.stms_task_suggestion_list{
+    table#stms_task_suggestion_list{
         width: 100%;
         font-family: Roboto, Arial, Helvetica;
     }
-        table.stms_task_suggestion_list td{
+        table#stms_task_suggestion_list td{
             border-bottom: 10px solid transparent;
         }
-        table.stms_task_suggestion_list td.stms_task_suggestion_priority{
+        table#stms_task_suggestion_list td.stms_task_suggestion_priority{
             width: 34px;
         }
-        table.stms_task_suggestion_list td.stms_task_suggestion_date{
+        table#stms_task_suggestion_list td.stms_task_suggestion_date{
             text-align: right;
         }
             div.stms_priority_icon{

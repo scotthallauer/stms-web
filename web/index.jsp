@@ -40,28 +40,7 @@
 			<div id="stms_tasks_cont">
 				<h3>Friday, 24 August</h3>
 				<h4>Suggestions</h4>
-				<table class="stms_task_suggestion_list">
-					<tbody>
-						<tr>
-							<td rowspan="2" class="stms_task_suggestion_priority"><div class="stms_priority_icon stms_priority_icon_high">!!!</div></td>
-							<td style="border-bottom: 0" class="stms_task_suggestion_text"><span class="stms_priority_text stms_priority_text_high">Study for Computer Science Test</span></td>
-							<td style="border-bottom: 0" class="stms_task_suggestion_date">tomorrow</td>
-						</tr>
-						<tr>
-							<td style="color: red; font-size: 13px">Weighting: 10%</td>
-						</tr>
-						<tr>
-							<td class="stms_task_suggestion_priority"><div class="stms_priority_icon stms_priority_icon_medium">!!</div></td>
-							<td class="stms_task_suggestion_text"><span class="stms_priority_text stms_priority_text_medium">Work on Computer Science Assignment</span></td>
-							<td class="stms_task_suggestion_date">in 3 days</td>
-						</tr>
-						<tr>
-							<td class="stms_task_suggestion_priority"><div class="stms_priority_icon stms_priority_icon_low">!</div></td>
-							<td class="stms_task_suggestion_text"><span class="stms_priority_text stms_priority_text_low">Work on Philosophy Essay</span></td>
-							<td class="stms_task_suggestion_date">in 6 days</td>
-						</tr>
-					</tbody>
-				</table>
+				<table id="stms_task_suggestion_list"><tbody></tbody></table>
 				<h4>Your Tasks<div class='dhx_task_create_button' aria-label='Create' role='button'>Create</div></h4>
 				<div id="stms_tasks_grid"></div>
 				<div id="stms_tasks_none">No Tasks</div>

@@ -70,14 +70,17 @@ public class Course {
     // METHODS //
 
     /**
-     * Loads all of the course sessions for the course into an array stored as an attribute.
+     * Loads all or only graded course sessions for the course into an array stored as an attribute.
      */
-    private void loadCourseSessions(){
+    private void loadCourseSessions(boolean graded){
         // check if database is connected
         if(!Database.isConnected()) {
             return;
         }
         String sql = "SELECT * FROM courseSession WHERE courseID = ?";
+        if(graded){
+            sql = "SELECT * FROM courseSession WHERE courseID = ? AND (priority IS NOT NULL OR weighting IS NOT NULL)";
+        }
         Object[] params = new Object[1];
         int[] types = new int[1];
         params[0] = this.courseID;
@@ -102,7 +105,15 @@ public class Course {
     }
 
     public CourseSession[] getSessions () {
-        this.loadCourseSessions();
+        this.loadCourseSessions(false);
+        if(this.sessions == null){
+            this.sessions = new CourseSession[0];
+        }
+        return this.sessions;
+    }
+
+    public CourseSession[] getGradedSessions(){
+        this.loadCourseSessions(true);
         if(this.sessions == null){
             this.sessions = new CourseSession[0];
         }

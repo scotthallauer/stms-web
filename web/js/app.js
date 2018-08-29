@@ -83,6 +83,16 @@ dhtmlxEvent(window, 'load', function(){
 
     });
 
+    // prepare tasks page
+    stms_sidebar.attachEvent("onSelect", function(id, lastId){
+        if(id == "p2_tasks"){
+            var width = stms_task_layout.cells("a").getWidth()-22;
+            var height = stms_task_layout.cells("a").getHeight()-$("table#stms_task_suggestion_list").height()-203;
+            taskListResize(width, width);
+            loadSuggestions(); // suggestion list table
+        }
+    });
+
     ///////////////////
     // CALENDAR PAGE //
     ///////////////////
@@ -264,6 +274,8 @@ dhtmlxEvent(window, 'load', function(){
     ////////////////
     // TASKS PAGE //
     ////////////////
+
+    // PAGE LAYOUT //
     var stms_task_layout = stms_sidebar.cells("p2_tasks").attachLayout({
 
         pattern:        "2U",
@@ -301,15 +313,21 @@ dhtmlxEvent(window, 'load', function(){
         stms_task_layout.cells("a").setWidth(totalWidth/2);
         stms_task_layout.cells("b").setWidth(totalWidth/2);
         var taskListWidth = (totalWidth/2)-22;
-        var taskListHeight = stms_task_layout.cells("a").getHeight()-$("table.stms_task_suggestion_list").height()-203;
+        var taskListHeight = stms_task_layout.cells("a").getHeight()-$("table#stms_task_suggestion_list").height()-203;
         taskListResize(taskListWidth, taskListHeight);
     });
 
+    // TO-DO LIST COLUMN //
     stms_task_layout.cells("a").attachObject("stms_tasks");
 
+    // set title to current date
     $("div#stms_tasks_cont h3").text(moment().format("dddd, Do MMMM"));
 
-    var stms_task_grid = new dhtmlXGridObject("stms_tasks_grid"); // global variable because we need to access it from the taskListResize() function
+    // preload suggestion list table (will reload whenever user switches to this tab - handled in onSelect event for sidebar)
+    loadSuggestions();
+
+    // task list grid
+    var stms_task_grid = new dhtmlXGridObject("stms_tasks_grid");
     stms_task_grid.setImagePath("../js/libraries/dhtmlxSuite/imgs/");
     stms_task_grid.setHeader("Done,Task,Due");
     stms_task_grid.setNoHeader(true);
@@ -322,19 +340,16 @@ dhtmlxEvent(window, 'load', function(){
     stms_task_grid.enableAutoWidth(true);
     stms_task_grid.enableEditEvents(true,true,true);
     stms_task_grid.init();
-    var initialWidth = stms_task_layout.cells("a").getWidth()-22;
-    var initialHeight = stms_task_layout.cells("a").getHeight()-$("table.stms_task_suggestion_list").height()-203;
-    taskListResize(initialWidth, initialHeight);
 
     // enable create button at the top of the task list
     $("div.dhx_task_create_button").click(function () {
-        var newID = (new Date()).valueOf();
+        var newID = (new Date()).valueOf(); // generate unique id based on datetime
         var newDate = moment().add(1, 'days').format("DD/MM/YYYY [at 12:00]");
-        stms_task_grid.addRow(newID, "0,," + newDate, 0);
+        stms_task_grid.addRow(newID, "0,," + newDate, 0); // insert row in grid with unchecked checkbox, empty task name and tomorrow noon as default due date
     });
 
     stms_task_grid.attachEvent("onRowAdded", function(rID){
-        $("div#stms_tasks_grid").removeClass("gridbox_empty");
+        $("div#stms_tasks_grid").removeClass("gridbox_empty"); // remove the "No Tasks" placeholder
         $("div#stms_tasks_none").removeClass("gridbox_empty");
         stms_task_grid.selectCell(0, 1);
         stms_task_grid.editCell();
@@ -342,7 +357,8 @@ dhtmlxEvent(window, 'load', function(){
             function() {
                 $("div#stms_tasks_grid tr.rowselected td.cellselected").trigger("click");
             },
-        0);
+            0
+        );
     });
 
     stms_task_grid.attachEvent("onCheck", function(rID, cInd, state){
@@ -351,7 +367,7 @@ dhtmlxEvent(window, 'load', function(){
             stms_task_grid.cells(rID, 1).setDisabled(true);
             stms_task_grid.cells(rID, 2).setDisabled(true);
             $("div#stms_tasks_grid tr.rowselected").addClass("stms_task_disabled");
-            setTimeout(function(){
+            setTimeout(function(){ // give user 2 seconds to uncheck task before it disappears
                     if(stms_task_grid.cells(rID, 0).isChecked()){
                         stms_task_grid.deleteRow(rID);
                     }
@@ -379,7 +395,7 @@ dhtmlxEvent(window, 'load', function(){
             { id:3, data: ["0", "Set up study timetable", "02/09/2018 at 12:00"]}
         ]
     };
-    stms_task_grid.parse(data,"json");
+    stms_task_grid.parse(data,"json"); // populate task list
 
     var stms_assignment_tabbar = stms_task_layout.cells("b").attachTabbar({
 
@@ -460,4 +476,62 @@ function lightboxGradeCheckbox(checkbox){
         $("#stms_lightbox_grading").addClass("stms_lightbox_grading_hidden");
     }
     $("div.dhx_cal_larea").trigger('DOMSubtreeModified');
+}
+
+function compareSuggestion(a,b) {
+    var aP = parseFloat(a.priority);
+    var bP = parseFloat(b.priority);
+    if (aP < bP)
+        return 1;
+    if (aP > bP)
+        return -1;
+    return 0;
+}
+
+function loadSuggestions(){
+    $.ajax({
+        url: "./ajax/connect_task_suggestion.jsp"
+    }).done(function(data){
+        $("table#stms_task_suggestion_list tbody").empty();
+        var suggestions = JSON.parse(data);
+        suggestions.sort(compareSuggestion);
+        for(var i = 0 ; i < suggestions.length ; i++){
+            var priority = parseFloat(suggestions[i].priority);
+            var relativeDate = moment(suggestions[i].dueDate).fromNow();
+            var html = "";
+            if(priority >= 0.65){ // high priority
+                html = "<tr><td ";
+                if(suggestions[i].weighting != "null"){
+                    html += "rowspan='2' ";
+                }
+                html += "class='stms_task_suggestion_priority'><div class='stms_priority_icon stms_priority_icon_high'>!!!</div></td><td ";
+                if(suggestions[i].weighting != "null"){
+                    html += "style='border-bottom: 0' ";
+                }
+                html += "class='stms_task_suggestion_text'><span class='stms_priority_text stms_priority_text_high'>" + suggestions[i].action + " " + suggestions[i].courseName + " " + suggestions[i].type + "</span></td><td ";
+                if(suggestions[i].weighting != "null"){
+                    html += "style='border-bottom: 0' ";
+                }
+                html += "class='stms_task_suggestion_date'>" + relativeDate + "</td></tr>";
+                if(suggestions[i].weighting != "null"){
+                    html += "<tr><td style='color: red; font-size: 13px'>Weighting: " + suggestions[i].weighting + "%</td></tr>";
+                }
+            }else if(priority >= 0.45){ // medium priority
+                html =
+                    "<tr>" +
+                    "<td class='stms_task_suggestion_priority'><div class='stms_priority_icon stms_priority_icon_medium'>!!</div></td>" +
+                    "<td class='stms_task_suggestion_text'><span class='stms_priority_text stms_priority_text_medium'>" + suggestions[i].action + " " + suggestions[i].courseName + " " + suggestions[i].type + "</span></td>" +
+                    "<td class='stms_task_suggestion_date'>" + relativeDate + "</td>";
+                "</tr>";
+            }else{ // low priority
+                html =
+                    "<tr>" +
+                    "<td class='stms_task_suggestion_priority'><div class='stms_priority_icon stms_priority_icon_low'>!</div></td>" +
+                    "<td class='stms_task_suggestion_text'><span class='stms_priority_text stms_priority_text_low'>" + suggestions[i].action + " " + suggestions[i].courseName + " " + suggestions[i].type + "</span></td>" +
+                    "<td class='stms_task_suggestion_date'>" + relativeDate + "</td>";
+                "</tr>";
+            }
+            $("table#stms_task_suggestion_list tbody").append(html);
+        }
+    });
 }
