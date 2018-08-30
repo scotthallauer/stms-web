@@ -83,7 +83,7 @@ CREATE TABLE courseSession (
     earnedMark double NULL,
     PRIMARY KEY (sessionID),
     FOREIGN KEY (courseID) REFERENCES course(courseID),
-    UNIQUE KEY course_session_uniq (courseID, sessionType, startDate, endDate)
+    UNIQUE KEY course_session_uniq (courseID, sessionType, startDate, endDate, length)
 );
 
 CREATE TABLE courseAssignment (

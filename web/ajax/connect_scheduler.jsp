@@ -132,6 +132,9 @@
             eventLength = null;
         }
         String eventRecType = request.getParameter("rec_type");
+        if(eventRecType != null && eventRecType.length() < 1){
+            eventRecType = null;
+        }
 
         JSONObject jo = new JSONObject();
         if(action.equals("inserted")){
