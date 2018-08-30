@@ -79,7 +79,7 @@ public class Course {
         }
         String sql = "SELECT * FROM courseSession WHERE courseID = ?";
         if(graded){
-            sql = "SELECT * FROM courseSession WHERE courseID = ? AND (priority IS NOT NULL OR weighting IS NOT NULL)";
+            sql = "SELECT * FROM courseSession WHERE courseID = ? AND priority IS NOT NULL"; // if priority is set, then the course is graded
         }
         Object[] params = new Object[1];
         int[] types = new int[1];

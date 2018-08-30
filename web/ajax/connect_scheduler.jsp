@@ -3,6 +3,7 @@
 <%@ page import="java.sql.Types" %>
 <%@ page import="java.sql.Timestamp" %>
 <%! boolean authRequired = true; %>
+<%! boolean ajaxRequest = true; %>
 <%@ include file="../includes/session.jsp" %>
 <%!
 
@@ -124,9 +125,9 @@
         }
         Timestamp eventStartDate = Timestamp.valueOf(request.getParameter("start_date"));
         Timestamp eventEndDate = Timestamp.valueOf(request.getParameter("end_date"));
-        Integer eventLength;
+        Long eventLength;
         try{
-            eventLength = Integer.valueOf(request.getParameter("event_length"));
+            eventLength = Long.valueOf(request.getParameter("event_length"));
         }catch(Exception e){
             eventLength = null;
         }
@@ -146,7 +147,7 @@
             cs.setLength(eventLength);
             cs.setRecType(eventRecType);
             if(cs.save()){
-                if(eventRecType.equals("none")){
+                if(eventRecType != null && eventRecType.equals("none")){
                     jo.put("action", "deleted");
                 }else{
                     jo.put("action", "inserted");
@@ -169,7 +170,7 @@
             cs.setLength(eventLength);
             cs.setRecType(eventRecType);
             if(cs.save()){
-                if(eventRecType.length() > 0 && !eventRecType.equals("none")){
+                if(eventRecType != null && eventRecType.length() > 0 && !eventRecType.equals("none")){
                     String sql = "DELETE FROM courseSession WHERE sessionPID = ?";
                     Object[] params = new Object[1];
                     int[] types = new int[1];

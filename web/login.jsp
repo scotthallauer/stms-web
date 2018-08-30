@@ -1,4 +1,5 @@
 <%! boolean authRequired = false; %>
+<%! boolean ajaxRequest = false; %>
 <%@ include file="./includes/session.jsp" %>
 <%
     // Redirect to application if user is already logged in

@@ -1,6 +1,7 @@
 <%@ page import="com.stms.web.*" %>
 <%@ page import="java.sql.SQLException" %>
 <%! boolean authRequired = false; %>
+<%! boolean ajaxRequest = true; %>
 <%@ include file="../includes/session.jsp" %>
 <%
     // get login credentials from POST parameters

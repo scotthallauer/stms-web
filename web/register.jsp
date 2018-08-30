@@ -1,4 +1,5 @@
 <%! boolean authRequired = false; %>
+<%! boolean ajaxRequest = false; %>
 <%@ include file="./includes/session.jsp" %>
 <!DOCTYPE html>
 <html>

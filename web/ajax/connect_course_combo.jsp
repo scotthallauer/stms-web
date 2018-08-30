@@ -3,6 +3,7 @@
 <%@ page import="java.sql.Types" %>
 <%@ page import="java.sql.ResultSet" %>
 <%! boolean authRequired = true; %>
+<%! boolean ajaxRequest = true; %>
 <%@ include file="../includes/session.jsp" %>
 <%
 

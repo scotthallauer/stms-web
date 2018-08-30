@@ -182,6 +182,7 @@ dhtmlxEvent(window, 'load', function(){
     scheduler.attachEvent("onEventCreated", function(id, ev){
         scheduler.getEvent(id).text = "New Session";
         scheduler.getEvent(id).color = getColourCode("blue");
+        scheduler.getEvent(id).textColor = "#FFFFFF";
         return true;
     });
 
@@ -499,7 +500,7 @@ function loadSuggestions(){
             $("div#stms_task_suggestion_wrapper").show();
         }
         for(var i = 0 ; i < suggestions.length ; i++){
-            var priority = parseFloat(suggestions[i].priority);
+            var priority = suggestions[i].priority;
             var relativeDate = moment(suggestions[i].dueDate).fromNow();
             var html = "";
             if(priority >= 0.65){ // high priority

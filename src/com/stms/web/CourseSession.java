@@ -22,7 +22,7 @@ public class CourseSession {
     private String type;
     private Timestamp startDate;
     private Timestamp endDate;
-    private Integer length;
+    private Long length;
     private String recType;
     private String location;
     private String note;
@@ -64,7 +64,10 @@ public class CourseSession {
             this.type = rs.getString("sessionType");
             this.startDate = rs.getTimestamp("startDate");
             this.endDate = rs.getTimestamp("endDate");
-            this.length = rs.getInt("length");
+            this.length = rs.getLong("length");
+            if(rs.wasNull()){
+                this.length = null;
+            }
             this.recType = rs.getString("recType");
             if(rs.wasNull()){
                 this.recType = null;
@@ -150,14 +153,14 @@ public class CourseSession {
         return this.endDate;
     }
 
-    public void setLength(Integer length) {
+    public void setLength(Long length) {
         if(length == null || length > 0) {
             this.length = length;
             this.recordSaved = false;
         }
     }
 
-    public Integer getLength() {
+    public Long getLength() {
         return this.length;
     }
 

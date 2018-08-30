@@ -198,10 +198,7 @@ public class Utilities {
      * @return Date today
      */
     public static LocalDate getDateToday(){
-        DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        LocalDate toReturn = LocalDate.now();
-        System.out.println(toReturn.toString());
-        return toReturn;
+        return LocalDate.now();
     }
 
     public static String capitalise(String str) {

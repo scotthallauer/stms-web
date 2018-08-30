@@ -1,5 +1,6 @@
 <%@ page import="com.stms.web.*" %>
 <%! boolean authRequired = true; %>
+<%! boolean ajaxRequest = false; %>
 <%@ include file="./includes/session.jsp" %>
 <!DOCTYPE html>
 <html>
@@ -63,6 +64,7 @@
         $("body").loadingModal("show");
 	</script>
 	<!-- load application scripts after we have started the loading screen -->
+	<script src="./js/libraries/ajax-interceptor/interceptor.js" type="text/javascript"></script>
 	<script src="./js/libraries/dhtmlxSuite/dhtmlx.js" type="text/javascript"></script>
 	<script src="./js/libraries/dhtmlxScheduler/dhtmlxscheduler.js" type="text/javascript"></script>
 	<script src="./js/libraries/dhtmlxScheduler/ext/dhtmlxscheduler_recurring.js" type="text/javascript"></script>
