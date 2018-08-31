@@ -23,7 +23,7 @@
 		<script src="./js/libraries/loadingModal/jquery.loadingModal.min.js" type="text/javascript"></script>
 	</head>
 	<body>
-	<div id="stms_loader"></div>
+	    <div id="stms_loader"></div>
 		<div id="stms_header">
 			<div id="stms_title">
 				<div id="stms_title_icon"></div>
@@ -39,7 +39,7 @@
 				<h2>To-Do List</h2>
 			</div>
 			<div id="stms_tasks_cont">
-				<h3>Friday, 24 August</h3>
+				<h3></h3>
 				<div id="stms_task_suggestion_wrapper">
 					<h4>Suggestions</h4>
 					<table id="stms_task_suggestion_list"><tbody></tbody></table>
@@ -51,6 +51,45 @@
 				</div>
 			</div>
 		</div>
+        <div id="stms_semesters_left">
+            <div id="stms_semesters_button_bar"><h2>Semesters</h2><div class='dhx_semester_create_button' aria-label='Create' role='button'>Create</div></div>
+            <div id="stms_semesters_list_wrapper">
+                <table id="stms_semesters_list">
+                    <tbody>
+                        <tr class="stms_semester_row">
+                            <td><span class="stms_semester_name">2nd Semester</span><span class="stms_semester_date">25 Jul 2018 - 12 Dec 2018</span></td>
+                        </tr>
+                        <tr class="stms_course_row selected">
+                            <td><span class="colour_blue">CSC3003S - Computer Science</span></td>
+                        </tr>
+                        <tr class="stms_course_row">
+                            <td><span class="colour_red">MCB3012Z - Genetics</span></td>
+                        </tr>
+                        <tr class="stms_course_row">
+                            <td><span class="colour_green">MCB3023S - Genetics</span></td>
+                        </tr>
+                        <tr class="stms_semester_row">
+                            <td><span class="stms_semester_name">1st Semester</span><span class="stms_semester_date">23 Jan 2018 - 12 Jun 2018</span></td>
+                        </tr>
+                        <tr class="stms_course_row">
+                            <td><span class="colour_blue">CSC3002F - Computer Science</span></td>
+                        </tr>
+                        <tr class="stms_course_row">
+                            <td><span class="colour_green">MCB3026F - Genetics</span></td>
+                        </tr>
+                        <tr class="stms_semester_row">
+                            <td><span class="stms_semester_name">2nd Semester</span><span class="stms_semester_date">25 Jul 2017 - 12 Dec 2017</span></td>
+                        </tr>
+                        <tr class="stms_course_row">
+                            <td><span class="colour_yellow">CEM2000W - Chemistry</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="stms_semesters_right">
+
+        </div>
 	</body>
 	<script type="text/javascript">
 		// show loading screen while app loads

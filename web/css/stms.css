@@ -408,3 +408,124 @@ div.dhx_task_create_button:hover{
 div#stms_tasks_grid tr.stms_task_disabled{
     text-decoration: line-through;
 }
+
+/* SEMESTERS PAGE */
+div#stms_semesters_left{
+    height: 100%;
+}
+div#stms_semesters_button_bar{
+    box-sizing: border-box;
+    background-color: #FAFAFA;
+    width: 100%;
+    height: 43px;
+    line-height: 43px;
+    padding-left: 10px;
+    border-bottom: 2px solid #39c;
+}
+    div#stms_semesters_button_bar h2{
+        margin: 0;
+        color: #39c;
+        text-align: left;
+        font-family: Roboto, Arial, Helvetica;
+        font-weight: normal;
+        font-size: 14px;
+        text-transform: uppercase;
+    }
+    div.dhx_semester_create_button{
+        font-family: Roboto, Arial, Helvetica;
+        cursor: pointer;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 500;
+        font-style: normal;
+        color: #0288d1;
+        position: absolute;
+        top: 0;
+        right: 10px;
+        margin-top: 5px;
+        background-image: none;
+        background-position: -62px 0;
+        background-repeat: no-repeat;
+        height: 30px;
+        width: 80px;
+        border: 1px solid transparent;
+        border-radius: 2px;
+        line-height: 30px;
+        text-decoration: none;
+        text-transform: uppercase;
+    }
+    div.dhx_semester_create_button:hover{
+        border: 1px solid transparent;
+        background-color: rgba(0,0,0,.1);
+        transition: all .1s ease-in-out;
+    }
+div#stms_semesters_list_wrapper{
+    height: calc(100% - 43px);
+    overflow: auto;
+}
+table#stms_semesters_list{
+    font-family: Roboto, Arial, Helvetica;
+    padding: 10px;
+    width: 100%;
+}
+    table#stms_semesters_list td{
+        cursor: pointer;
+    }
+    table#stms_semesters_list tr.selected td{
+        background-color: #DDD;
+    }
+    table#stms_semesters_list tr.stms_semester_row td{
+        display: block;
+        padding: 5px;
+        margin-top: 10px;
+    }
+    table#stms_semesters_list tr.stms_semester_row:first-child td{
+        margin-top: 0px;
+    }
+    table#stms_semesters_list tr.stms_semester_row td:hover{
+        background-color: #EEE;
+    }
+        table#stms_semesters_list span.stms_semester_name{
+            display: block;
+            font-weight: bold;
+            font-size: 18px;
+            padding-bottom: 5px;
+        }
+        table#stms_semesters_list span.stms_semester_date{
+            display: block;
+            font-size: 12px;
+            color: #555;
+        }
+    table#stms_semesters_list tr.stms_course_row td{
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-right: 15px;
+    }
+    table#stms_semesters_list tr.stms_course_row td:hover{
+        background-color: #EEE;
+    }
+        table#stms_semesters_list tr.stms_course_row span{
+            display: block;
+            margin-left: 15px;
+            padding-left: 30px;
+            background-repeat: no-repeat;
+            background-position: left center;
+        }
+        table#stms_semesters_list tr.stms_course_row span.colour_red{
+            background-image: url(/media/colours/red.png);
+        }
+        table#stms_semesters_list tr.stms_course_row span.colour_orange{
+            background-image: url(/media/colours/orange.png);
+        }
+        table#stms_semesters_list tr.stms_course_row span.colour_yellow{
+            background-image: url(/media/colours/yellow.png);
+        }
+        table#stms_semesters_list tr.stms_course_row span.colour_green{
+            background-image: url(/media/colours/green.png);
+        }
+        table#stms_semesters_list tr.stms_course_row span.colour_blue{
+            background-image: url(/media/colours/blue.png);
+        }
+        table#stms_semesters_list tr.stms_course_row span.colour_purple{
+            background-image: url(/media/colours/purple.png);
+        }

@@ -77,6 +77,12 @@ dhtmlxEvent(window, 'load', function(){
                 id:         "p2_tasks",
                 text:       "Tasks",
                 icon:       "task_icon.png"
+            },
+
+            {
+                id:         "p3_semesters",
+                text:       "Semesters",
+                icon:       "semester_icon.png"
             }
 
         ]
@@ -420,6 +426,41 @@ dhtmlxEvent(window, 'load', function(){
         name: "Progress Report",
         priority: "Medium"
     });
+
+    ////////////////////
+    // SEMESTERS PAGE //
+    ////////////////////
+    // PAGE LAYOUT //
+    var stms_semester_layout = stms_sidebar.cells("p3_semesters").attachLayout({
+
+        pattern:        "2U",
+        skin:           "material",
+
+        offsets: {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        },
+
+        cells: [
+
+            {
+                id:         "a",
+                width:      350
+            },
+            {
+                id:         "b"
+            }
+        ]
+
+    });
+
+    stms_semester_layout.cells("a").setMinWidth(350);
+    stms_semester_layout.cells("a").attachObject("stms_semesters_left");
+
+    stms_semester_layout.cells("b").setMinWidth(550);
+    stms_semester_layout.cells("b").attachObject("stms_semesters_right");
 
     // hide loading screen after app has finished loading
     $("div#stms_loader").hide();
