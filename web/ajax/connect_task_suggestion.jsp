@@ -22,34 +22,37 @@
         for (int j = 0; j < courses.length; j++) {
             CourseSession[] sessions = courses[j].getGradedSessions(); // only interested in graded sessions
             for (int k = 0; k < sessions.length; k++) {
-                if(now.before(sessions[k].getStartDate())) {
-                    JSONObject jo = new JSONObject();
-                    jo.put("id", sessions[k].getSessionID());
-                    if(sessions[k].getType().equals("test") || sessions[k].getType().equals("exam")){
-                        jo.put("action", "Study for");
-                    }else{
-                        jo.put("action", "Prepare for");
+                Occurrence[] occurrences = sessions[k].getOccurrences(1000);
+                for (int n = 0; n < occurrences.length; n++) {
+                    if (now.before(Timestamp.valueOf(occurrences[n].getStartDate()))) {
+                        JSONObject jo = new JSONObject();
+                        jo.put("id", sessions[k].getSessionID() + "-" + n);
+                        if (sessions[k].getType().equals("test") || sessions[k].getType().equals("exam")) {
+                            jo.put("action", "Study for");
+                        } else {
+                            jo.put("action", "Prepare for");
+                        }
+                        jo.put("type", sessions[k].getType());
+                        jo.put("courseName", courses[j].getName());
+                        if (courses[j].getCode() == null) {
+                            jo.put("courseCode", "null");
+                        } else {
+                            jo.put("courseCode", courses[j].getCode());
+                        }
+                        jo.put("type", Utilities.capitalise(sessions[k].getType()));
+                        LocalDate dueDate = occurrences[n].getStartDate().toLocalDate();
+                        Integer userPriority = sessions[k].getPriority();
+                        Double weighting = sessions[k].getWeighting();
+                        jo.put("priority", Priority.calculate(dueDate, userPriority, weighting));
+                        if (weighting == null) {
+                            jo.put("weighting", "null");
+                        } else {
+                            DecimalFormat decimal = new DecimalFormat("0.##");
+                            jo.put("weighting", decimal.format(weighting));
+                        }
+                        jo.put("dueDate", Timestamp.valueOf(occurrences[n].getStartDate()).toString());
+                        oa.add(jo);
                     }
-                    jo.put("type", sessions[k].getType());
-                    jo.put("courseName", courses[j].getName());
-                    if(courses[j].getCode() == null){
-                        jo.put("courseCode", "null");
-                    }else {
-                        jo.put("courseCode", courses[j].getCode());
-                    }
-                    jo.put("type", Utilities.capitalise(sessions[k].getType()));
-                    LocalDate dueDate = sessions[k].getStartDate().toLocalDateTime().toLocalDate();
-                    Integer userPriority = sessions[k].getPriority();
-                    Double weighting = sessions[k].getWeighting();
-                    jo.put("priority", Priority.calculate(dueDate, userPriority, weighting));
-                    if(weighting == null){
-                        jo.put("weighting", "null");
-                    }else {
-                        DecimalFormat decimal = new DecimalFormat("0.##");
-                        jo.put("weighting", decimal.format(weighting));
-                    }
-                    jo.put("dueDate", sessions[k].getStartDate().toString());
-                    oa.add(jo);
                 }
             }
         }
