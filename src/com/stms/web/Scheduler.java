@@ -12,9 +12,7 @@ import java.util.Calendar;
 
 public class Scheduler {
 
-    private Utilities Util;
     private int UserID;
-    private Database DB;
     private boolean timeTable[][];
     private int DaysTilDue;
     private int SemesterID;
@@ -28,14 +26,12 @@ public class Scheduler {
      */
 
     Scheduler(){
-        Util = new Utilities();
         toBed = 0;
         toWake = 8;
     }
 
     Scheduler(int UserID){
         this.UserID = UserID;
-        Util = new Utilities();
         toBed = 0;
         toWake = 8;
     }
@@ -49,8 +45,8 @@ public class Scheduler {
      * @return Amount of hours created or negative if no session created
      */
     public int generateSessions(int numOfHours, LocalDate dueDate) {
-        DaysTilDue = Util.calcDayNumInYear(dueDate) - Util.calcDayNumInYear(Util.getDateToday());
-        if (Util.getDateToday().isAfter(dueDate)) {
+        DaysTilDue = Utilities.calcDayNumInYear(dueDate) - Utilities.calcDayNumInYear(Utilities.getDateToday());
+        if (Utilities.getDateToday().isAfter(dueDate)) {
             System.out.println("Due date has passed.");
             return -1;
         }
@@ -88,7 +84,7 @@ public class Scheduler {
         int[] types = new int[1];
         params[0] = UserID;
         types[0] = Types.INTEGER;
-        ResultSet rs = DB.query(sql, params, types);
+        ResultSet rs = Database.query(sql, params, types);
         //Data is now loaded into the resultSet
         try{
             while (rs.next()) {
@@ -97,12 +93,18 @@ public class Scheduler {
                 int length = rs.getInt("length");
                 String recType = rs.getString("recType");
                 if (recType == null) {
-                    int DayCount = Util.calcDayNumInYear(timeSlot.toLocalDate()) - Util.calcDayNumInYear(Util.getDateToday());
+                    int DayCount = Utilities.calcDayNumInYear(timeSlot.toLocalDate()) - Utilities.calcDayNumInYear(Utilities.getDateToday());
                     timeTable[DayCount][timeSlot.getHour()] = false;
                 }  else if (recType.contains("week")) {
                     scheduleWeekEvent(timeSlot, endDate,recType, length);
                 } else if (recType.contains("month")){
-
+                    int dayNum = Utilities.calcDayNumInYear(timeSlot.toLocalDate());
+                    if ((dayNum > Utilities.calcDayNumInYear(Utilities.getDateToday()) && dayNum < Utilities.calcDayNumInYear(dueDate))){
+                        dayNum = Utilities.calcDayNumInYear(dueDate) - dayNum;
+                        for(int x = timeSlot.getHour(); x < endDate.getHour(); x++){
+                            timeTable[dayNum][x] = false;
+                        }
+                    }
                 } else if (recType.contains("day")){
                     scheduleDayEvent(timeSlot, endDate,recType);
                 } else if (recType.contains("none")){
@@ -118,7 +120,7 @@ public class Scheduler {
         sql = "SELECT semesterID FROM semester WHERE userID = ?;";
         ResultSet rs2;
         try {
-            rs = DB.query(sql, params, types);
+            rs = Database.query(sql, params, types);
             if (rs.next()){
                 SemesterID = rs.getInt("semesterID");
             }
@@ -128,7 +130,7 @@ public class Scheduler {
                     //SemesterID = rs.getInt("semesterID");
                     sql = "SELECT startTime, endTime FROM studySession WHERE semesterID = ?;";
                     params[0] = SemesterID;
-                    rs2 = DB.query(sql, params, types);
+                    rs2 = Database.query(sql, params, types);
 
                     while (rs2.next()) {
                         LocalDateTime start = rs2.getTimestamp("startTime").toLocalDateTime();
@@ -162,7 +164,7 @@ public class Scheduler {
             for (int y = 0; y < 24; y++){
                 if((timeTable[x][y]) && (hourCount < avghoursperDay) && (fullCount + hourCount < numOfHours)){
                     //Create new studysession
-                    LocalDate due = Util.CalcDateFromDayNum(Util.calcDayNumInYear(Util.getDateToday()) + x);
+                    LocalDate due = Utilities.CalcDateFromDayNum(Utilities.calcDayNumInYear(Utilities.getDateToday()) + x);
                     LocalDateTime startTime = due.atTime(y, 0);
                     LocalDateTime endTime;
                     if (y == 23){
@@ -213,7 +215,7 @@ public class Scheduler {
      * @param endTime End of the studySession
      */
     public void ScheduleStudySessions(LocalDateTime  startTime, LocalDateTime endTime){
-        int dayNum = Util.calcDayNumInYear(startTime.toLocalDate()) - Util.calcDayNumInYear(Util.getDateToday());
+        int dayNum = Utilities.calcDayNumInYear(startTime.toLocalDate()) - Utilities.calcDayNumInYear(Utilities.getDateToday());
         if(dayNum >= 0){
             for (int x = startTime.getHour(); x < endTime.getHour(); x++){
                 timeTable[dayNum][x] = false;
@@ -245,12 +247,12 @@ public class Scheduler {
         s = s.substring(0, 3);
         recType = recType.substring(recType.indexOf(',')-1);
 
-        int DayNumWeek = Util.dayToInt(s);
+        int DayNumWeek = Utilities.dayToInt(s);
         for(int x = 0; x < DaysTilDue; x++){
             String s1  = "" + DayNumWeek;
             if(recType.indexOf(s1) != -1){
-                if((Util.calcDayNumInYear(startTime.toLocalDate()) < Util.calcDayNumInYear(Util.getDateToday()) + x)
-                        && (Util.calcDayNumInYear(endTime.toLocalDate()) > Util.calcDayNumInYear(Util.getDateToday()) + x)){
+                if((Utilities.calcDayNumInYear(startTime.toLocalDate()) < Utilities.calcDayNumInYear(Utilities.getDateToday()) + x)
+                        && (Utilities.calcDayNumInYear(endTime.toLocalDate()) > Utilities.calcDayNumInYear(Utilities.getDateToday()) + x)){
                     for (int y = startHour; y < count + startHour; y++){
                         timeTable[x][y] = false;
                         System.out.println("I have set day " + x + " to false and also hour " + y);
@@ -272,7 +274,7 @@ public class Scheduler {
         types[0] = Types.VARCHAR;
         sql = "SELECT startDate, endDate FROM coursesession WHERE recType = ?;";
         params[0] = "none";
-        ResultSet rs = DB.query(sql, params, types);
+        ResultSet rs = Database.query(sql, params, types);
         LocalDateTime startTime;
         LocalDateTime endTime;
         int dayNum;
@@ -281,7 +283,7 @@ public class Scheduler {
             while (rs.next()){
                 startTime = rs.getTimestamp("startDate").toLocalDateTime();
                 endTime = rs.getTimestamp("endDate").toLocalDateTime();
-                dayNum = Util.calcDayNumInYear(startTime.toLocalDate()) - Util.calcDayNumInYear(Util.getDateToday());
+                dayNum = Utilities.calcDayNumInYear(startTime.toLocalDate()) - Utilities.calcDayNumInYear(Utilities.getDateToday());
                 for(int x1 = startTime.getHour(); x1 < endTime.getHour(); x1++){
                     if (x1 == 24){
                         timeTable[dayNum][0] = true;
