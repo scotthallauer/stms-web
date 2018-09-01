@@ -1,5 +1,10 @@
 package com.stms.web;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.sql.*;
 
@@ -235,6 +240,195 @@ public class CourseSession {
 
     public Double getEarnedMark() {
         return this.earnedMark;
+    }
+
+    /**
+     * Get all of the occurrences for this session.
+     * @param max the maximum of occurrences to return (you can probably just always set this to 1000)
+     * @return an array of occurrences for this session
+     */
+    public Occurrence[] getOccurrences(int max){
+
+        LocalDateTime startDate = this.startDate.toLocalDateTime();
+        LocalDateTime endDate = this.endDate.toLocalDateTime();
+
+        ArrayList<Occurrence> occurrences = new ArrayList<Occurrence>();
+        Occurrence period;
+
+        if(this.recType == null || this.recType.length() == 0){
+
+            period = new Occurrence(startDate, endDate);
+            occurrences.add(period);
+
+        }else if(!this.recType.equals("none")){
+
+            String type = this.recType.split("_")[0];
+            Integer count;
+            try {
+                count = Integer.valueOf(this.recType.split("_")[1]);
+            }catch(Exception e){
+                count = null;
+            }
+            Integer day;
+            try {
+                day = Integer.valueOf(this.recType.split("_")[2]);
+            }catch(Exception e){
+                day = null;
+            }
+            Integer count2;
+            try {
+                count2 = Integer.valueOf(this.recType.split("_")[3]);
+            }catch(Exception e){
+                count2 = null;
+            }
+            Integer[] days;
+            try {
+                String[] strDays = this.recType.split("_")[4].replace("#", "").split(",");
+                days = new Integer[strDays.length];
+                for(int i = 0 ; i < strDays.length ; i++){
+                    days[i] = Integer.valueOf(strDays[i]);
+                }
+            }catch(Exception e){
+                days = null;
+            }
+            String extra;
+            try {
+                extra = this.recType.split("#")[1];
+            }catch (Exception e){
+                extra = "";
+            }
+
+            if(type.equals("day")){
+
+                // add first occurrence
+                period = new Occurrence(startDate, startDate.plusSeconds(this.length));
+                occurrences.add(period);
+
+                // add all other occurrences
+                boolean flag = false;
+                for(int i = 1 ; i < max && !flag ; i++){
+                    LocalDateTime start = period.getStartDate().plusDays(count);
+                    LocalDateTime end = start.plusSeconds(this.length);
+                    if(end.isBefore(endDate) || end.isEqual(endDate)) {
+                        period = new Occurrence(start, end);
+                        occurrences.add(period);
+                    }else{
+                        flag = true;
+                    }
+                }
+
+            }else if(type.equals("week")){
+
+                // add first occurrence
+                period = new Occurrence(startDate, startDate.plusSeconds(this.length));
+                occurrences.add(period);
+
+                // add all other occurrences
+                boolean flag = false;
+                for(int i = 1 ; i < max && !flag ; i++){
+                    for(int j = 1 ; j < days.length && i < max && !flag ; j++){
+                        LocalDateTime start = period.getStartDate().plusDays(days[j]-days[j-1]);
+                        LocalDateTime end = start.plusSeconds(this.length);
+                        if(end.isBefore(endDate) || end.isEqual(endDate)) {
+                            period = new Occurrence(start, end);
+                            occurrences.add(period);
+                            i++;
+                        }else{
+                            flag = true;
+                        }
+                    }
+                    LocalDateTime start = period.getStartDate().minusDays(days[days.length-1]-days[0]).plusWeeks(count);
+                    LocalDateTime end = start.plusSeconds(this.length);
+                    if(end.isBefore(endDate) || end.isEqual(endDate)) {
+                        period = new Occurrence(start, end);
+                        occurrences.add(period);
+                    }else{
+                        flag = true;
+                    }
+                }
+
+
+            }else if(type.equals("month")){
+
+                // monthly on same day number
+                if(day == null || count2 == null) {
+
+                    // add first occurrence
+                    period = new Occurrence(startDate, startDate.plusSeconds(this.length));
+                    occurrences.add(period);
+
+                    // add all other occurrences
+                    boolean flag = false;
+                    for (int i = 1; i < max && !flag; i++) {
+                        LocalDateTime start = period.getStartDate().plusMonths(count);
+                        LocalDateTime end = start.plusSeconds(this.length);
+                        if (end.isBefore(endDate) || end.isEqual(endDate)) {
+                            period = new Occurrence(start, end);
+                            occurrences.add(period);
+                        } else {
+                            flag = true;
+                        }
+                    }
+
+                }
+
+                // monthly on same week day
+                else{
+
+                    // get the date of the first occurrence
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(Calendar.YEAR, startDate.getYear());
+                    calendar.set(Calendar.MONTH, startDate.getMonthValue()-1);
+                    calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, count2);
+                    calendar.set(Calendar.DAY_OF_WEEK, day+1);
+                    calendar.set(Calendar.HOUR_OF_DAY, startDate.getHour());
+                    calendar.set(Calendar.MINUTE, startDate.getMinute());
+                    calendar.set(Calendar.SECOND, startDate.getSecond());
+                    calendar.set(Calendar.MILLISECOND, 0);
+
+                    // add first occurrence
+                    LocalDateTime start = Instant.ofEpochMilli(calendar.getTime().getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+                    LocalDateTime end = start.plusSeconds(this.length);
+                    period = new Occurrence(start, end);
+                    occurrences.add(period);
+
+                    // add all other occurrences
+                    boolean flag = false;
+                    for (int i = 1; i < max && !flag; i++) {
+                        LocalDateTime approxDate = period.getStartDate().plusMonths(count);
+                        calendar = Calendar.getInstance();
+                        calendar.set(Calendar.YEAR, approxDate.getYear());
+                        calendar.set(Calendar.MONTH, approxDate.getMonthValue()-1);
+                        calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, count2);
+                        calendar.set(Calendar.DAY_OF_WEEK, day+1);
+                        calendar.set(Calendar.HOUR_OF_DAY, approxDate.getHour());
+                        calendar.set(Calendar.MINUTE, approxDate.getMinute());
+                        calendar.set(Calendar.SECOND, approxDate.getSecond());
+                        calendar.set(Calendar.MILLISECOND, 0);
+                        start = Instant.ofEpochMilli(calendar.getTime().getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+                        end = start.plusSeconds(this.length);
+                        if (end.isBefore(endDate) || end.isEqual(endDate)) {
+                            period = new Occurrence(start, end);
+                            occurrences.add(period);
+                        } else {
+                            flag = true;
+                        }
+                    }
+
+                }
+
+
+
+            }else if(type.equals("year")){
+
+                // our app doesn't support annually recurring events, so this functionality is unnecessary
+
+            }
+
+        }
+
+        return occurrences.toArray(new Occurrence[0]);
+
     }
 
     /**

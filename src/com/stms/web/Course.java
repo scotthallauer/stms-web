@@ -1,6 +1,7 @@
 package com.stms.web;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * Course class for Student Time Management System
@@ -86,22 +87,16 @@ public class Course {
         params[0] = this.courseID;
         types[0] = Types.INTEGER;
         ResultSet rs = Database.query(sql, params, types);
+        ArrayList<CourseSession> arr = new ArrayList<CourseSession>();
         try {
-            // set length of array
-            if(rs.last()){
-                this.sessions = new CourseSession[rs.getRow()];
-            }
-            int count = 0;
-            if(rs.first()){
-                do{
-                    this.sessions[count] = new CourseSession(rs.getInt("sessionID"));
-                    count++;
-                }while(rs.next());
+            while(rs.next()){
+                arr.add(new CourseSession(rs.getInt("sessionID")));
             }
         } catch (Exception e){
             System.out.println("Failed to load all course sessions for Course (courseID: " + this.courseID + ").");
             e.printStackTrace();
         }
+        this.sessions = arr.toArray(new CourseSession[0]);
     }
 
     public CourseSession[] getSessions () {

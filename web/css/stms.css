@@ -227,6 +227,9 @@ div.dhxcombolist_material{
 input.dhx_repeat_date{
     width: 100px;
 }
+div.dhx_repeat_left label:last-child{
+    display: none;
+}
 
 /* Custom lightbox section for users to enter information about a course's grading */
 div#stms_lightbox_grading input[type=checkbox]{

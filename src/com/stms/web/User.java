@@ -4,6 +4,8 @@ import javax.rmi.CORBA.Util;
 import javax.swing.*;
 import java.sql.*;
 import static java.sql.Types.*;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.security.MessageDigest;
 import java.util.Random;
@@ -94,22 +96,16 @@ public class User {
         params[0] = this.userID;
         types[0] = Types.INTEGER;
         ResultSet rs = Database.query(sql, params, types);
+        ArrayList<Semester> arr = new ArrayList<Semester>();
         try {
-            // set length of array
-            if(rs.last()){
-                this.semesters = new Semester[rs.getRow()];
-            }
-            int count = 0;
-            if(rs.first()){
-                do{
-                    this.semesters[count] = new Semester(rs.getInt("semesterID"));
-                    count++;
-                }while(rs.next());
+            while(rs.next()){
+                arr.add(new Semester(rs.getInt("semesterID")));
             }
         } catch (Exception e){
             System.out.println("Failed to load all semesters for User (userID: " + this.userID + ").");
             e.printStackTrace();
         }
+        this.semesters = arr.toArray(new Semester[0]);
     }
 
     public Semester[] getSemesters(){

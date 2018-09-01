@@ -1,5 +1,6 @@
 package com.stms.web;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.sql.*;
 
@@ -81,22 +82,16 @@ public class Semester {
         params[1] = this.semesterID;
         types[1] = Types.INTEGER;
         ResultSet rs = Database.query(sql, params, types);
+        ArrayList<Course> arr = new ArrayList<Course>();
         try {
-            // set length of array
-            if(rs.last()){
-                this.courses = new Course[rs.getRow()];
-            }
-            int count = 0;
-            if(rs.first()){
-                do{
-                    this.courses[count] = new Course(rs.getInt("courseID"));
-                    count++;
-                }while(rs.next());
+            while(rs.next()){
+                arr.add(new Course(rs.getInt("courseID")));
             }
         } catch (Exception e){
             System.out.println("Failed to load all courses for Semester (semesterID: " + this.semesterID + ").");
             e.printStackTrace();
         }
+        this.courses = arr.toArray(new Course[0]);
     }
 
     public Course[] getCourses () {
