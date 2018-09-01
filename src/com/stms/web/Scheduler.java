@@ -1,13 +1,10 @@
 package com.stms.web;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Calendar;
 
 
 public class Scheduler {
@@ -66,7 +63,7 @@ public class Scheduler {
 
         //Major variables have all be intialized
 
-        String sql = "SELECT startDate, endDate, recType, length\n" +
+        String sql = "SELECT sessionID \n" +
                 "    FROM courseSession\n" +
                 "    INNER JOIN\n" +
                 "    (\n" +
@@ -87,31 +84,26 @@ public class Scheduler {
         ResultSet rs = Database.query(sql, params, types);
         //Data is now loaded into the resultSet
         try{
-            while (rs.next()) {
-                LocalDateTime timeSlot = rs.getTimestamp("startDate").toLocalDateTime();
-                LocalDateTime endDate = rs.getTimestamp("endDate").toLocalDateTime();
-                int length = rs.getInt("length");
-                String recType = rs.getString("recType");
-                if (recType == null) {
-                    int DayCount = Utilities.calcDayNumInYear(timeSlot.toLocalDate()) - Utilities.calcDayNumInYear(Utilities.getDateToday());
-                    timeTable[DayCount][timeSlot.getHour()] = false;
-                }  else if (recType.contains("week")) {
-                    scheduleWeekEvent(timeSlot, endDate,recType, length);
-                } else if (recType.contains("month")){
-                    int dayNum = Utilities.calcDayNumInYear(timeSlot.toLocalDate());
-                    if ((dayNum > Utilities.calcDayNumInYear(Utilities.getDateToday()) && dayNum < Utilities.calcDayNumInYear(dueDate))){
-                        dayNum = Utilities.calcDayNumInYear(dueDate) - dayNum;
-                        for(int x = timeSlot.getHour(); x < endDate.getHour(); x++){
-                            timeTable[dayNum][x] = false;
+            while(rs.next()){
+                int sessionID = rs.getInt("sessionID");
+                try{
+                    CourseSession courseSession = new CourseSession(sessionID);
+                    Occurrence[] occurrences = courseSession.getOccurrences(DaysTilDue);
+                    for(int x = 0; x < occurrences.length; x++){
+                        int start = occurrences[x].getStartDate().getHour();
+                        int end = occurrences[x].getEndDate().getHour();
+                        int dayCount = Utilities.calcDayNumInYear(occurrences[x].getStartDate().toLocalDate());
+                        dayCount -= Utilities.calcDayNumInYear(Utilities.getDateToday());
+                        for(int m = start; m < end; m++){
+                            timeTable[dayCount][m] = false;
                         }
                     }
-                } else if (recType.contains("day")){
-                    scheduleDayEvent(timeSlot, endDate,recType);
-                } else if (recType.contains("none")){
-
-                } else{
-
+                } catch (Exception e){
+                    System.out.println("Failed to create CourseSession object");
+                    e.printStackTrace();
                 }
+
+
             }
         } catch (SQLException e){
             e.printStackTrace();
@@ -223,78 +215,6 @@ public class Scheduler {
         } else {
             System.out.println("Study session has already been completed");
             //Find a better fix
-        }
-    }
-
-    /**
-     * The point of this method is to set all used time on the schedule to false
-     *
-     * @param startTime beginning time and date of event
-     * @param endTime final date of event
-     * @param recType DHTMLX recurring String
-     * @param length length of event in seconds
-     */
-    private void scheduleWeekEvent(LocalDateTime startTime, LocalDateTime endTime, String recType, int length){
-        int count = 0;
-        while (length > 0){
-            length -= 3600;
-            count += 1;
-        }
-        int startHour = startTime.getHour();
-        System.out.println(startHour + " where the start time is " + startTime.toString() + " and the end time is " + endTime.toString());
-        Calendar cal = Calendar.getInstance();
-        String s = cal.getTime().toString();
-        s = s.substring(0, 3);
-        recType = recType.substring(recType.indexOf(',')-1);
-
-        int DayNumWeek = Utilities.dayToInt(s);
-        for(int x = 0; x < DaysTilDue; x++){
-            String s1  = "" + DayNumWeek;
-            if(recType.indexOf(s1) != -1){
-                if((Utilities.calcDayNumInYear(startTime.toLocalDate()) < Utilities.calcDayNumInYear(Utilities.getDateToday()) + x)
-                        && (Utilities.calcDayNumInYear(endTime.toLocalDate()) > Utilities.calcDayNumInYear(Utilities.getDateToday()) + x)){
-                    for (int y = startHour; y < count + startHour; y++){
-                        timeTable[x][y] = false;
-                        System.out.println("I have set day " + x + " to false and also hour " + y);
-                    }
-                }
-            }
-            DayNumWeek += 1;
-            if (DayNumWeek == 8){
-                DayNumWeek = 1;
-            }
-        }
-    }
-
-    private void scheduleFreeTime(){
-        String sql;
-        Object[] params = new Object[1];
-        int[] types = new int[1];
-        params[0] = UserID;
-        types[0] = Types.VARCHAR;
-        sql = "SELECT startDate, endDate FROM coursesession WHERE recType = ?;";
-        params[0] = "none";
-        ResultSet rs = Database.query(sql, params, types);
-        LocalDateTime startTime;
-        LocalDateTime endTime;
-        int dayNum;
-
-        try{
-            while (rs.next()){
-                startTime = rs.getTimestamp("startDate").toLocalDateTime();
-                endTime = rs.getTimestamp("endDate").toLocalDateTime();
-                dayNum = Utilities.calcDayNumInYear(startTime.toLocalDate()) - Utilities.calcDayNumInYear(Utilities.getDateToday());
-                for(int x1 = startTime.getHour(); x1 < endTime.getHour(); x1++){
-                    if (x1 == 24){
-                        timeTable[dayNum][0] = true;
-                        break;
-                    }
-                    timeTable[dayNum][x1] = true;
-                }
-            }
-        } catch (SQLException e){
-            System.out.println("Error in scheduleFreeTime try catch");
-            e.printStackTrace();
         }
     }
 
