@@ -107,7 +107,7 @@ public class Utilities {
      * @param dayPrefix Prefix of the day from the calendar object e.g. mon
      * @return Corresponding char in numeric form for the prefix
      */
-    public int dayToInt(String dayPrefix){
+    public static int dayToInt(String dayPrefix){
         if (dayPrefix.equals("Mon")){
             return 1;
         } else if (dayPrefix.equals("Tue")){
