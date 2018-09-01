@@ -99,6 +99,34 @@ public class Utilities {
             return false;
         }
     }
+	
+	/**
+     * Translate the day you get from a calendar instance into a char character corresponding to the day where monday =1
+     * and sunday = 7. 0 is invalid input
+     *
+     * @param dayPrefix Prefix of the day from the calendar object e.g. mon
+     * @return Corresponding char in numeric form for the prefix
+     */
+    public int dayToInt(String dayPrefix){
+        if (dayPrefix.equals("Mon")){
+            return 1;
+        } else if (dayPrefix.equals("Tue")){
+            return 2;
+        } else if (dayPrefix.equals("Wed")){
+            return 3;
+        } else if (dayPrefix.equals("Thu")){
+            return 4;
+        } else if (dayPrefix.equals("Fri")){
+            return 5;
+        } else if (dayPrefix.equals("Sat")){
+            return 6;
+        } else if (dayPrefix.equals("Sun")){
+            return 7;
+        } else{
+            System.out.println("Invalid input " + dayPrefix + ".");
+            return '0';
+        }
+    }
 
     /**
      * Takes the date in the form of LocalDate and returns the number of the day in the year
