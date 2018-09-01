@@ -88,14 +88,19 @@ public class Scheduler {
                 int sessionID = rs.getInt("sessionID");
                 try{
                     CourseSession courseSession = new CourseSession(sessionID);
-                    Occurrence[] occurrences = courseSession.getOccurrences(DaysTilDue);
+                    Occurrence[] occurrences = filterOccurences(courseSession,dueDate);
+                    System.out.println(occurrences.length + " # occurences");
                     for(int x = 0; x < occurrences.length; x++){
-                        int start = occurrences[x].getStartDate().getHour();
-                        int end = occurrences[x].getEndDate().getHour();
-                        int dayCount = Utilities.calcDayNumInYear(occurrences[x].getStartDate().toLocalDate());
-                        dayCount -= Utilities.calcDayNumInYear(Utilities.getDateToday());
-                        for(int m = start; m < end; m++){
-                            timeTable[dayCount][m] = false;
+                        if (occurrences[x] != null){
+                            int start = occurrences[x].getStartDate().getHour();
+                            int end = occurrences[x].getEndDate().getHour();
+                            int dayCount = Utilities.calcDayNumInYear(occurrences[x].getStartDate().toLocalDate());
+                            dayCount = dayCount - Utilities.calcDayNumInYear(Utilities.getDateToday());
+                            System.out.println(start + " is the start and the end is " + end + " and the DayNum is " + dayCount);
+                            for(int m = start; m < end; m++){
+                                System.out.println(dayCount + " is the day and the hour is " + m);
+                                timeTable[dayCount][m] = false;
+                            }
                         }
                     }
                 } catch (Exception e){
@@ -191,12 +196,20 @@ public class Scheduler {
         return numOfHours - fullCount;
     }
 
-    /**
-     *
-     */
-    private void scheduleDayEvent(LocalDateTime timeSlot, LocalDateTime endDate, String recType){
-        recType = recType.substring(3);
 
+    private Occurrence[] filterOccurences(CourseSession courseSession, LocalDate due){
+        Occurrence[] occurrences = courseSession.getOccurrences(1000);
+        Occurrence[] toRe = new Occurrence[DaysTilDue];
+        int count = 0;
+        for (int x = 0; x < occurrences.length; x++){
+            if((Utilities.calcDayNumInYear(occurrences[x].getStartDate().toLocalDate()) > Utilities.calcDayNumInYear(Utilities.getDateToday()))
+                && (Utilities.calcDayNumInYear(occurrences[x].getStartDate().toLocalDate()) < Utilities.calcDayNumInYear(due))){
+                toRe[count] = occurrences[x];
+                count++;
+            }
+        }
+
+        return toRe;
     }
 
     /**
@@ -235,3 +248,4 @@ public class Scheduler {
         toWake = wake;
     }
 }
+
