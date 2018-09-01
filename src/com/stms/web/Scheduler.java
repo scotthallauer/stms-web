@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Calendar;
 
+
 public class Scheduler {
 
     private Utilities Util;
@@ -50,7 +51,7 @@ public class Scheduler {
     public int generateSessions(int numOfHours, LocalDate dueDate) {
         DaysTilDue = Util.calcDayNumInYear(dueDate) - Util.calcDayNumInYear(Util.getDateToday());
         if (Util.getDateToday().isAfter(dueDate)) {
-            System.out.println("Due date has passed you chop nugget");
+            System.out.println("Due date has passed.");
             return -1;
         }
         int avghoursperDay = Math.round(numOfHours / DaysTilDue) + 2;
@@ -98,8 +99,16 @@ public class Scheduler {
                 if (recType == null) {
                     int DayCount = Util.calcDayNumInYear(timeSlot.toLocalDate()) - Util.calcDayNumInYear(Util.getDateToday());
                     timeTable[DayCount][timeSlot.getHour()] = false;
-                }  else {
-                    scheduleEvent(timeSlot, endDate,recType, length);
+                }  else if (recType.contains("week")) {
+                    scheduleWeekEvent(timeSlot, endDate,recType, length);
+                } else if (recType.contains("month")){
+
+                } else if (recType.contains("day")){
+                    scheduleDayEvent(timeSlot, endDate,recType);
+                } else if (recType.contains("none")){
+
+                } else{
+
                 }
             }
         } catch (SQLException e){
@@ -107,19 +116,13 @@ public class Scheduler {
         } //This works for all course sessions generated from DHTLMX
 
         sql = "SELECT semesterID FROM semester WHERE userID = ?;";
-
+        ResultSet rs2;
         try {
             rs = DB.query(sql, params, types);
             if (rs.next()){
                 SemesterID = rs.getInt("semesterID");
             }
             //FIX THE SEMESTERID GENERATION HERE COULD BE INVALID SEMESTER
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-
-        ResultSet rs2;
-        try{
             if(rs != null) {
                 while (rs.next()) {
                     //SemesterID = rs.getInt("semesterID");
@@ -131,13 +134,16 @@ public class Scheduler {
                         LocalDateTime start = rs2.getTimestamp("startTime").toLocalDateTime();
                         LocalDateTime end = rs2.getTimestamp("endTime").toLocalDateTime();
                         ScheduleStudySessions(start, end);
-                        }
                     }
                 }
+            }
         } catch (SQLException e){
-            System.out.println("Fail on studySessions try catch");
             e.printStackTrace();
         }
+
+        //scheduleFreeTime();
+
+        //END OF BUILD PHASE
 
         for (int x = 0; x < DaysTilDue; x++){
             System.out.print("Day number " + x + " : ");
@@ -146,6 +152,8 @@ public class Scheduler {
             }
             System.out.print('\n');
         }
+
+        //Start of burn phase
 
         int hourCount = 0;
         int fullCount = 0;
@@ -166,7 +174,7 @@ public class Scheduler {
                     StudySession toSchedule = new StudySession();
                     toSchedule.setStartTime(timestamp);
                     timestamp = Timestamp.valueOf(endTime);
-                    System.out.println(timestamp.toString() + " Testing");
+
                     toSchedule.setEndTime(timestamp);
                     toSchedule.setSemesterID(SemesterID);
                     toSchedule.setConfirmed(true);
@@ -187,6 +195,14 @@ public class Scheduler {
         System.out.println(fullCount);
 
         return numOfHours - fullCount;
+    }
+
+    /**
+     *
+     */
+    private void scheduleDayEvent(LocalDateTime timeSlot, LocalDateTime endDate, String recType){
+        recType = recType.substring(3);
+
     }
 
     /**
@@ -216,7 +232,7 @@ public class Scheduler {
      * @param recType DHTMLX recurring String
      * @param length length of event in seconds
      */
-    private void scheduleEvent(LocalDateTime startTime, LocalDateTime endTime, String recType, int length){
+    private void scheduleWeekEvent(LocalDateTime startTime, LocalDateTime endTime, String recType, int length){
         int count = 0;
         while (length > 0){
             length -= 3600;
@@ -229,7 +245,7 @@ public class Scheduler {
         s = s.substring(0, 3);
         recType = recType.substring(recType.indexOf(',')-1);
 
-        int DayNumWeek = dayToInt(s);
+        int DayNumWeek = Util.dayToInt(s);
         for(int x = 0; x < DaysTilDue; x++){
             String s1  = "" + DayNumWeek;
             if(recType.indexOf(s1) != -1){
@@ -248,39 +264,38 @@ public class Scheduler {
         }
     }
 
+    private void scheduleFreeTime(){
+        String sql;
+        Object[] params = new Object[1];
+        int[] types = new int[1];
+        params[0] = UserID;
+        types[0] = Types.VARCHAR;
+        sql = "SELECT startDate, endDate FROM coursesession WHERE recType = ?;";
+        params[0] = "none";
+        ResultSet rs = DB.query(sql, params, types);
+        LocalDateTime startTime;
+        LocalDateTime endTime;
+        int dayNum;
 
-    /**
-     * This method takes the end time of one session nd the start time of the next to calculate the free time between
-     *
-     * @param endTime End time of current session
-     * @param startTime start time of next session
-     * @return number of hours that are free. -1 if nothing is free
-     */
-    public int calcFreeTime(LocalTime endTime, LocalTime startTime){
-        if (endTime.isAfter(startTime)){
-            System.out.println("Error. Start time is before endTime");
-            return -1;
+        try{
+            while (rs.next()){
+                startTime = rs.getTimestamp("startDate").toLocalDateTime();
+                endTime = rs.getTimestamp("endDate").toLocalDateTime();
+                dayNum = Util.calcDayNumInYear(startTime.toLocalDate()) - Util.calcDayNumInYear(Util.getDateToday());
+                for(int x1 = startTime.getHour(); x1 < endTime.getHour(); x1++){
+                    if (x1 == 24){
+                        timeTable[dayNum][0] = true;
+                        break;
+                    }
+                    timeTable[dayNum][x1] = true;
+                }
+            }
+        } catch (SQLException e){
+            System.out.println("Error in scheduleFreeTime try catch");
+            e.printStackTrace();
         }
-        int hours1 = endTime.getHour();
-        int minute1 = endTime.getMinute();
-        int hours2 = startTime.getHour();
-        int minute2 = startTime.getMinute();
-        int time = hours2 - hours1;
-
-        if((time <= 1) && (minute1 < minute2 )){
-            return -1;
-        }
-
-        if (minute1 > minute2){
-
-        } else {
-
-        }
-
-
-        System.out.println("The difference between  " + endTime.toString() + " and  " + startTime.toString() + " is " + time);
-        return time;
     }
+
 
     public void setUserID(int UserID){
         this.UserID = UserID;
