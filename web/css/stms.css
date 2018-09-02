@@ -220,7 +220,7 @@ input.dhxcombo_input[readonly=true]{
     cursor: default;
 }
 
-div.dhxcombolist_material{
+div.dhxcombolist_material:not(.dhxform_obj_material){
     width: 332px !important;
 }
 
@@ -485,7 +485,7 @@ table#stms_semesters_list{
     table#stms_semesters_list tr.stms_semester_row:first-child td{
         margin-top: 0px;
     }
-    table#stms_semesters_list tr.stms_semester_row td:hover{
+    table#stms_semesters_list tr:not(.selected) td:hover{
         background-color: #EEE;
     }
         table#stms_semesters_list span.stms_semester_name{
@@ -503,9 +503,6 @@ table#stms_semesters_list{
         padding-top: 10px;
         padding-bottom: 10px;
         padding-right: 15px;
-    }
-    table#stms_semesters_list tr.stms_course_row td:hover{
-        background-color: #EEE;
     }
         table#stms_semesters_list tr.stms_course_row span{
             display: block;
@@ -532,3 +529,35 @@ table#stms_semesters_list{
         table#stms_semesters_list tr.stms_course_row span.colour_purple{
             background-image: url(/media/colours/purple.png);
         }
+div#stms_semesters_none{
+    display: none;
+    width: 100%;
+    text-align: center;
+    font-family: Roboto, Arial, Helvetica;
+    font-size: 12px;
+    color: #AAA;
+    margin: 50px 0;
+}
+div#stms_semesters_right{
+    padding: 15px;
+}
+div#stms_semesters_right h2{
+    font-family: Roboto, Arial, Helvetica;
+    font-size: 22px;
+    margin: 0;
+}
+div.stms_delete_course_button > div, div.stms_delete_semester_button > div{
+    color: red !important;
+    background-color: #f9eded !important;
+    border-color: #e5d3d3 !important;
+    font-weight: 500;
+}
+div.stms_delete_course_button > div.dhxform_btn_over, div.stms_delete_semester_button > div.dhxform_btn_over{
+    background-color: #f7e8e8 !important;
+}
+div.stms_delete_course_button > div.dhxform_btn_pressed, div.stms_delete_semester_button > div.dhxform_btn_pressed{
+    background-color: #f4e3e3 !important;
+}
+div.stms_delete_course_button > div:focus, div.stms_delete_semester_button > div:focus{
+    border-color: red !important;
+}

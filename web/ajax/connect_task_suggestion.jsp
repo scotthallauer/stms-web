@@ -34,19 +34,13 @@
                         }
                         jo.put("type", sessions[k].getType());
                         jo.put("courseName", courses[j].getName());
-                        if (courses[j].getCode() == null) {
-                            jo.put("courseCode", "null");
-                        } else {
-                            jo.put("courseCode", courses[j].getCode());
-                        }
+                        jo.put("courseCode", courses[j].getCode());
                         jo.put("type", Utilities.capitalise(sessions[k].getType()));
                         LocalDate dueDate = occurrences[n].getStartDate().toLocalDate();
                         Integer userPriority = sessions[k].getPriority();
                         Double weighting = sessions[k].getWeighting();
                         jo.put("priority", Priority.calculate(dueDate, userPriority, weighting));
-                        if (weighting == null) {
-                            jo.put("weighting", "null");
-                        } else {
+                        if (weighting != null) {
                             DecimalFormat decimal = new DecimalFormat("0.##");
                             jo.put("weighting", decimal.format(weighting));
                         }

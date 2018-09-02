@@ -20,10 +20,10 @@ INSERT INTO semester (userID,semesterName,startDate,endDate)
 VALUES (1, '2nd Semester', '2018-07-24', '2018-11-30');
 
 INSERT INTO semester (userID,semesterName,startDate,endDate) 
-VALUES (2,'Jan-June 2018', '2018-01-19', '2018-06-24');
+VALUES (2,'Jan-June', '2018-01-19', '2018-06-24');
 
 INSERT INTO semester (userID,semesterName,startDate,endDate) 
-VALUES (2, 'July-Dec 2018', '2018-07-24', '2018-11-30');
+VALUES (2, 'July-Dec', '2018-07-24', '2018-11-30');
 
 INSERT INTO semester (userID,semesterName,startDate,endDate) 
 VALUES (3, 'FIRST SEM', '2018-01-19', '2018-06-24');
@@ -47,11 +47,11 @@ VALUES (3, NULL, 'Computer Science', 'CSC3002F', 'blue');
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
 VALUES (4, NULL, 'Computer Science', 'CSC3003S', 'blue');
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
-VALUES (5, NULL, 'Computer Science :\'(', 'CSC3003S', 'blue');
+VALUES (5, NULL, 'Genetics', 'MCB3026F', 'green');
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
-VALUES (5, NULL, 'Genetics', 'MCB3023S', 'green');
+VALUES (6, NULL, 'Computer Science :\'(', 'CSC3003S', 'blue');
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
-VALUES (6, NULL, 'Genetics', 'MCB3026F', 'green');
+VALUES (6, NULL, 'Genetics :D', 'MCB3023S', 'green');
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
 VALUES (2, NULL, 'Genetics', 'MCB3012Z', 'red');
 
@@ -72,6 +72,6 @@ VALUES (0, 5, 'lecture', '2018-07-23 16:00:00', '2018-10-25 17:00:00', 2700, 'we
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
 VALUES (1, 3, 'lecture', '2018-08-31 09:00:00', '2018-10-31 09:45:00', 1535698800, 'none');
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, priority, weighting)
-VALUES (0, 3, 'test', '2018-08-31 09:00:00', '2018-10-31 09:45:00', 3, 7.5);
+VALUES (0, 3, 'test', '2018-08-31 09:00:00', '2018-08-31 09:45:00', 3, 7.5);
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, priority, weighting)
-VALUES (0, 3, 'demonstration', '2018-09-07 12:00:00', '2018-10-07 12:45:00', 3, 15);
+VALUES (0, 3, 'demonstration', '2018-09-07 12:00:00', '2018-09-07 12:45:00', 3, 15);

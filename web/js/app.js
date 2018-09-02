@@ -94,6 +94,8 @@ dhtmlxEvent(window, 'load', function(){
         if(id == "p2_tasks"){
             taskListResize();
             loadSuggestions(); // suggestion list table
+        }else if(id == "p3_semesters"){
+            loadSemesters();
         }
     });
 
@@ -459,8 +461,78 @@ dhtmlxEvent(window, 'load', function(){
     stms_semester_layout.cells("a").setMinWidth(350);
     stms_semester_layout.cells("a").attachObject("stms_semesters_left");
 
+    // preload semester list table (will reload whenever user switches to this tab - handled in onSelect event for sidebar)
+    loadSemesters();
+
+    // Pop-up for when user clicks create button on the semesters page (choose new semester or new course)
+    var stms_semester_popup = new dhtmlXPopup();
+    stms_semester_popup.attachList("option", [
+        {id: 1, option: "New Semester"},
+        {id: 2, option: "New Course"}
+    ]);
+    stms_semester_popup.attachEvent("onClick", function(id){
+        $("table#stms_semesters_list tr").removeClass("selected");
+        if(id == 1){
+            prepareSemesterForm(null);
+        }else{
+            prepareCourseForm(null);
+        }
+    });
+    $("#stms_semester_create_button").click(function(){
+        if(stms_semester_popup.isVisible()){
+            stms_semester_popup.hide();
+        }else {
+            var stms_semester_area = document.getElementById("stms_semester_create_button");
+            var x = window.dhx.absLeft(stms_semester_area);
+            var y = window.dhx.absTop(stms_semester_area)-6;
+            var width = stms_semester_area.offsetWidth;
+            var height = stms_semester_area.offsetHeight;
+            stms_semester_popup.show(x, y, width, height);
+        }
+    });
+
     stms_semester_layout.cells("b").setMinWidth(550);
     stms_semester_layout.cells("b").attachObject("stms_semesters_right");
+
+    stms_semester_form = new dhtmlXForm("stms_semester_dhx_form", [
+        {type: "settings", position: "label-left", labelWidth: "100", inputWidth: "300"},
+        {type: "hidden", name: "semester_id"},
+        {type: "block", width: 403, offsetTop: 15, blockOffset:0, list: [
+            {type: "input", name: "semester_name", label: "Name:", required: true},
+            {type: "calendar", name: "semester_start", label: "Start Date:", required: true},
+            {type: "calendar", name: "semester_end", label: "End Date:", required: true}
+        ]},
+        {type: "block", width: 403, offsetTop: 15, blockOffset: 0, list: [
+            {type: "button", name: "submit", value: "Save", className: "stms_save_semester_button", width: 197},
+            {type: "newcolumn"},
+            {type: "button", name: "cancel", value: "Cancel", className: "stms_cancel_semester_button", width: 197},
+            {type: "button", name: "delete", value: "Delete", className: "stms_delete_semester_button", width: 197}
+        ]}
+    ]);
+
+    stms_course_form = new dhtmlXForm("stms_course_dhx_form", [
+        {type: "settings", position: "label-left", labelWidth: "100", inputWidth: "300"},
+        {type: "hidden", name: "course_id"},
+        {type: "block", width: 403, offsetTop: 15, blockOffset:0, list: [
+            {type: "input", name: "course_name", label: "Name:", required: true},
+            {type: "input", name: "course_code", label: "Code:", required: false},
+            {type: "combo", name: "course_semester_1", label: "Semester:", readonly: true, required: true},
+            {type: "combo", name: "course_colour", label: "Colour:", comboType: "image", readonly: true, required: true, options: [
+                {value: "red", text: "Red", img_src: "../media/colours/red.png"},
+                {value: "orange", text: "Orange", img_src: "../media/colours/orange.png"},
+                {value: "yellow", text: "Yellow", img_src: "../media/colours/yellow.png"},
+                {value: "green", text: "Green", img_src: "../media/colours/green.png"},
+                {value: "blue", text: "Blue", img_src: "../media/colours/blue.png"},
+                {value: "purple", text: "Purple", img_src: "../media/colours/purple.png"}
+            ]}
+        ]},
+        {type: "block", width: 403, offsetTop: 15, blockOffset: 0, list: [
+            {type: "button", name: "submit", value: "Save", className: "stms_save_course_button", width: 197},
+            {type: "newcolumn"},
+            {type: "button", name: "cancel", value: "Cancel", className: "stms_cancel_course_button", width: 197},
+            {type: "button", name: "delete", value: "Delete", className: "stms_delete_course_button", width: 197}
+        ]}
+    ]);
 
     // hide loading screen after app has finished loading
     $("div#stms_loader").hide();
@@ -537,7 +609,7 @@ function loadSuggestions(){
         suggestions.sort(compareSuggestion); // sort based on priority (high to low)
         if(suggestions.length < 1){
             $("div#stms_task_suggestion_wrapper").hide(); // if there are no suggestion, then hide the section
-        }else{
+        }else {
             $("div#stms_task_suggestion_wrapper").show();
         }
         for(var i = 0 ; i < suggestions.length ; i++){
@@ -546,19 +618,19 @@ function loadSuggestions(){
             var html = "";
             if(priority >= 0.65){ // high priority
                 html = "<tr><td ";
-                if(suggestions[i].weighting != "null"){
+                if(suggestions[i].weighting != null){
                     html += "rowspan='2' ";
                 }
                 html += "class='stms_task_suggestion_priority'><div class='stms_priority_icon stms_priority_icon_high'>!!!</div></td><td ";
-                if(suggestions[i].weighting != "null"){
+                if(suggestions[i].weighting != null){
                     html += "style='border-bottom: 0' ";
                 }
                 html += "class='stms_task_suggestion_text'><span class='stms_priority_text stms_priority_text_high'>" + suggestions[i].action + " " + suggestions[i].courseName + " " + suggestions[i].type + "</span></td><td ";
-                if(suggestions[i].weighting != "null"){
+                if(suggestions[i].weighting != null){
                     html += "style='border-bottom: 0' ";
                 }
                 html += "class='stms_task_suggestion_date'>" + relativeDate + "</td></tr>";
-                if(suggestions[i].weighting != "null"){
+                if(suggestions[i].weighting != null){
                     html += "<tr><td style='color: red; font-size: 13px'>Weighting: " + suggestions[i].weighting + "%</td></tr>";
                 }
             }else if(priority >= 0.45){ // medium priority
@@ -580,4 +652,145 @@ function loadSuggestions(){
             taskListResize();
         }
     });
+}
+
+function compareSemester(a,b) {
+    var aD = a.end;
+    var bD = b.end;
+    if (moment(aD).isBefore(bD))
+        return 1;
+    if (moment(aD).isAfter(bD))
+        return -1;
+    return 0;
+}
+
+function compareCourse(a,b) {
+    var aD;
+    if(a.code == null){
+        aD = a.name;
+    }else{
+        aD = a.code + " - " + a.name;
+    }
+    var bD;
+    if(b.code == null){
+        bD = b.name;
+    }else{
+        bD = b.code + " - " + b.name;
+    }
+    if (aD > bD)
+        return 1;
+    if (aD < bD)
+        return -1;
+    return 0;
+}
+
+function loadSemesters(){
+    $.ajax({
+        url: "./ajax/connect_semesters_page.jsp"
+    }).done(function(data){
+        $("table#stms_semesters_list tbody").empty(); // clear existing items in semester list (need to refresh)
+        var semesters = JSON.parse(data);
+        semesters.sort(compareSemester); // sort based on priority (high to low)
+        if(semesters.length == 0){
+            $("table#stms_semesters_list").hide(); // if there are no semesters, then hide the table
+            $("div#stms_semesters_none").show();
+        }else{
+            $("table#stms_semesters_list").show();
+            $("div#stms_semesters_none").hide();
+        }
+        var semester_combo = stms_course_form.getCombo("course_semester_1");
+        semester_combo.clearAll();
+        var total_courses = 0;
+        for(var i = 0 ; i < semesters.length ; i++){
+            var semester_id = semesters[i].id;
+            var semester_name = semesters[i].name;
+            semester_combo.addOption(semester_id, semester_name + " (" + moment(semesters[i].end).format("YYYY") + ")");
+            var date_range = moment(semesters[i].start).format("D MMM YYYY") + " - " + moment(semesters[i].end).format("D MMM YYYY");
+            var html = "";
+            html += "<tr class='stms_semester_row' data-semester-id='" + semester_id + "' data-semester-name='" + semester_name + "' data-semester-start='" + moment(semesters[i].start).format("YYYY-MM-DD") + "' data-semester-end='" + moment(semesters[i].end).format("YYYY-MM-DD") + "'>" +
+                        "<td><span class='stms_semester_name'>" + semester_name + "</span><span class='stms_semester_date'>" + date_range + "</span></td>" +
+                    "</tr>";
+            var courses = semesters[i].courses;
+            courses.sort(compareCourse);
+            for(var j = 0 ; j < courses.length ; j++){
+                var course_id = courses[j].id;
+                var course_code = (courses[j].code == null ? "" : courses[j].code);
+                var course_desc;
+                if(courses[j].code == null){
+                    course_desc = courses[j].name;
+                }else{
+                    course_desc = courses[j].code + " - " + courses[j].name;
+                }
+                html += "<tr class='stms_course_row' data-course-id='" + course_id + "' data-course-semester-1='" + courses[j].semester_id_1 + "' data-course-name='" + courses[j].name + "' data-course-code='" + course_code + "' data-course-colour='" + courses[j].colour + "'>" +
+                            "<td><span class='colour_"+ courses[j].colour + "'>" + course_desc + "</span></td>" +
+                        "</tr>";
+                total_courses++;
+            }
+            $("table#stms_semesters_list tbody").append(html);
+        }
+        semester_combo.selectOption(0);
+        // add click event handlers to prepare the right-hand form when a row is clicked
+        $("table#stms_semesters_list tr.stms_semester_row").off("click");
+        $("table#stms_semesters_list tr.stms_semester_row").on("click", function(event){
+            var target = $(this);
+            $("table#stms_semesters_list tr").removeClass("selected");
+            target.addClass("selected");
+            prepareSemesterForm(target.attr("data-semester-id"));
+        });
+        $("table#stms_semesters_list tr.stms_course_row").off("click");
+        $("table#stms_semesters_list tr.stms_course_row").on("click", function(event){
+            var target = $(this);
+            $("table#stms_semesters_list tr").removeClass("selected");
+            target.addClass("selected");
+            prepareCourseForm(target.attr("data-course-id"));
+        });
+        if(semesters.length > 0 && total_courses > 0) {
+            $("table#stms_semesters_list tr.stms_course_row:first").click();
+        }else if(semesters.length > 0){
+            prepareCourseForm(null);
+        }else{
+            prepareSemesterForm(null);
+        }
+    });
+}
+
+function prepareSemesterForm(semester_id){
+    $("div#stms_course_form_wrapper").hide();
+    $("div#stms_semester_form_wrapper").show();
+    stms_semester_form.setItemValue("semester_id", semester_id);
+    if(semester_id == null){
+        $("div#stms_semester_form_wrapper h2").text("New Semester");
+        $("div#stms_semester_form_wrapper div.stms_cancel_semester_button").show();
+        $("div#stms_semester_form_wrapper div.stms_delete_semester_button").hide();
+        stms_semester_form.clear();
+    }else{
+        $("div#stms_semester_form_wrapper h2").text("Edit Semester");
+        $("div#stms_semester_form_wrapper div.stms_cancel_semester_button").hide();
+        $("div#stms_semester_form_wrapper div.stms_delete_semester_button").show();
+        var semester_row = $("table#stms_semesters_list tr.stms_semester_row[data-semester-id=" + semester_id + "]");
+        stms_semester_form.setItemValue("semester_name", semester_row.attr("data-semester-name"));
+        stms_semester_form.setItemValue("semester_start", semester_row.attr("data-semester-start"));
+        stms_semester_form.setItemValue("semester_end", semester_row.attr("data-semester-end"));
+    }
+}
+
+function prepareCourseForm(course_id){
+    $("div#stms_course_form_wrapper").show();
+    $("div#stms_semester_form_wrapper").hide();
+    stms_course_form.setItemValue("course_id", course_id);
+    if(course_id == null){
+        $("div#stms_course_form_wrapper h2").text("New Course");
+        $("div#stms_course_form_wrapper div.stms_cancel_course_button").show();
+        $("div#stms_course_form_wrapper div.stms_delete_course_button").hide();
+        stms_course_form.clear();
+    }else{
+        $("div#stms_course_form_wrapper h2").text("Edit Course");
+        $("div#stms_course_form_wrapper div.stms_cancel_course_button").hide();
+        $("div#stms_course_form_wrapper div.stms_delete_course_button").show();
+        var course_row = $("table#stms_semesters_list tr.stms_course_row[data-course-id=" + course_id + "]");
+        stms_course_form.setItemValue("course_semester_1", course_row.attr("data-course-semester-1"));
+        stms_course_form.setItemValue("course_name", course_row.attr("data-course-name"));
+        stms_course_form.setItemValue("course_code", course_row.attr("data-course-code"));
+        stms_course_form.setItemValue("course_colour", course_row.attr("data-course-colour"));
+    }
 }
