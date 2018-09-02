@@ -430,6 +430,32 @@ public class CourseSession {
         return occurrences.toArray(new Occurrence[0]);
 
     }
+	
+	/**
+     * Overloaded method of getOccurences which only return occurrences between 2 dates
+     *
+     * @param max   max number of occurences to return
+     * @param start start Date of your time window
+     * @param end end Date of your time window
+     * @return
+     */
+    public Occurrence[] getOccurrences(int max, LocalDate start, LocalDate end){
+        Occurrence[] occurrences = getOccurrences(max);
+        ArrayList<Occurrence> ALoccur = new ArrayList<Occurrence>();
+        for(int x = 0; x < occurrences.length; x++){
+            if((Utilities.calcDayNumInYear(start) < Utilities.calcDayNumInYear(occurrences[x].getStartDate().toLocalDate()))
+            && (Utilities.calcDayNumInYear(end) > Utilities.calcDayNumInYear(occurrences[x].getStartDate().toLocalDate()))){
+                ALoccur.add(occurrences[x]);
+            }
+
+        }
+        Occurrence[] toRe = new Occurrence[ALoccur.size()];
+        for (int x = 0; x < ALoccur.size();x++){
+            toRe[x] = ALoccur.get(x);
+        }
+        return toRe;
+
+    }
 
     /**
      * Save the course session's details to the database.
