@@ -129,16 +129,6 @@ public class Utilities {
     }
 
     /**
-     * Takes the date in the form of LocalDate and returns the number of the day in the year
-     *
-     * @param date LocalDate you want the DayNum for
-     * @return The number of the day in the year corresponding to input date
-     */
-    public static int calcDayNumInYear(LocalDate date){
-        return date.getDayOfYear();
-    }
-
-    /**
      * Gets and returns the current date in the form of LocalDate
      *
      * @return Date today

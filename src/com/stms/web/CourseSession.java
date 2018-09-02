@@ -444,8 +444,8 @@ public class CourseSession {
         ArrayList<Occurrence> ALoccur = new ArrayList<>();
         for(int x = 0; x < occurrences.length; x++){
 
-            if((Utilities.calcDayNumInYear(start) <= Utilities.calcDayNumInYear(occurrences[x].getStartDate().toLocalDate()))
-            && (Utilities.calcDayNumInYear(end) > Utilities.calcDayNumInYear(occurrences[x].getStartDate().toLocalDate()))){
+            if((start.getDayOfYear() <= occurrences[x].getStartDate().getDayOfYear())
+            && (end.getDayOfYear() > occurrences[x].getStartDate().getDayOfYear())){
                     ALoccur.add(occurrences[x]);
                 }
             }
@@ -455,7 +455,6 @@ public class CourseSession {
 
         }
         return toRe;
-
     }
 
     /**

@@ -1,5 +1,4 @@
 package com.stms.web;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -43,7 +42,7 @@ public class Scheduler {
      * @return Amount of hours created or negative if no session created
      */
     public int generateSessions(int numOfHours, LocalDate dueDate) {
-        DaysTilDue = Utilities.calcDayNumInYear(dueDate) - Utilities.calcDayNumInYear(Utilities.getDateToday());
+        DaysTilDue = dueDate.getDayOfYear() - Utilities.getDateToday().getDayOfYear();
         if (Utilities.getDateToday().isAfter(dueDate)) {
             System.out.println("Due date has passed.");
             return -1;
@@ -96,8 +95,8 @@ public class Scheduler {
                         if (occurrences[x] != null){
                             int start = occurrences[x].getStartDate().getHour();
                             int end = occurrences[x].getEndDate().getHour() + 1;
-                            int dayCount = Utilities.calcDayNumInYear(occurrences[x].getStartDate().toLocalDate());
-                            dayCount = dayCount - Utilities.calcDayNumInYear(Utilities.getDateToday());
+                            int dayCount = occurrences[x].getStartDate().getDayOfYear();
+                            dayCount = dayCount - Utilities.getDateToday().getDayOfYear();
                             System.out.println(start + " is the start and the end is " + end + " and the DayNum is " + dayCount);
                             for(int m = start; m < end; m++){
                                 System.out.println(dayCount + " is the day and the hour is " + m);
@@ -205,7 +204,7 @@ public class Scheduler {
      * @param endTime End of the studySession
      */
     public void ScheduleStudySessions(LocalDateTime  startTime, LocalDateTime endTime){
-        int dayNum = Utilities.calcDayNumInYear(startTime.toLocalDate()) - Utilities.calcDayNumInYear(Utilities.getDateToday());
+        int dayNum = startTime.getDayOfYear() - Utilities.getDateToday().getDayOfYear();
         if(dayNum >= 0){
             for (int x = startTime.getHour(); x < endTime.getHour(); x++){
                 timeTable[dayNum][x] = false;
@@ -233,3 +232,4 @@ public class Scheduler {
         toWake = wake;
     }
 }
+
