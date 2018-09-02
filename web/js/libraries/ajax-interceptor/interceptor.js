@@ -4,6 +4,8 @@ var AjaxInterceptor = require("ajax-interceptor");
 AjaxInterceptor.addResponseCallback(function(xhr) {
     var data = JSON.parse(xhr.response);
     if(data[0] != null && data[0].auth != null && data[0].auth == "false"){ // check if session has died
+        $("div#stms_loader").show();
+        $("body").loadingModal("show");
         window.location = "/login.jsp";
     }
 });

@@ -4,7 +4,7 @@
 <%@ page import="java.sql.Timestamp" %>
 <%@ page import="java.time.LocalDateTime" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
-<%! boolean authRequired = false; %>
+<%! boolean authRequired = true; %>
 <%! boolean ajaxRequest = true; %>
 <%@ include file="../includes/session.jsp" %>
 <%

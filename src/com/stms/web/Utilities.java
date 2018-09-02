@@ -70,17 +70,6 @@ public class Utilities {
     public static Timestamp getCurrentTimestamp(){
         return new Timestamp(new Date().getTime());
     }
-    
-    public static int daysUntil(LocalDate date){
-        LocalDate today = getDateToday();
-        int sum = calcDayNumInYear(date);
-        sum -= calcDayNumInYear(today);
-        if (sum > 0){
-            return  sum;
-        } else {
-            return -1;
-        }
-    }
 
     /**
      * This method checks to see whether or not the DHTLMX Has scheduled a session in said time period

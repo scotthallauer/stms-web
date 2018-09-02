@@ -1,6 +1,7 @@
 package com.stms.web;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -170,11 +171,7 @@ public class CourseSession {
     }
 
     public void setRecType(String recType) {
-        if(recType == null){
-            this.recType = null;
-            this.length = null;
-            this.recordSaved = false;
-        }else if(recType.length() > 0) {
+        if(recType == null || recType.length() > 0){
             this.recType = recType;
             this.recordSaved = false;
         }
@@ -525,9 +522,18 @@ public class CourseSession {
         // execute query
         if(Database.update(sql, params, types)){
             // get session ID
-            sql = "SELECT sessionID FROM courseSession WHERE courseID = ? AND sessionType = ? AND startDate = ? AND endDate = ? AND length = ?";
-            params = new Object[5];
-            types = new int[5];
+            if(this.length == null){
+                sql = "SELECT sessionID FROM courseSession WHERE courseID = ? AND sessionType = ? AND startDate = ? AND endDate = ? AND length IS NULL";
+            }else {
+                sql = "SELECT sessionID FROM courseSession WHERE courseID = ? AND sessionType = ? AND startDate = ? AND endDate = ? AND length = ?";
+            }
+            if(this.length == null) {
+                params = new Object[4];
+                types = new int[4];
+            }else{
+                params = new Object[5];
+                types = new int[5];
+            }
             params[0] = this.courseID;
             types[0] = Types.INTEGER;
             params[1] = this.type;
@@ -536,8 +542,10 @@ public class CourseSession {
             types[2] = Types.TIMESTAMP;
             params[3] = this.endDate;
             types[3] = Types.TIMESTAMP;
-            params[4] = this.length;
-            types[4] = Types.BIGINT;
+            if(this.length != null) {
+                params[4] = this.length;
+                types[4] = Types.BIGINT;
+            }
             ResultSet rs = Database.query(sql, params, types); // if fetching the sessionID fails, this object will no longer be able to save data to the database (i.e. save() will always return false)
             try {
                 if (rs.first()) {
