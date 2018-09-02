@@ -56,22 +56,22 @@ INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour)
 VALUES (2, NULL, 'Genetics', 'MCB3012Z', 'red');
 
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
-VALUES (0, 3, 'lecture', '2018-07-23 09:00:00', '2018-09-07 09:45:00', 2700, 'week_1___1,2,3,4,5#');
+VALUES (0, 3, 'lecture', '2018-07-23 09:00:00', '2018-10-07 09:45:00', 2700, 'week_1___1,2,3,4,5#');
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
-VALUES (0, 4, 'lecture', '2018-07-23 11:00:00', '2018-09-07 11:45:00', 2700, 'week_1___1,2,3,4,5#');
+VALUES (0, 4, 'lecture', '2018-07-23 11:00:00', '2018-10-07 11:45:00', 2700, 'week_1___1,2,3,4,5#');
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
-VALUES (0, 5, 'lecture', '2018-07-23 15:00:00', '2018-09-07 15:45:00', 2700, 'week_1___1,2,3,4,5#');
+VALUES (0, 5, 'lecture', '2018-07-23 15:00:00', '2018-10-07 15:45:00', 2700, 'week_1___1,2,3,4,5#');
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
-VALUES (0, 5, 'lecture', '2018-07-23 11:00:00', '2018-08-25 12:00:00', 2700, 'week_1___1,2,3,4,5#');
+VALUES (0, 5, 'lecture', '2018-07-23 11:00:00', '2018-10-25 12:00:00', 2700, 'week_1___1,2,3,4,5#');
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
-VALUES (0, 5, 'lecture', '2018-07-23 07:00:00', '2018-08-25 8:00:00', 2700, 'week_1___1,2,3,4,5#');
+VALUES (0, 5, 'lecture', '2018-07-23 07:00:00', '2018-10-25 8:00:00', 2700, 'week_1___1,2,3,4,5#');
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
-VALUES (0, 5, 'lecture', '2018-07-23 09:00:00', '2018-08-25 10:00:00', 2700, 'week_1___1,2,3,4,5#');
+VALUES (0, 5, 'lecture', '2018-07-23 09:00:00', '2018-10-25 10:00:00', 2700, 'week_1___1,2,3,4,5#');
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
-VALUES (0, 5, 'lecture', '2018-07-23 16:00:00', '2018-08-25 17:00:00', 2700, 'week_1___1,2,3,4,5#');
+VALUES (0, 5, 'lecture', '2018-07-23 16:00:00', '2018-10-25 17:00:00', 2700, 'week_1___1,2,3,4,5#');
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
-VALUES (1, 3, 'lecture', '2018-08-31 09:00:00', '2018-08-31 09:45:00', 1535698800, 'none');
+VALUES (1, 3, 'lecture', '2018-08-31 09:00:00', '2018-10-31 09:45:00', 1535698800, 'none');
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, priority, weighting)
-VALUES (0, 3, 'test', '2018-08-31 09:00:00', '2018-08-31 09:45:00', 3, 7.5);
+VALUES (0, 3, 'test', '2018-08-31 09:00:00', '2018-10-31 09:45:00', 3, 7.5);
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, priority, weighting)
-VALUES (0, 3, 'demonstration', '2018-09-07 12:00:00', '2018-09-07 12:45:00', 3, 15);
+VALUES (0, 3, 'demonstration', '2018-09-07 12:00:00', '2018-10-07 12:45:00', 3, 15);

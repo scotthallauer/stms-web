@@ -441,17 +441,18 @@ public class CourseSession {
      */
     public Occurrence[] getOccurrences(int max, LocalDate start, LocalDate end){
         Occurrence[] occurrences = getOccurrences(max);
-        ArrayList<Occurrence> ALoccur = new ArrayList<Occurrence>();
+        ArrayList<Occurrence> ALoccur = new ArrayList<>();
         for(int x = 0; x < occurrences.length; x++){
-            if((Utilities.calcDayNumInYear(start) < Utilities.calcDayNumInYear(occurrences[x].getStartDate().toLocalDate()))
-            && (Utilities.calcDayNumInYear(end) > Utilities.calcDayNumInYear(occurrences[x].getStartDate().toLocalDate()))){
-                ALoccur.add(occurrences[x]);
-            }
 
-        }
+            if((Utilities.calcDayNumInYear(start) <= Utilities.calcDayNumInYear(occurrences[x].getStartDate().toLocalDate()))
+            && (Utilities.calcDayNumInYear(end) > Utilities.calcDayNumInYear(occurrences[x].getStartDate().toLocalDate()))){
+                    ALoccur.add(occurrences[x]);
+                }
+            }
         Occurrence[] toRe = new Occurrence[ALoccur.size()];
         for (int x = 0; x < ALoccur.size();x++){
             toRe[x] = ALoccur.get(x);
+
         }
         return toRe;
 

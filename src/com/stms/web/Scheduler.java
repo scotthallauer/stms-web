@@ -1,4 +1,5 @@
 package com.stms.web;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -84,16 +85,17 @@ public class Scheduler {
         ResultSet rs = Database.query(sql, params, types);
         //Data is now loaded into the resultSet
         try{
+            CourseSession courseSession;
             while(rs.next()){
                 int sessionID = rs.getInt("sessionID");
                 try{
-                    CourseSession courseSession = new CourseSession(sessionID);
-                    Occurrence[] occurrences = filterOccurences(courseSession,dueDate);
+                    courseSession = new CourseSession(sessionID);
+                    Occurrence[] occurrences = courseSession.getOccurrences(1000, Utilities.getDateToday(), dueDate);
                     System.out.println(occurrences.length + " # occurences");
                     for(int x = 0; x < occurrences.length; x++){
                         if (occurrences[x] != null){
                             int start = occurrences[x].getStartDate().getHour();
-                            int end = occurrences[x].getEndDate().getHour();
+                            int end = occurrences[x].getEndDate().getHour() + 1;
                             int dayCount = Utilities.calcDayNumInYear(occurrences[x].getStartDate().toLocalDate());
                             dayCount = dayCount - Utilities.calcDayNumInYear(Utilities.getDateToday());
                             System.out.println(start + " is the start and the end is " + end + " and the DayNum is " + dayCount);
@@ -140,7 +142,6 @@ public class Scheduler {
             e.printStackTrace();
         }
 
-        //scheduleFreeTime();
 
         //END OF BUILD PHASE
 
@@ -196,22 +197,6 @@ public class Scheduler {
         return numOfHours - fullCount;
     }
 
-
-    private Occurrence[] filterOccurences(CourseSession courseSession, LocalDate due){
-        Occurrence[] occurrences = courseSession.getOccurrences(1000);
-        Occurrence[] toRe = new Occurrence[DaysTilDue];
-        int count = 0;
-        for (int x = 0; x < occurrences.length; x++){
-            if((Utilities.calcDayNumInYear(occurrences[x].getStartDate().toLocalDate()) > Utilities.calcDayNumInYear(Utilities.getDateToday()))
-                && (Utilities.calcDayNumInYear(occurrences[x].getStartDate().toLocalDate()) < Utilities.calcDayNumInYear(due))){
-                toRe[count] = occurrences[x];
-                count++;
-            }
-        }
-
-        return toRe;
-    }
-
     /**
      * The below method only works with the DHTLMX recurring fields and
      * this one is for previously scheduled studySessions
@@ -248,4 +233,3 @@ public class Scheduler {
         toWake = wake;
     }
 }
-
