@@ -131,54 +131,11 @@ public class Utilities {
     /**
      * Takes the date in the form of LocalDate and returns the number of the day in the year
      *
-     * @param date1 LocalDate you want the DayNum for
+     * @param date LocalDate you want the DayNum for
      * @return The number of the day in the year corresponding to input date
      */
-    public static int calcDayNumInYear(LocalDate date1){
-        //Date1 is due date and date 2 is
-        //date in format YYYY-MM-DD
-        String s = date1.toString();
-        int year = Integer.parseInt(s.substring(0,4));
-        int month = Integer.parseInt(s.substring(5,7));
-        int day = Integer.parseInt(s.substring(8,10));
-        int total = 0;
-        if (month > 1){
-            total += 31;
-        }
-        if (month > 2){
-            total += 28;
-            if (year % 4 == 0){
-                total += 1;
-            }
-        }
-        if (month > 3){
-            total += 31;
-        }
-        if (month > 4){
-            total += 30;
-        }
-        if (month > 5){
-            total += 31;
-        }if (month > 6){
-            total += 30;
-        }
-        if (month > 7){
-            total += 31;
-        }
-        if (month > 8){
-            total += 31;
-        }
-        if (month > 9){
-            total += 30;
-        }
-        if (month > 10){
-            total += 31;
-        }
-        if (month > 11){
-            total += 30;
-        }
-        total += day;
-        return total;
+    public static int calcDayNumInYear(LocalDate date){
+        return date.getDayOfYear();
     }
 
     /**
