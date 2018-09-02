@@ -139,45 +139,6 @@ public class Utilities {
     }
 
     /**
-     * Takes in the Day number in the year as a parameter and then outputs a LocalDate of the corresponding date
-     *
-     * @param DayNum The day number in the year supposed to be retrieved from the method above
-     * @return The Date in a LocalDate variable
-     */
-    public static LocalDate CalcDateFromDayNum(int DayNum){
-        LocalDate toRe;
-        if (DayNum <= 31){
-            toRe = LocalDate.of(2018,1,DayNum);
-        } else if (DayNum <= 59){
-            toRe = LocalDate.of(2018,2,DayNum - 31);
-        } else if (DayNum <= 90){
-            toRe = LocalDate.of(2018,3,DayNum - 59);
-        } else if (DayNum <= 120){
-            toRe = LocalDate.of(2018,4,DayNum - 90);
-        } else if (DayNum <= 151){
-            toRe = LocalDate.of(2018,5,DayNum - 120);
-        } else if (DayNum <= 181){
-            toRe = LocalDate.of(2018,6,DayNum - 151);
-        } else if (DayNum <= 212){
-            toRe = LocalDate.of(2018,7,DayNum - 181);
-        } else if (DayNum <= 243){
-            toRe = LocalDate.of(2018,8,DayNum - 212);
-        } else if (DayNum <= 273){
-            toRe = LocalDate.of(2018,9,DayNum - 243);
-        } else if (DayNum <= 304){
-            toRe = LocalDate.of(2018,10,DayNum - 273);
-        } else if (DayNum <= 335){
-            toRe = LocalDate.of(2018,11,DayNum - 304);
-        } else if (DayNum <= 365){
-            toRe = LocalDate.of(2018,12,DayNum - 335);
-        } else {
-            System.out.println("Error invalid day number has been entered");
-            throw new IndexOutOfBoundsException();
-        }
-        return toRe;
-    }
-
-    /**
      * Gets and returns the current date in the form of LocalDate
      *
      * @return Date today

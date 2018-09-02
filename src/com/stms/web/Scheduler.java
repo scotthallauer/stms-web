@@ -162,7 +162,7 @@ public class Scheduler {
             for (int y = 0; y < 24; y++){
                 if((timeTable[x][y]) && (hourCount < avghoursperDay) && (fullCount + hourCount < numOfHours)){
                     //Create new studysession
-                    LocalDate due = Utilities.CalcDateFromDayNum(Utilities.calcDayNumInYear(Utilities.getDateToday()) + x);
+                    LocalDate due = Utilities.getDateToday().plusDays(x);
                     LocalDateTime startTime = due.atTime(y, 0);
                     LocalDateTime endTime;
                     if (y == 23){
