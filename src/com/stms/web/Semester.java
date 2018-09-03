@@ -1,5 +1,6 @@
 package com.stms.web;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.sql.*;
@@ -20,8 +21,8 @@ public class Semester {
     private Integer semesterID;
     private Integer userID;
     private String name;
-    private Timestamp startDate;
-    private Timestamp endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private Course[] courses;
 
     // CONSTRUCTORS //
@@ -55,8 +56,8 @@ public class Semester {
             this.semesterID = rs.getInt("semesterID");
             this.userID = rs.getInt("userID");
             this.name = rs.getString("semesterName");
-            this.startDate = rs.getTimestamp("startDate");
-            this.endDate = rs.getTimestamp("endDate");
+            this.startDate = rs.getDate("startDate").toLocalDate();
+            this.endDate = rs.getDate("endDate").toLocalDate();
             this.recordExists = true;
             this.recordSaved = true;
         }else{
@@ -124,20 +125,20 @@ public class Semester {
         this.recordSaved = false;
     }
 
-    public Timestamp getStartDate() {
+    public LocalDate getStartDate() {
         return this.startDate;
     }
 
-    public void setStartDate(Timestamp startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
         this.recordSaved = false;
     }
 
-    public Timestamp getEndDate() {
+    public LocalDate getEndDate() {
         return this.endDate;
     }
 
-    public void setEndDate(Timestamp endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
         this.recordSaved = false;
     }
@@ -146,7 +147,7 @@ public class Semester {
      * Save the semester's details to the database.
      * @return true if successful, false otherwise.
      */
-    private boolean save(){
+    public boolean save(){
         // check if database is connected
         if(!Database.isConnected()) {
             return false;
@@ -184,9 +185,9 @@ public class Semester {
         params[1] = this.name;
         types[1] = Types.VARCHAR;
         params[2] = this.startDate;
-        types[2] = Types.TIMESTAMP;
+        types[2] = Types.DATE;
         params[3] = this.endDate;
-        types[3] = Types.TIMESTAMP;
+        types[3] = Types.DATE;
         // execute query
         if(Database.update(sql, params, types)){
             // get semester ID
@@ -196,9 +197,9 @@ public class Semester {
             params[0] = this.userID;
             types[0] = Types.INTEGER;
             params[1] = this.startDate;
-            types[1] = Types.TIMESTAMP;
+            types[1] = Types.DATE;
             params[2] = this.endDate;
-            types[2] = Types.TIMESTAMP;
+            types[2] = Types.DATE;
             ResultSet rs = Database.query(sql, params, types); // if fetching the semesterID fails, this object will no longer be able to save data to the database (i.e. save() will always return false)
             try {
                 if (rs.first()) {
@@ -218,7 +219,7 @@ public class Semester {
      * including courses, courseAssignments, courseSessions and studySessions.
      * @return true if successful, false otherwise.
      */
-    public boolean deleteSemester () {
+    public boolean delete() {
         // check if database is connected
         if(!Database.isConnected()) {
             return false;

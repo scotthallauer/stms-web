@@ -7,8 +7,27 @@ html, body{
 }
 
 /* ALERT MESSAGES*/
+/* popup in centre of screen and require user interaction before disappearing */
 .swal-modal{
     font-family: Roboto, Arial, Helvetica;
+}
+.swal-text{
+    text-align: center;
+}
+
+/* INFORMATION MESSAGES */
+/* popup in bottom-left of screen and disappear after a couple of seconds */
+.dhtmlx-save-message, .dhtmlx-info.dhtmlx-save-message div{
+    font-weight: bold !important;
+    color: #FFF !important;
+    background-color: #26A65B !important;
+    border: none !important;
+}
+.dhtmlx-delete-message, .dhtmlx-info.dhtmlx-delete-message div{
+    font-weight: bold !important;
+    color: #FFF !important;
+    background-color: #e53935 !important;
+    border: none !important;
 }
 
 /* LOGIN & REGISTER PAGES */
@@ -212,7 +231,7 @@ div.dhx_cal_light{
         }
 
 /* Customise DHTMLX scheduler lightbox controls (because they don't work like they're meant to) */
-.dhx_cal_light_wide .combo>div, .dhx_cal_light_wide .dhx_combo_box, input.dhxcombo_input{
+.dhx_cal_light_wide .combo>div, .dhx_cal_light_wide .dhx_combo_box, .dhx_cal_light_wide input.dhxcombo_input{
     width: 335px !important;
 }
 

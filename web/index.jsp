@@ -63,7 +63,7 @@
 				<h2>New Semester</h2>
 				<div id="stms_semester_dhx_form"></div>
 			</div>
-			<div id="stms_course_form_wrapper">
+			<div id="stms_course_form_wrapper" style="display: none">
 				<h2>New Course</h2>
 				<div id="stms_course_dhx_form"></div>
 			</div>

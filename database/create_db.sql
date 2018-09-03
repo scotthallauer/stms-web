@@ -46,8 +46,8 @@ CREATE TABLE semester (
 	semesterID int NOT NULL AUTO_INCREMENT,
     userID int NOT NULL,
     semesterName VARCHAR(25) NOT NULL,
-    startDate DATETIME NOT NULL,
-    endDate DATETIME NOT NULL,
+    startDate DATE NOT NULL,
+    endDate DATE NOT NULL,
     PRIMARY KEY (semesterID),
     FOREIGN KEY (userID) REFERENCES user(userID),
     UNIQUE KEY semester_uniq (userID, startDate, endDate)

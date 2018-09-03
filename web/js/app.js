@@ -1,3 +1,7 @@
+// global variables used as flags in app (they can be updated after AJAX calls and referred to from anywhere)
+SEMESTER_COUNT = 0;
+COURSE_COUNT = 0;
+
 // Set-up the page layout when the full HTML document has been downloaded
 dhtmlxEvent(window, 'load', function(){
 
@@ -89,9 +93,11 @@ dhtmlxEvent(window, 'load', function(){
 
     });
 
-    // prepare tasks page
+    // prepare pages when user switches between them
     stms_sidebar.attachEvent("onSelect", function(id, lastId){
-        if(id == "p2_tasks"){
+        if(id == "p1_calendar"){
+            loadEvents();
+        }else if(id == "p2_tasks"){
             taskListResize();
             loadSuggestions(); // suggestion list table
         }else if(id == "p3_semesters"){
@@ -117,6 +123,7 @@ dhtmlxEvent(window, 'load', function(){
     scheduler.locale.labels.section_types = "Type";
     scheduler.locale.labels.section_grades = "Graded";
 
+    // custom lightbox form section for graded sessions
     scheduler.form_blocks["grading"] = {
         render: function(sns){
             var out = "<div id='stms_lightbox_grading' class='stms_lightbox_grading_hidden'>" +
@@ -178,12 +185,20 @@ dhtmlxEvent(window, 'load', function(){
     // Add a create button to the top right of the calendar
     $("div.dhx_cal_navline").append("<div class='dhx_cal_create_button' aria-label='Create' role='button'>Create</div>");
     $("div.dhx_cal_create_button").click(function () {
-        scheduler.addEventNow({
-            text: "New Session",
-            color: getColourCode("blue"),
-            start_date: moment().startOf("hour").toDate(),
-            end_date: moment().startOf("hour").add(1, "hour").toDate()
-        });
+        if(COURSE_COUNT == 0){
+            swal({
+                icon: "warning",
+                title: "No Courses",
+                text: "You haven't created any courses yet! Go to the \"Semesters\" page to create some semesters and courses."
+            });
+        }else{
+            scheduler.addEventNow({
+                text: "New Session",
+                color: getColourCode("blue"),
+                start_date: moment().startOf("hour").toDate(),
+                end_date: moment().startOf("hour").add(1, "hour").toDate()
+            });
+        }
     });
 
     // Set event details to default values when creating an event by dragging on the calendar
@@ -196,17 +211,27 @@ dhtmlxEvent(window, 'load', function(){
 
     // Only allow dragging events to change their time if they are not readonly
     scheduler.attachEvent("onBeforeDrag", function(id){
-        var event = scheduler.getEvent(id);
-        if(event != null && event.readonly){
+        if(COURSE_COUNT == 0){
+            swal({
+                icon: "warning",
+                title: "No Courses",
+                text: "You haven't created any courses yet! Go to the \"Semesters\" page to create some semesters and courses."
+            });
             return false;
-        }else{
-            return true;
+        }else {
+            var event = scheduler.getEvent(id);
+            if (event != null && event.readonly) {
+                return false;
+            } else {
+                return true;
+            }
         }
     });
 
     scheduler.attachEvent("onLightbox", function(id){
         $("div.dhx_cal_light").css("top", "10px");
         $("div.dhx_cal_larea").css("max-height", ($(window).height()-150) + "px");
+        $("div.dhx_cal_larea").off("DOMSubtreeModified");
         $("div.dhx_cal_larea").on("DOMSubtreeModified", function(){
             lightboxResize();
         });
@@ -267,7 +292,10 @@ dhtmlxEvent(window, 'load', function(){
         return true;
     });
 
-    scheduler.load("./ajax/connect_scheduler.jsp", "json");
+    // preload events (will reload whenever user switches to this tab - handled in onSelect event for sidebar)
+    loadEvents();
+
+    // dataProcessor to communicate updates to events with the server
     dp = new dataProcessor("./ajax/connect_scheduler.jsp");
     dp.init(scheduler);
     dp.setTransactionMode("POST", false);
@@ -461,11 +489,8 @@ dhtmlxEvent(window, 'load', function(){
     stms_semester_layout.cells("a").setMinWidth(350);
     stms_semester_layout.cells("a").attachObject("stms_semesters_left");
 
-    // preload semester list table (will reload whenever user switches to this tab - handled in onSelect event for sidebar)
-    loadSemesters();
-
     // Pop-up for when user clicks create button on the semesters page (choose new semester or new course)
-    var stms_semester_popup = new dhtmlXPopup();
+    stms_semester_popup = new dhtmlXPopup();
     stms_semester_popup.attachList("option", [
         {id: 1, option: "New Semester"},
         {id: 2, option: "New Course"}
@@ -494,6 +519,8 @@ dhtmlxEvent(window, 'load', function(){
     stms_semester_layout.cells("b").setMinWidth(550);
     stms_semester_layout.cells("b").attachObject("stms_semesters_right");
 
+    dhtmlx.message.position="bottom"; // settings for messages indicating user's form submission was saved
+
     stms_semester_form = new dhtmlXForm("stms_semester_dhx_form", [
         {type: "settings", position: "label-left", labelWidth: "100", inputWidth: "300"},
         {type: "hidden", name: "semester_id"},
@@ -510,12 +537,53 @@ dhtmlxEvent(window, 'load', function(){
         ]}
     ]);
 
+    stms_semester_form.attachEvent("onAfterValidate", function(status){
+        // if the form passes validation, display a loading screen while we wait for the AJAX response
+        if(status){
+            $("body").loadingModal("destroy");
+            $("body").loadingModal({
+                position: "auto",
+                color: "#fff",
+                opacity: "0.7",
+                backgroundColor: "rgb(0,0,0)",
+                animation: "doubleBounce"
+            });
+            $("body").loadingModal("show");
+        }
+    });
+
+    stms_semester_form.attachEvent("onButtonClick", function(name){
+        if(name == "submit"){
+            submitSemesterForm(false);
+        }else if(name == "cancel"){
+            var first_course = $("table#stms_semesters_list tr.stms_course_row:first");
+            if(first_course.length) {
+                first_course.click(); // if there is at least one course, select it
+            }else{
+                $("table#stms_semesters_list tr.stms_semester_row:first").click(); // otherwise if there is at least one semester, select it
+            }
+        }else if(name == "delete"){
+            swal({
+                title: "Are you sure?",
+                text: "Deleting this semester will result in all of the associated courses being deleted too.\n\nYou cannot undo this action.",
+                icon: "warning",
+                buttons: ["Cancel", "Delete"],
+                dangerMode: true,
+            })
+            .then(function(willDelete){
+                if(willDelete){
+                    submitSemesterForm(true);
+                }
+            });
+        }
+    });
+
     stms_course_form = new dhtmlXForm("stms_course_dhx_form", [
         {type: "settings", position: "label-left", labelWidth: "100", inputWidth: "300"},
         {type: "hidden", name: "course_id"},
         {type: "block", width: 403, offsetTop: 15, blockOffset:0, list: [
             {type: "input", name: "course_name", label: "Name:", required: true},
-            {type: "input", name: "course_code", label: "Code:", required: false},
+            {type: "input", name: "course_code", label: "Code:", maxLength: 10, required: false},
             {type: "combo", name: "course_semester_1", label: "Semester:", readonly: true, required: true},
             {type: "combo", name: "course_colour", label: "Colour:", comboType: "image", readonly: true, required: true, options: [
                 {value: "red", text: "Red", img_src: "../media/colours/red.png"},
@@ -533,6 +601,55 @@ dhtmlxEvent(window, 'load', function(){
             {type: "button", name: "delete", value: "Delete", className: "stms_delete_course_button", width: 197}
         ]}
     ]);
+
+    stms_course_form.attachEvent("onAfterValidate", function(status){
+        // if the form passes validation, display a loading screen while we wait for the AJAX response
+        if(status){
+            $("body").loadingModal("destroy");
+            $("body").loadingModal({
+                position: "auto",
+                color: "#fff",
+                opacity: "0.7",
+                backgroundColor: "rgb(0,0,0)",
+                animation: "doubleBounce"
+            });
+            $("body").loadingModal("show");
+        }
+    });
+
+    stms_course_form.attachEvent("onButtonClick", function(name){
+        if(name == "submit"){
+            submitCourseForm(false);
+        }else if(name == "cancel"){
+            var first_course = $("table#stms_semesters_list tr.stms_course_row:first");
+            if(first_course.length) {
+                first_course.click(); // if there is at least one course, select it
+            }else{
+                $("table#stms_semesters_list tr.stms_semester_row:first").click(); // otherwise if there is at least one semester, select it
+            }
+        }else if(name == "delete"){
+            swal({
+                title: "Are you sure?",
+                text: "Deleting this course will result in all of the associated sessions and assignments being deleted too.\n\nYou cannot undo this action.",
+                icon: "warning",
+                buttons: ["Cancel", "Delete"],
+                dangerMode: true,
+            })
+            .then(function(willDelete){
+                if(willDelete){
+                    submitCourseForm(true);
+                }
+            });
+        }
+    });
+
+    // preload semester list table (will reload whenever user switches to this tab - handled in onSelect event for sidebar)
+    //prepareSemesterForm(null);
+    loadSemesters(function(){
+        if(COURSE_COUNT == 0){
+            stms_sidebar.cells("p3_semesters").setActive();
+        }
+    });
 
     // hide loading screen after app has finished loading
     $("div#stms_loader").hide();
@@ -558,6 +675,15 @@ function getColourCode(colourName){
     }else{
         return "#95A5A6";
     }
+}
+
+function loadEvents(){
+    $.ajax({
+        url: "./ajax/connect_scheduler.jsp"
+    }).done(function(data) {
+        scheduler.clearAll();
+        scheduler.parse(JSON.parse(data), "json");
+    });
 }
 
 function lightboxResize(){
@@ -684,13 +810,14 @@ function compareCourse(a,b) {
     return 0;
 }
 
-function loadSemesters(){
+function loadSemesters(callback){
     $.ajax({
-        url: "./ajax/connect_semesters_page.jsp"
+        url: "./ajax/connect_semesters.jsp"
     }).done(function(data){
         $("table#stms_semesters_list tbody").empty(); // clear existing items in semester list (need to refresh)
         var semesters = JSON.parse(data);
         semesters.sort(compareSemester); // sort based on priority (high to low)
+        SEMESTER_COUNT = semesters.length;
         if(semesters.length == 0){
             $("table#stms_semesters_list").hide(); // if there are no semesters, then hide the table
             $("div#stms_semesters_none").show();
@@ -728,6 +855,7 @@ function loadSemesters(){
             }
             $("table#stms_semesters_list tbody").append(html);
         }
+        COURSE_COUNT = total_courses;
         semester_combo.selectOption(0);
         // add click event handlers to prepare the right-hand form when a row is clicked
         $("table#stms_semesters_list tr.stms_semester_row").off("click");
@@ -746,10 +874,27 @@ function loadSemesters(){
         });
         if(semesters.length > 0 && total_courses > 0) {
             $("table#stms_semesters_list tr.stms_course_row:first").click();
+            stms_semester_popup.clear();
+            stms_semester_popup.attachList("option", [
+                {id: 1, option: "New Semester"},
+                {id: 2, option: "New Course"}
+            ]);
         }else if(semesters.length > 0){
             prepareCourseForm(null);
+            stms_semester_popup.clear();
+            stms_semester_popup.attachList("option", [
+                {id: 1, option: "New Semester"},
+                {id: 2, option: "New Course"}
+            ]);
         }else{
             prepareSemesterForm(null);
+            stms_semester_popup.clear();
+            stms_semester_popup.attachList("option", [
+                {id: 1, option: "New Semester"}
+            ]);
+        }
+        if(callback && typeof callback === "function"){
+            callback();
         }
     });
 }
@@ -774,6 +919,45 @@ function prepareSemesterForm(semester_id){
     }
 }
 
+function submitSemesterForm(deleted){
+    var action = "updated";
+    if(stms_semester_form.getItemValue("semester_id") == null || stms_semester_form.getItemValue("semester_id").length == 0){
+        action = "inserted";
+    }
+    if(deleted){
+        action = "deleted";
+    }
+    stms_semester_form.send("./ajax/connect_semesters.jsp?action=" + action, "post", function(loader, response){
+        // display error message if request failed, otherwise refresh semester page
+        var data = JSON.parse(response);
+        if(data.action == "inserted" || data.action == "updated"){
+            loadSemesters(function(){
+                $("body").loadingModal("hide");
+                dhtmlx.message({
+                    type: "save-message",
+                    text: "Your semester has been successfully saved!"
+                });
+                selectSemester(data.tid);
+            });
+        }else if(data.action == "deleted"){
+            loadSemesters(function(){
+                $("body").loadingModal("hide");
+                dhtmlx.message({
+                    type: "delete-message",
+                    text: "Your semester has been successfully deleted!"
+                });
+            });
+        }else{
+            $("body").loadingModal("hide");
+            swal({
+                icon: "error",
+                title: "Server Error",
+                text: "Please try again later."
+            });
+        }
+    });
+}
+
 function prepareCourseForm(course_id){
     $("div#stms_course_form_wrapper").show();
     $("div#stms_semester_form_wrapper").hide();
@@ -792,5 +976,62 @@ function prepareCourseForm(course_id){
         stms_course_form.setItemValue("course_name", course_row.attr("data-course-name"));
         stms_course_form.setItemValue("course_code", course_row.attr("data-course-code"));
         stms_course_form.setItemValue("course_colour", course_row.attr("data-course-colour"));
+        // fix for a bug that suddenly appeared for no reason (thanks DHTMLX O_O)
+        var semester_combo = $(stms_course_form.getCombo("course_semester_1").DOMelem);
+        var colour_combo = $(stms_course_form.getCombo("course_colour").DOMelem);
+        semester_combo.width(300);
+        semester_combo.find("input").width(300);
+        stms_course_form.getCombo("course_semester_1").setOptionWidth(298);
+        colour_combo.width(300);
+        colour_combo.find("input").width(300);
+        stms_course_form.getCombo("course_colour").setOptionWidth(298);
     }
+}
+
+function submitCourseForm(deleted){
+    var action = "updated";
+    var course_id = stms_course_form.getItemValue("course_id");
+    if(course_id == null || course_id.length == 0){
+        action = "inserted";
+    }
+    if(deleted){
+        action = "deleted";
+    }
+    stms_course_form.send("./ajax/connect_semesters.jsp?action=" + action, "post", function(loader, response){
+        // display error message if request failed, otherwise refresh semester page
+        var data = JSON.parse(response);
+        if(data.action == "inserted" || data.action == "updated"){
+            loadSemesters(function(){
+                $("body").loadingModal("hide");
+                dhtmlx.message({
+                    type: "save-message",
+                    text: "Your course has been successfully saved!"
+                });
+                selectCourse(data.tid);
+            });
+        }else if(data.action == "deleted"){
+            loadSemesters(function(){
+                $("body").loadingModal("hide");
+                dhtmlx.message({
+                    type: "delete-message",
+                    text: "Your course has been successfully deleted!"
+                });
+            });
+        }else{
+            $("body").loadingModal("hide");
+            swal({
+                icon: "error",
+                title: "Server Error",
+                text: "Please try again later."
+            });
+        }
+    });
+}
+
+function selectSemester(id){
+    $("table#stms_semesters_list tr.stms_semester_row[data-semester-id=" + id + "]").click();
+}
+
+function selectCourse(id){
+    $("table#stms_semesters_list tr.stms_course_row[data-course-id=" + id + "]").click();
 }

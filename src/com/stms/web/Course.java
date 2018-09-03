@@ -151,6 +151,12 @@ public class Course {
     }
 
     public void setCode(String code) {
+        if(code != null && code.length() > 10){
+            return;
+        }
+        if(code != null && code.length() == 0){
+            code = null;
+        }
         this.code = code;
         this.recordSaved = false;
     }
@@ -168,7 +174,7 @@ public class Course {
      * Save the course's details to the database.
      * @return true if successful, false otherwise.
      */
-	private boolean save(){
+	public boolean save(){
         // check if database is connected
         if(!Database.isConnected()) {
             return false;
@@ -243,7 +249,7 @@ public class Course {
      * Delete the course's details from the database, along with all sessions and assignments related to it.
      * @return true if successful, false otherwise.
      */
-    private boolean deleteCourse () {
+    public boolean delete() {
         // check if database is connected
         if(!Database.isConnected()) {
             return false;
