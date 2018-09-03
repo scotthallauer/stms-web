@@ -1,15 +1,15 @@
 USE stms;
 
-INSERT INTO user (firstName, lastName, email, activated, pwdHash, pwdSalt) 
-values ('Scott', 'Hallauer', 'scott.hallauer@gmail.com', 1, '225c245490a5385b2a034f7c1ebcbe7a034e44e26871163a32fb20e2f76a3f01', 'KxZ65ezpqs86tlM'); 
+INSERT INTO user (firstName, lastName, email, pwdHash, pwdSalt) 
+values ('Scott', 'Hallauer', 'scott.hallauer@gmail.com', '225c245490a5385b2a034f7c1ebcbe7a034e44e26871163a32fb20e2f76a3f01', 'KxZ65ezpqs86tlM'); 
 # password is password
 
-INSERT INTO user (firstName, lastName, email, activated, pwdHash, pwdSalt) 
-VALUES ('Jonathon', 'Everatt', 'EVRJON003@myuct.ac.za',1,'d6a4c76e085cf2f4130ba94188883ec6fff9e91a9546887a0ee8f55066be8d37','JKMCNTAc7xNoR3b');
+INSERT INTO user (firstName, lastName, email, pwdHash, pwdSalt) 
+VALUES ('Jonathon', 'Everatt', 'EVRJON003@myuct.ac.za', 'd6a4c76e085cf2f4130ba94188883ec6fff9e91a9546887a0ee8f55066be8d37','JKMCNTAc7xNoR3b');
 #password is 12345678
 
-INSERT INTO user (firstName, lastName, email, activated, pwdHash, pwdSalt) 
-VALUES ('Jessica','Bourn','BRNJES018@myuct.ac.za',1,'8eac3fdf96fde1d740de6d1309b94eb8ce80a0d2232b14d1900384fc30202f6b','IjlSlQWnDwbD1Ee');
+INSERT INTO user (firstName, lastName, email, pwdHash, pwdSalt) 
+VALUES ('Jessica','Bourn','BRNJES018@myuct.ac.za', '8eac3fdf96fde1d740de6d1309b94eb8ce80a0d2232b14d1900384fc30202f6b','IjlSlQWnDwbD1Ee');
 #password is p3gasuss 
 
 #semester inserts

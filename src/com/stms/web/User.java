@@ -28,7 +28,6 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
-    private Boolean activated;
     private String pwdHash;
     private String pwdSalt;
     private String tokenCode;
@@ -66,7 +65,6 @@ public class User {
             this.firstName = rs.getString("firstName");
             this.lastName = rs.getString("lastName");
             this.email = rs.getString("email");
-            this.activated = rs.getBoolean("activated");
             this.pwdHash = rs.getString("pwdHash");
             this.pwdSalt = rs.getString("pwdSalt");
             this.tokenCode = rs.getString("tokenCode");
@@ -215,15 +213,6 @@ public class User {
         }
     }
 
-    public boolean isActivated(){
-        return this.activated;
-    }
-
-    public void setActivated(boolean activated){
-        this.activated = activated;
-        this.recordSaved = false;
-    }
-
     /**
      * Save the user's details to the database.
      * @return true if successful, false otherwise.
@@ -245,23 +234,21 @@ public class User {
         String sql;
         // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
         if(!this.recordExists){
-            sql = "INSERT INTO user (firstName, lastName, email, activated, pwdHash, pwdSalt, tokenCode, tokenDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO user (firstName, lastName, email, pwdHash, pwdSalt, tokenCode, tokenDate) VALUES (?, ?, ?, ?, ?, ?, ?)";
         }else{
-            sql = "UPDATE user SET firstName = ?, lastName = ?, email = ?, activated = ?, pwdHash = ?, pwdSalt = ?, tokenCode = ?, tokenDate = ? WHERE userID = ?";
+            sql = "UPDATE user SET firstName = ?, lastName = ?, email = ?, pwdHash = ?, pwdSalt = ?, tokenCode = ?, tokenDate = ? WHERE userID = ?";
         }
         // prepare query parameters
         Object[] params;
         int[] types;
         if(!this.recordExists){
+            params = new Object[7];
+            types = new int[7];
+        }else{
             params = new Object[8];
             types = new int[8];
-            this.activated = false;
-            this.generateToken(); // token for activation link
-        }else{
-            params = new Object[9];
-            types = new int[9];
-            params[8] = this.userID;
-            types[8] = Types.INTEGER;
+            params[7] = this.userID;
+            types[7] = Types.INTEGER;
         }
         params[0] = this.firstName;
         types[0] = Types.VARCHAR;
@@ -269,16 +256,14 @@ public class User {
         types[1] = Types.VARCHAR;
         params[2] = this.email;
         types[2] = Types.VARCHAR;
-        params[3] = this.activated;
-        types[3] = Types.BIT;
-        params[4] = this.pwdHash;
+        params[3] = this.pwdHash;
+        types[3] = Types.VARCHAR;
+        params[4] = this.pwdSalt;
         types[4] = Types.VARCHAR;
-        params[5] = this.pwdSalt;
+        params[5] = this.tokenCode;
         types[5] = Types.VARCHAR;
-        params[6] = this.tokenCode;
-        types[6] = Types.VARCHAR;
-        params[7] = this.tokenDate;
-        types[7] = Types.TIMESTAMP;
+        params[6] = this.tokenDate;
+        types[6] = Types.TIMESTAMP;
         // execute query
         if(Database.update(sql, params, types)){
             // get user ID

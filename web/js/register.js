@@ -79,7 +79,7 @@ dhtmlxEvent(window, 'load', function(){
                     swal({
                         icon: "success",
                         title: "Account Created",
-                        text: "Please click the activation link we sent to your email."
+                        text: "You can now log in to Monthly Mentor."
                     }).then(function(value){
                         window.location = "/login.jsp";
                     });

@@ -37,10 +37,14 @@ dhtmlxEvent(window, 'load', function(){
     var stms_account_popup = new dhtmlXPopup();
     stms_account_popup.attachList("option", [
         {id: 1, option: "Account Settings"},
-        {id: 2, option: "Log Out"}
+        {id: 2, option: "User Manual"},
+        stms_account_popup.separator,
+        {id: 3, option: "Log Out"}
     ]);
     stms_account_popup.attachEvent("onClick", function(id){
         if(id == 2){
+            window.open("/media/documents/user_manual.pdf");
+        }else if(id == 3){
             window.location = "/logout.jsp";
         }
     });
@@ -976,16 +980,16 @@ function prepareCourseForm(course_id){
         stms_course_form.setItemValue("course_name", course_row.attr("data-course-name"));
         stms_course_form.setItemValue("course_code", course_row.attr("data-course-code"));
         stms_course_form.setItemValue("course_colour", course_row.attr("data-course-colour"));
-        // fix for a bug that suddenly appeared for no reason (thanks DHTMLX O_O)
-        var semester_combo = $(stms_course_form.getCombo("course_semester_1").DOMelem);
-        var colour_combo = $(stms_course_form.getCombo("course_colour").DOMelem);
-        semester_combo.width(300);
-        semester_combo.find("input").width(300);
-        stms_course_form.getCombo("course_semester_1").setOptionWidth(298);
-        colour_combo.width(300);
-        colour_combo.find("input").width(300);
-        stms_course_form.getCombo("course_colour").setOptionWidth(298);
     }
+    // fix for a bug that suddenly appeared for no reason (thanks DHTMLX O_O)
+    var semester_combo = $(stms_course_form.getCombo("course_semester_1").DOMelem);
+    var colour_combo = $(stms_course_form.getCombo("course_colour").DOMelem);
+    semester_combo.width(300);
+    semester_combo.find("input").width(300);
+    stms_course_form.getCombo("course_semester_1").setOptionWidth(298);
+    colour_combo.width(300);
+    colour_combo.find("input").width(300);
+    stms_course_form.getCombo("course_colour").setOptionWidth(298);
 }
 
 function submitCourseForm(deleted){

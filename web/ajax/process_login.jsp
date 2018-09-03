@@ -10,7 +10,7 @@
 
     // only continue to validate if both email and password have been provided, otherwise return error code
     if(user_email == null && user_password == null) {
-        out.print(2); // login failed - incorrect credentials
+        out.print(1); // login failed - incorrect credentials
         return;
     }
 
@@ -19,22 +19,19 @@
     try{
         user = new User(user_email);
     }catch(NullPointerException e){
-        out.print(2); // login failed - incorrect credentials
+        out.print(1); // login failed - incorrect credentials
         return;
     }catch(SQLException e) {
-        out.print(3); // login failed - server error (failed to connect to database)
+        out.print(2); // login failed - server error (failed to connect to database)
         return;
     }
-    if(!user.isActivated()) {
-        out.print(1); // login failed - account not activated
-        return;
-    }else if(user.checkPassword(user_password)) {
+    if(user.checkPassword(user_password)) {
         session.setAttribute("auth", true);
         session.setAttribute("user", user);
         out.print(0); // login successful
         return;
     }else{
-        out.print(2); // login failed - incorrect credentials
+        out.print(1); // login failed - incorrect credentials
         return;
     }
 %>
