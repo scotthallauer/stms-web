@@ -17,6 +17,7 @@ public class Scheduler {
     private int toBed;
     private int toWake;
 
+    //Add a foreign key for coursessionID or assignmentID
 
     /**
      * Constructors for the class. One that is blank and another that passes the UserID to the class.
@@ -42,7 +43,7 @@ public class Scheduler {
      * @param dueDate The Date that the work must be completed by
      * @return Amount of hours created or negative if no session created
      */
-    public int generateSessions(int numOfHours, LocalDate dueDate) {
+    public int generateSessions(int numOfHours, LocalDate dueDate, String type, int ID) {
         DaysTilDue = dueDate.getDayOfYear() - Utilities.getDateToday().getDayOfYear();
         if (Utilities.getDateToday().isAfter(dueDate)) {
             System.out.println("Due date has passed.");
@@ -128,20 +129,15 @@ public class Scheduler {
             if (rs.next()){
                 SemesterID = rs.getInt("semesterID1");
             }
-            //FIX THE SEMESTERID GENERATION HERE COULD BE INVALID SEMESTER
-            if(rs != null) {
-                while (rs.next()) {
-                    //SemesterID = rs.getInt("semesterID");
-                    sql = "SELECT startTime, endTime FROM studySession WHERE semesterID = ?;";
-                    params[0] = SemesterID;
-                    rs2 = Database.query(sql, params, types);
+            //SemesterID = rs.getInt("semesterID");
+            sql = "SELECT startTime, endTime FROM studySession WHERE semesterID = ?;";
+            params[0] = SemesterID;
+            rs2 = Database.query(sql, params, types);
 
-                    while (rs2.next()) {
-                        LocalDateTime start = rs2.getTimestamp("startTime").toLocalDateTime();
-                        LocalDateTime end = rs2.getTimestamp("endTime").toLocalDateTime();
-                        ScheduleStudySessions(start, end);
-                    }
-                }
+            while (rs2.next()) {
+                LocalDateTime start = rs2.getTimestamp("startTime").toLocalDateTime();
+                LocalDateTime end = rs2.getTimestamp("endTime").toLocalDateTime();
+                ScheduleStudySessions(start, end);
             }
         } catch (SQLException e){
             e.printStackTrace();
@@ -169,7 +165,13 @@ public class Scheduler {
                     StudySession toSchedule = new StudySession();
                     toSchedule.setStartTime(timestamp);
                     timestamp = Timestamp.valueOf(endTime);
-
+                    if (type.equals("assignment")){
+                        toSchedule.setAssignmentID(ID);
+                    } else if (type.equals("coursesession")){
+                        toSchedule.setCoursesessionID(ID);
+                    }else{
+                        System.out.println("No type has been correctly specified");
+                    }
                     toSchedule.setEndTime(timestamp);
                     toSchedule.setSemesterID(SemesterID);
                     toSchedule.setConfirmed(true);
@@ -227,6 +229,7 @@ public class Scheduler {
         toWake = wake;
     }
 }
+
 
 
 

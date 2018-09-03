@@ -105,12 +105,16 @@ CREATE TABLE courseAssignment (
 CREATE TABLE studySession (
 	sSessionID int NOT NULL AUTO_INCREMENT,
     semesterID int NOT NULL,
+    courseSessionID int NULL,
+    assignmentID int NULL,
     startTime DateTime NOT NULL,
     endTime DateTime NOT NULL,
     confirmed boolean NULL,
     note VARCHAR(200) NULL,
     PRIMARY KEY (sSessionID),
     FOREIGN KEY (semesterID) REFERENCES semester(semesterID),
+    FOREIGN KEY (courseSessionID) REFERENCES coursesession(sessionID),
+    FOREIGN KEY (assignmentID) REFERENCES courseAssignment(assignmentID),
     UNIQUE KEY study_session_uniq (semesterID, startTime, endTime)
 );
 

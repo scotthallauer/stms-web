@@ -18,6 +18,8 @@ public class StudySession {
     private Boolean recordSaved;
 
     private Integer sSessionID;
+    private Integer assignmentID;
+    private Integer coursesessionID;
     private Integer semesterID;
     private Timestamp startTime;
     private Timestamp endTime;
@@ -32,6 +34,8 @@ public class StudySession {
     public StudySession () {
         this.recordExists = false;
         this.recordSaved = false;
+        this.assignmentID = null;
+        this.coursesessionID = null;
     }
 
     /**
@@ -57,6 +61,8 @@ public class StudySession {
             this.endTime = rs.getTimestamp("endTime");
             this.confirmed = rs.getBoolean("confirmed");
             this.note = rs.getString("note");
+            this.assignmentID = rs.getInt("assignmentID");
+            this.coursesessionID = rs.getInt("courseSessionID");
         } else{
             throw new NullPointerException("No CourseSession exists with the sSessionID " + sSessionID);
         }
@@ -83,32 +89,38 @@ public class StudySession {
         String sql;
         // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
         if (!this.recordExists) {
-            sql = "INSERT INTO studySession (semesterID, startTime, endTime, confirmed, note) VALUES (?, ?, ?, ?, ?)";
+            sql = "INSERT INTO studySession (semesterID, courseSessionID, assignmentID, startTime, endTime, confirmed, note) VALUES (?, ?, ?, ?, ?, ?, ?)";
         } else {
-            sql = "UPDATE studySession SET semesterID = ?, startTime = ?, endTime = ?, confirmed = ?, note = ? WHERE sSessionID = ?";
+            sql = "UPDATE studySession SET semesterID = ?, courseSessionID = ?, assignmentID = ?, startTime = ?, endTime = ?, confirmed = ?, note = ? WHERE sSessionID = ?";
         }
         // prepare query parameters
         Object[] params;
         int[] types;
         if (!this.recordExists) {
-            params = new Object[5];
-            types = new int[5];
+            params = new Object[7];
+            types = new int[7];
         } else {
-            params = new Object[6];
-            types = new int[6];
-            params[5] = this.sSessionID;
-            types[5] = Types.INTEGER;
+            params = new Object[8];
+            types = new int[8];
+            params[7] = this.sSessionID;
+            types[7] = Types.INTEGER;
         }
         params[0] = this.semesterID;
         types[0] = Types.INTEGER;
-        params[1] = this.startTime;
-        types[1] = Types.TIMESTAMP;
-        params[2] = this.endTime;
-        types[2] = Types.TIMESTAMP;
-        params[3] = this.confirmed;
-        types[3] = Types.BOOLEAN;
-        params[4] = this.note;
-        types[4] = Types.VARCHAR;
+        params[1] = this.coursesessionID;
+        types[1] = Types.INTEGER;
+        params[2] = this.assignmentID;
+        types[2] = Types.INTEGER;
+        params[3] = this.startTime;
+        types[3] = Types.TIMESTAMP;
+        params[4] = this.endTime;
+        types[4] = Types.TIMESTAMP;
+        params[5] = this.confirmed;
+        types[5] = Types.BOOLEAN;
+        params[6] = this.note;
+        types[6] = Types.VARCHAR;
+
+
         // execute query
         if (Database.update(sql, params, types)) {
             // get study session ID
@@ -196,8 +208,27 @@ public class StudySession {
         this.note = note;
         this.recordSaved = false;
     }
+
+    public void setCoursesessionID(int coursesessionID){
+        this.coursesessionID = coursesessionID;
+    }
+
+    public int getCourseSessionID(){
+        return  coursesessionID;
+    }
+
+    public void setAssignmentID(int AssignmentID){
+        this.assignmentID = AssignmentID;
+    }
+
+    public int getAssignmentID(){
+        return assignmentID;
+    }
+
     public String getNote() {
         return this.note;
     }
 }
+
+
 
