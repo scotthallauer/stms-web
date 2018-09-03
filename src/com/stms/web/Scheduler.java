@@ -90,16 +90,13 @@ public class Scheduler {
                 try{
                     courseSession = new CourseSession(sessionID);
                     Occurrence[] occurrences = courseSession.getOccurrences(1000, Utilities.getDateToday(), dueDate);
-                    System.out.println(occurrences.length + " # occurences");
                     for(int x = 0; x < occurrences.length; x++){
                         if (occurrences[x] != null){
                             int start = occurrences[x].getStartDate().getHour();
                             int end = occurrences[x].getEndDate().getHour() + 1;
                             int dayCount = occurrences[x].getStartDate().getDayOfYear();
                             dayCount = dayCount - Utilities.getDateToday().getDayOfYear();
-                            System.out.println(start + " is the start and the end is " + end + " and the DayNum is " + dayCount);
                             for(int m = start; m < end; m++){
-                                System.out.println(dayCount + " is the day and the hour is " + m);
                                 timeTable[dayCount][m] = false;
                             }
                         }
@@ -141,17 +138,7 @@ public class Scheduler {
             e.printStackTrace();
         }
 
-
         //END OF BUILD PHASE
-
-        for (int x = 0; x < DaysTilDue; x++){
-            System.out.print("Day number " + x + " : ");
-            for (int y = 0; y < 24; y++){
-                System.out.print( timeTable[x][y] + " ");
-            }
-            System.out.print('\n');
-        }
-
         //Start of burn phase
 
         int hourCount = 0;
@@ -184,15 +171,12 @@ public class Scheduler {
                         System.out.println("Failed to save session");
                     }
                     hourCount += 1;
-                    System.out.println("Study Session created on day " + x + " starting at hour " + y);
                 }
 
             }
             fullCount += hourCount;
             hourCount = 0;
         }
-        System.out.println(fullCount);
-
         return numOfHours - fullCount;
     }
 
@@ -234,4 +218,5 @@ public class Scheduler {
         toWake = wake;
     }
 }
+
 
