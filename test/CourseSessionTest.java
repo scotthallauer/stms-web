@@ -2,6 +2,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class CourseSessionTest {
@@ -40,7 +43,7 @@ class CourseSessionTest {
     void getSessionPID() {
         int ID = CS2.getSessionPID();
         int ID2 = CS1.getSessionPID();
-        assertEquals(8, ID);
+        assertEquals(1, ID);
         assertEquals(0, ID2);
     }
 
@@ -65,11 +68,14 @@ class CourseSessionTest {
     }
 
     @Test
-    void setStartDate() {
-    }
+    void setStartDate() {}
 
     @Test
     void getStartDate() {
+        LocalDateTime temp = LocalDateTime.of(2018, 07, 23, 9, 0);
+        Timestamp start = Timestamp.valueOf(temp);
+        Timestamp check = CS1.getStartDate();
+        assertEquals(start, check);
     }
 
     @Test
@@ -78,6 +84,10 @@ class CourseSessionTest {
 
     @Test
     void getEndDate() {
+        LocalDateTime temp = LocalDateTime.of(2018, 10, 7, 9, 45);
+        Timestamp start = Timestamp.valueOf(temp);
+        Timestamp check = CS1.getEndDate();
+        assertEquals(start, check);
     }
 
     @Test
@@ -91,6 +101,10 @@ class CourseSessionTest {
 
     @Test
     void setRecType() {
+        CS1.setRecType("Test");
+        String s = CS1.getRecType();
+        assertEquals("Test", s);
+        CS1.setRecType("week_1___1,2,3,4,5#");
 
     }
 
@@ -123,16 +137,15 @@ class CourseSessionTest {
 
     @Test
     void getNote() {
-        String s = CS1.getType();
+        String s = CS1.getNote();
+
         assertNull(s);
 
     }
 
     @Test
     void setPriority() {
-        CS1.setPriority(10);
-        assertEquals(10, CS3.getPriority());
-        CS1.setPriority(null);
+
     }
 
     @Test

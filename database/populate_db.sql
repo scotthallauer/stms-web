@@ -55,6 +55,13 @@ VALUES (6, NULL, 'Genetics :D', 'MCB3023S', 'green');
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
 VALUES (2, NULL, 'Genetics', 'MCB3012Z', 'red');
 
+INSERT INTO courseassignment (courseID, assignmentName, dueDate, priority, possibleMark, earnedMark, weighting, note, complete) 
+VALUES (1, 'Capstone', '2018-09-07 17:00:00', 80.0, 50, null, 0.2, 'Final project', false);
+INSERT INTO courseassignment (courseID, assignmentName, dueDate, priority, possibleMark, earnedMark, weighting, note, complete) 
+VALUES (6, 'Capstone', '2018-09-07 17:00:00', 80.0, 50, null, 0.2, 'Final project', false);
+INSERT INTO courseassignment (courseID, assignmentName, dueDate, priority, possibleMark, earnedMark, weighting, note, complete) 
+VALUES (8, 'gen prac', '2018-08-16 10:00:00', 25.0, 100, 45, 0.1, 'Genetics Prac', true);
+
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
 VALUES (0, 3, 'lecture', '2018-07-23 09:00:00', '2018-10-07 09:45:00', 2700, 'week_1___1,2,3,4,5#');
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
@@ -82,3 +89,10 @@ INSERT INTO studysession (semesterID,startTime,endTime,confirmed,note)
 VALUES (1, '2018-09-04 9:00:00', '2018-09-04 10:00:00', 1, 'Auto generated Study Session');
 INSERT INTO studysession (semesterID,startTime,endTime,confirmed,note) 
 VALUES (5, '2018-09-04 16:00:00', '2018-09-04 17:00:00', 1, 'Auto generated Study Session');
+
+INSERT INTO task (userID, taskName, deadline, complete, priority, note) 
+VALUES (1, 'Capstone', '2018-09-07 17:00:00', 0, 80.0, 'Final project');
+INSERT INTO task (userID, taskName, deadline, complete, priority, note) 
+VALUES (2, 'Capstone', '2018-09-07 17:00:00', 0, 80.0, 'Final project');
+INSERT INTO task (userID, taskName, deadline, complete, priority, note) 
+VALUES (1, 'Test', '2018-09-10 17:00:00', 0, 50.0, 'Genetics Test');
