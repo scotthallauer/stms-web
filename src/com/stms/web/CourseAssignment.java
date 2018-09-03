@@ -224,7 +224,7 @@ public class CourseAssignment {
      * Delete the assignment's details from the database.
      * @return true if successful, false otherwise.
      */
-    private boolean deleteAssignment () {
+    private boolean delete() {
         // check if database is connected
         if(!Database.isConnected()) {
             return false;

@@ -529,7 +529,7 @@ dhtmlxEvent(window, 'load', function(){
         {type: "settings", position: "label-left", labelWidth: "100", inputWidth: "300"},
         {type: "hidden", name: "semester_id"},
         {type: "block", width: 403, offsetTop: 15, blockOffset:0, list: [
-            {type: "input", name: "semester_name", label: "Name:", required: true},
+            {type: "input", name: "semester_name", label: "Name:", maxLength: 30, required: true},
             {type: "calendar", name: "semester_start", label: "Start Date:", required: true},
             {type: "calendar", name: "semester_end", label: "End Date:", required: true}
         ]},
@@ -586,7 +586,7 @@ dhtmlxEvent(window, 'load', function(){
         {type: "settings", position: "label-left", labelWidth: "100", inputWidth: "300"},
         {type: "hidden", name: "course_id"},
         {type: "block", width: 403, offsetTop: 15, blockOffset:0, list: [
-            {type: "input", name: "course_name", label: "Name:", required: true},
+            {type: "input", name: "course_name", label: "Name:", maxLength: 30, required: true},
             {type: "input", name: "course_code", label: "Code:", maxLength: 10, required: false},
             {type: "combo", name: "course_semester_1", label: "Semester:", readonly: true, required: true},
             {type: "combo", name: "course_colour", label: "Colour:", comboType: "image", readonly: true, required: true, options: [
@@ -941,7 +941,9 @@ function submitSemesterForm(deleted){
                     type: "save-message",
                     text: "Your semester has been successfully saved!"
                 });
-                selectSemester(data.tid);
+                if(COURSE_COUNT > 0) { // if the user has already created some courses, display the newly created semester (otherwise show new course form - handled in loadSemesters())
+                    selectSemester(data.tid);
+                }
             });
         }else if(data.action == "deleted"){
             loadSemesters(function(){

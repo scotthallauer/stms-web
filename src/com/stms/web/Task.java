@@ -200,7 +200,7 @@ public class Task {
      * Delete the task's details from the database.
      * @return true if successful, false otherwise.
      */
-    private boolean deleteTask () {
+    private boolean delete() {
         // check if database is connected
         if(!Database.isConnected()) {
             return false;

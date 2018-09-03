@@ -44,7 +44,7 @@ CREATE TABLE calendarEvent (
 CREATE TABLE semester (
 	semesterID int NOT NULL AUTO_INCREMENT,
     userID int NOT NULL,
-    semesterName VARCHAR(25) NOT NULL,
+    semesterName VARCHAR(30) NOT NULL,
     startDate DATE NOT NULL,
     endDate DATE NOT NULL,
     PRIMARY KEY (semesterID),
@@ -56,7 +56,7 @@ CREATE TABLE course (
 	courseID int NOT NULL AUTO_INCREMENT,
     semesterID1 int NOT NULL,
     semesterID2 int NULL,
-    courseName VARCHAR(25) NOT NULL,
+    courseName VARCHAR(30) NOT NULL,
     courseCode VARCHAR(10) NULL,
     colour VARCHAR(7) NULL,
     PRIMARY KEY (courseID),

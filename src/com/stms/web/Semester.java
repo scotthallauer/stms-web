@@ -224,8 +224,6 @@ public class Semester {
         if(!Database.isConnected()) {
             return false;
         }
-        // the count will be used to make sure all five classes of objects are deleted from the database
-        int count = 0;
         String sql = "DELETE FROM studySession WHERE semesterID = ?";
         Object[] params;
         int[] types;
@@ -233,8 +231,9 @@ public class Semester {
         types = new int[1];
         params[0] = this.semesterID;
         types[0] = Types.INTEGER;
-        if(Database.update(sql, params, types)) {
-            count++;
+        if(!Database.update(sql, params, types)) {
+            System.out.println("Failed to delete all database entries for Semester (semesterID: " + this.semesterID + ").");
+            return false;
         }
         sql = "SELECT courseID FROM course WHERE semesterID1 = ? OR semesterID2 = ?";
         params = new Object[2];
@@ -247,22 +246,25 @@ public class Semester {
         try {
             int deletedCourse;
             while (rs.next()) {
+                deletedCourse = rs.getInt("courseID");
                 sql = "DELETE FROM courseSession WHERE courseID = ?";
-                deletedCourse = rs.getInt(1);
                 params = new Object[1];
                 types = new int[1];
                 params[0] = deletedCourse;
                 types[0] = Types.INTEGER;
-                if(Database.update(sql, params, types)) {
-                    count++;
+                if(!Database.update(sql, params, types)) {
+                    System.out.println("Failed to delete all database entries for Semester (semesterID: " + this.semesterID + ").");
+                    return false;
                 }
                 sql = "DELETE FROM courseAssignment WHERE courseID = ?";
-                if(Database.update(sql, params, types)) {
-                    count++;
+                if(!Database.update(sql, params, types)) {
+                    System.out.println("Failed to delete all database entries for Semester (semesterID: " + this.semesterID + ").");
+                    return false;
                 }
                 sql = "DELETE FROM course WHERE courseID = ?";
-                if(Database.update(sql, params, types)) {
-                    count++;
+                if(!Database.update(sql, params, types)) {
+                    System.out.println("Failed to delete all database entries for Semester (semesterID: " + this.semesterID + ").");
+                    return false;
                 }
             }
         } catch (Exception e){
@@ -274,15 +276,11 @@ public class Semester {
         types = new int[1];
         params[0] = this.semesterID;
         types[0] = Types.INTEGER;
-        if(Database.update(sql, params, types)) {
-            count++;
-        }
-        if (count == 5) {
-            return true;
-        } else {
-            System.out.println("Failed to delete all database entries for semesterID: " + this.semesterID + ".");
+        if(!Database.update(sql, params, types)) {
+            System.out.println("Failed to delete all database entries for Semester (semesterID: " + this.semesterID + ").");
             return false;
         }
+        return true;
     }
 
 

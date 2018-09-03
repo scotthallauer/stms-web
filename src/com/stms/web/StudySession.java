@@ -152,7 +152,7 @@ public class StudySession {
      * Delete the course session's details from the database.
      * @return true if successful, false otherwise.
      */
-    private boolean deleteStudySession () {
+    private boolean delete() {
         // check if database is connected
         if(!Database.isConnected()) {
             return false;

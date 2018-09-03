@@ -254,9 +254,6 @@ public class Course {
         if(!Database.isConnected()) {
             return false;
         }
-        // the count will be used to make sure all three classes of objects related to the course are deleted from the database
-        int count = 0;
-
         String sql = "DELETE FROM courseSession WHERE courseID = ?";
         Object[] params;
         int[] types;
@@ -264,23 +261,21 @@ public class Course {
         types = new int[1];
         params[0] = this.courseID;
         types[0] = Types.INTEGER;
-        if(Database.update(sql, params, types)) {
-            count++;
-        }
-        sql = "DELETE FROM courseAssignment WHERE courseID = ?";
-        if(Database.update(sql, params, types)) {
-            count++;
-        }
-        sql = "DELETE FROM course WHERE courseID = ?";
-        if(Database.update(sql, params, types)) {
-            count++;
-        }
-        if (count == 3) {
-            return true;
-        } else {
+        if(!Database.update(sql, params, types)) {
             System.out.println("Failed to delete all database entries for Course (courseID: " + this.courseID + ").");
             return false;
         }
+        sql = "DELETE FROM courseAssignment WHERE courseID = ?";
+        if(!Database.update(sql, params, types)) {
+            System.out.println("Failed to delete all database entries for Course (courseID: " + this.courseID + ").");
+            return false;
+        }
+        sql = "DELETE FROM course WHERE courseID = ?";
+        if(!Database.update(sql, params, types)) {
+            System.out.println("Failed to delete all database entries for Course (courseID: " + this.courseID + ").");
+            return false;
+        }
+        return true;
     }
 
     // Methods still to be implemented
