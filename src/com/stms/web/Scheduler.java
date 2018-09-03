@@ -1,4 +1,5 @@
 package com.stms.web;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -82,6 +83,8 @@ public class Scheduler {
         params[0] = UserID;
         types[0] = Types.INTEGER;
         ResultSet rs = Database.query(sql, params, types);
+        int courseID;
+        boolean flag = true;
         //Data is now loaded into the resultSet
         try{
             CourseSession courseSession;
@@ -89,6 +92,11 @@ public class Scheduler {
                 int sessionID = rs.getInt("sessionID");
                 try{
                     courseSession = new CourseSession(sessionID);
+                    if (flag){
+                        courseID = courseSession.getCourseID();
+                        params[0] = courseID;
+                        flag = false;
+                    }
                     Occurrence[] occurrences = courseSession.getOccurrences(1000, Utilities.getDateToday(), dueDate);
                     for(int x = 0; x < occurrences.length; x++){
                         if (occurrences[x] != null){
@@ -112,12 +120,13 @@ public class Scheduler {
             e.printStackTrace();
         } //This works for all course sessions generated from DHTLMX
 
-        sql = "SELECT semesterID FROM semester WHERE userID = ?;";
+        sql = "SELECT semesterID1 FROM course WHERE courseID = ?;";
+
         ResultSet rs2;
         try {
             rs = Database.query(sql, params, types);
             if (rs.next()){
-                SemesterID = rs.getInt("semesterID");
+                SemesterID = rs.getInt("semesterID1");
             }
             //FIX THE SEMESTERID GENERATION HERE COULD BE INVALID SEMESTER
             if(rs != null) {
@@ -166,7 +175,7 @@ public class Scheduler {
                     toSchedule.setConfirmed(true);
                     toSchedule.setNote("Auto generated study session.");
                     //Add some form of check for duplicate record
-                    boolean flag = toSchedule.save();
+                    flag = toSchedule.save();
                     if(!flag){
                         System.out.println("Failed to save session");
                     }
@@ -218,5 +227,6 @@ public class Scheduler {
         toWake = wake;
     }
 }
+
 
 
