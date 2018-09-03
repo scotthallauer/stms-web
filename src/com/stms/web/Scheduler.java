@@ -203,15 +203,17 @@ public class Scheduler {
      * @param startTime Beginning of the studySession
      * @param endTime End of the studySession
      */
-    public void ScheduleStudySessions(LocalDateTime  startTime, LocalDateTime endTime){
+    private void ScheduleStudySessions(LocalDateTime  startTime, LocalDateTime endTime){
         int dayNum = startTime.getDayOfYear() - Utilities.getDateToday().getDayOfYear();
         if(dayNum >= 0){
             for (int x = startTime.getHour(); x < endTime.getHour(); x++){
                 timeTable[dayNum][x] = false;
             }
+            if (startTime.getHour() == 23){
+                timeTable[dayNum][23] = false;
+            }
         } else {
             System.out.println("Study session has already been completed");
-            //Find a better fix
         }
     }
 
