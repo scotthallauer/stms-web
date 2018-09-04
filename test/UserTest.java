@@ -107,9 +107,9 @@ class UserTest {
 
     @Test
     void checkPassword() {
-        boolean s = user2.checkPassword("d6a4c76e085cf2f4130ba94188883ec6fff9e91a9546887a0ee8f55066be8d37");
+        boolean s = user2.checkPassword("12345678");
         assertTrue(s);
-        assertFalse(user2.checkPassword("d6a4c76e085cf2f4130ba94188883ec6fff9e91a9546887a0ee8f55066be8d3"));
+        assertFalse(user2.checkPassword("123456789"));
     }
 
     @Test
