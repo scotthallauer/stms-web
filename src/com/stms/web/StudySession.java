@@ -218,19 +218,19 @@ public class StudySession {
         this.recordSaved = false;
     }
 
-    public void setCourseSessionID(int courseSessionID){
+    public void setCourseSessionID(Integer courseSessionID){
         this.courseSessionID = courseSessionID;
     }
 
-    public int getCourseSessionID(){
+    public Integer getCourseSessionID(){
         return  courseSessionID;
     }
 
-    public void setAssignmentID(int AssignmentID){
-        this.assignmentID = AssignmentID;
+    public void setAssignmentID(Integer assignmentID){
+        this.assignmentID = assignmentID;
     }
 
-    public int getAssignmentID(){
+    public Integer getAssignmentID(){
         return assignmentID;
     }
 

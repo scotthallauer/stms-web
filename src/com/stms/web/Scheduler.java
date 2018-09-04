@@ -64,7 +64,6 @@ public class Scheduler {
             }
         }
         int checkToday = LocalDateTime.now().getHour() + 1;
-        System.out.println(checkToday);
         for (int x = 0; x < 24; x++){
             if(x > dueDate.getHour() || x < 8){
                 timeTable[DaysTilDue][x] = false;

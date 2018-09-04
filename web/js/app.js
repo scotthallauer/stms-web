@@ -145,7 +145,7 @@ dhtmlxEvent(window, 'load', function(){
                             "<tr>" +
                                 "<td></td>" +
                                 "<td>Study Time:</td>" +
-                                "<td><input type='number' min='0' step='1'> hours</td>" +
+                                "<td><input type='number' min='0' step='1'>hours</td>" +
                             "</tr>" +
                         "</table>" +
                       "</div>";

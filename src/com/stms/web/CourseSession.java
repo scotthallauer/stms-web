@@ -290,7 +290,6 @@ public class CourseSession {
                 Scheduler scheduler = new Scheduler(userID);
                 int unscheduledHours = this.studyHours;
                 for(int i = 0 ; i < 5 && unscheduledHours > 0 ; i++) { // give the scheduling algorithm 5 chances to schedule all required hours
-                    System.out.println(unscheduledHours + " hours to schedule.");
                     unscheduledHours = scheduler.generateSessions(unscheduledHours, this.startDate.toLocalDateTime(), "coursesession", this.sessionID);
                 }
                 if(unscheduledHours > 0){

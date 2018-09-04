@@ -239,7 +239,7 @@
                         types[0] = Types.INTEGER;
                         Database.update(sql, params, types);
                     }
-                    if((cs.isGraded() && (oldStudyHours != eventStudyHours || oldStartDate != eventStartDate)) ||
+                    if((cs.isGraded() && (oldStudyHours != eventStudyHours || !oldStartDate.equals(eventStartDate))) ||
                        (oldIsGraded && !cs.isGraded())){
                         cs.scheduleStudySessions();
                     }
