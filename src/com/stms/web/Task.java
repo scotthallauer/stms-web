@@ -173,7 +173,7 @@ public class Task {
         // execute query
         if(Database.update(sql, params, types)) {
             // get task ID
-            sql = "SELECT taskID FROM task WHERE userID = ? AND name = ? AND deadline = ?";
+            sql = "SELECT taskID FROM task WHERE userID = ? AND taskName = ? AND deadline = ?";
             params = new Object[3];
             types = new int[3];
             params[0] = this.userID;
