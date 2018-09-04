@@ -30,6 +30,18 @@ class StudySessionTest {
 
     @Test
     void save() {
+        StudySession s = new StudySession();
+        s.setConfirmed(true);
+        LocalDateTime temp = LocalDateTime.of(2018, 11, 7, 11, 0);
+        Timestamp x = Timestamp.valueOf(temp);
+        s.setStartTime(x);
+        temp = LocalDateTime.of(2018, 11, 7, 12, 0);
+        x = Timestamp.valueOf(temp);
+        s.setEndTime(x);
+        s.setCoursesessionID(9);
+        s.setNote("Test 12");
+        s.setSemesterID(2);
+        assertTrue(s.save());
     }
 
     @Test
@@ -59,6 +71,14 @@ class StudySessionTest {
 
     @Test
     void setStartTime() {
+        LocalDateTime temp = LocalDateTime.of(2018, 9, 8, 10, 0);
+        Timestamp x = Timestamp.valueOf(temp);
+        SS1.setStartTime(x);
+        Timestamp y = SS1.getStartTime();
+        assertEquals(x, y);
+        temp = LocalDateTime.of(2018, 9, 4, 9, 0);
+        x = Timestamp.valueOf(temp);
+        SS1.setStartTime(x);
     }
 
     @Test
@@ -71,6 +91,14 @@ class StudySessionTest {
 
     @Test
     void setEndTime() {
+        LocalDateTime temp = LocalDateTime.of(2018, 9, 8, 10, 0);
+        Timestamp x = Timestamp.valueOf(temp);
+        SS1.setEndTime(x);
+        Timestamp y = SS1.getEndTime();
+        assertEquals(x, y);
+        temp = LocalDateTime.of(2018, 9, 4, 10, 0);
+        x = Timestamp.valueOf(temp);
+        SS1.setEndTime(x);
     }
 
     @Test

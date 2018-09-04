@@ -50,17 +50,12 @@ class CourseTest {
 
     @Test
     void setSemesterID1() {
+        course1.setSemesterID1(5);
+        int x  = course1.getSemesterID1();
+        assertEquals(5, x);
+        course1.setSemesterID1(1);
     }
 
-    @Test
-    void getSemesterID2() {
-        int test = course3.getSemesterID2();
-        assertNull(test);
-    }
-
-    @Test
-    void setSemesterID2() {
-    }
 
     @Test
     void getName() {
@@ -70,6 +65,12 @@ class CourseTest {
 
     @Test
     void setName() {
+        course1.setName("test");
+        String s = course1.getName();
+        assertEquals("test", s);
+        course1.setName("Computer Science");
+        s = course1.getName();
+        assertEquals("Computer Science", s);
     }
 
     @Test
@@ -80,6 +81,12 @@ class CourseTest {
 
     @Test
     void setCode() {
+        course1.setCode("Test");
+        String s = course1.getCode();
+        assertEquals("Test", s);
+        course1.setCode("CSC3002F");
+        s = course1.getCode();
+        assertEquals(s, "CSC3002F");
     }
 
     @Test

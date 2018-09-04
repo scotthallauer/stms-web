@@ -20,8 +20,6 @@ class UserTest {
             System.out.println("Failed User Test creation. Tests invalid");
             e.printStackTrace();
         }
-
-
     }
 
     @AfterEach
@@ -30,6 +28,8 @@ class UserTest {
 
     @Test
     void getSemesters() {
+        Semester[] semesters = user1.getSemesters();
+        assertEquals(2, semesters.length);
     }
 
     @Test
@@ -107,6 +107,9 @@ class UserTest {
 
     @Test
     void checkPassword() {
+        boolean s = user2.checkPassword("d6a4c76e085cf2f4130ba94188883ec6fff9e91a9546887a0ee8f55066be8d37");
+        assertTrue(s);
+        assertFalse(user2.checkPassword("d6a4c76e085cf2f4130ba94188883ec6fff9e91a9546887a0ee8f55066be8d3"));
     }
 
     @Test

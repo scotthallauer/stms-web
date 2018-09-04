@@ -67,6 +67,14 @@ class CourseAssignmentTest {
 
     @Test
     void setDueDate() {
+        LocalDateTime temp = LocalDateTime.of(2018, 9, 8, 10, 0);
+        Timestamp x = Timestamp.valueOf(temp);
+        CA1.setDueDate(x);
+        Timestamp y = CA1.getDueDate();
+        assertEquals(x, y);
+        temp = LocalDateTime.of(2018, 9, 7, 17, 0);
+        x = Timestamp.valueOf(temp);
+        CA1.setDueDate(x);
     }
 
     @Test

@@ -78,6 +78,14 @@ class TaskTest {
 
     @Test
     void setDeadline() {
+        LocalDateTime temp = LocalDateTime.of(2018, 9, 8, 10, 0);
+        Timestamp x = Timestamp.valueOf(temp);
+        task1.setDeadline(x);
+        Timestamp y = task1.getDeadline();
+        assertEquals(x, y);
+        temp = LocalDateTime.of(2018, 9, 7, 17, 0);
+        x = Timestamp.valueOf(temp);
+        task1.setDeadline(x);
     }
 
     @Test
@@ -126,5 +134,15 @@ class TaskTest {
 
     @Test
     void save() {
+        Task task = new Task();
+        task.setUserID(1);
+        task.setName("Test");
+        LocalDateTime temp = LocalDateTime.of(2018, 11, 7, 11, 0);
+        Timestamp x = Timestamp.valueOf(temp);
+        task.setDeadline(x);
+        task.setCompleted(false);
+        task.setPriority(33);
+        task.setNote("Test");
+        assertTrue(task.save());
     }
 }

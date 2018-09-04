@@ -37,6 +37,12 @@ class CourseSessionTest {
 
     @Test
     void setSessionPID() {
+        CS1.setSessionPID(4);
+        int x = CS1.getSessionPID();
+        assertEquals(4, x);
+        CS1.setSessionPID(0);
+        x = CS1.getSessionPID();
+        assertEquals(0, x);
     }
 
     @Test
@@ -49,6 +55,12 @@ class CourseSessionTest {
 
     @Test
     void setCourseID() {
+        CS1.setCourseID(1);
+        int x = CS1.getCourseID();
+        assertEquals(1, x);
+        CS1.setCourseID(3);
+        x = CS1.getCourseID();
+        assertEquals(3, x);
     }
 
     @Test
@@ -59,6 +71,13 @@ class CourseSessionTest {
 
     @Test
     void setType() {
+        CS2.setType("Test");
+        String s= CS2.getType();
+        assertEquals("Test", s);
+        CS2.setType("lecture");
+        s= CS2.getType();
+        assertEquals("lecture", s);
+
     }
 
     @Test
@@ -68,7 +87,16 @@ class CourseSessionTest {
     }
 
     @Test
-    void setStartDate() {}
+    void setStartDate() {
+        LocalDateTime temp = LocalDateTime.of(2018, 9, 8, 10, 0);
+        Timestamp x = Timestamp.valueOf(temp);
+        CS1.setStartDate(x);
+        Timestamp y = CS1.getStartDate();
+        assertEquals(x, y);
+        temp = LocalDateTime.of(2018, 7, 23, 9, 0);
+        x = Timestamp.valueOf(temp);
+        CS1.setStartDate(x);
+    }
 
     @Test
     void getStartDate() {
@@ -80,6 +108,14 @@ class CourseSessionTest {
 
     @Test
     void setEndDate() {
+        LocalDateTime temp = LocalDateTime.of(2018, 9, 8, 10, 0);
+        Timestamp x = Timestamp.valueOf(temp);
+        CS1.setEndDate(x);
+        Timestamp y = CS1.getEndDate();
+        assertEquals(x, y);
+        temp = LocalDateTime.of(2018, 10, 7, 9, 0);
+        x = Timestamp.valueOf(temp);
+        CS1.setEndDate(x);
     }
 
     @Test
@@ -145,6 +181,10 @@ class CourseSessionTest {
 
     @Test
     void setPriority() {
+        CS2.setPriority(2);
+        int x = CS2.getPriority();
+        assertEquals(2, x);
+        CS2.setPriority(0);
 
     }
 

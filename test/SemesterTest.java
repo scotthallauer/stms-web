@@ -81,6 +81,14 @@ class SemesterTest {
 
     @Test
     void setStartDate() {
+        LocalDateTime temp = LocalDateTime.of(2018, 9, 8, 10, 0);
+        Timestamp x = Timestamp.valueOf(temp);
+        semester1.setStartDate(x);
+        Timestamp y = semester1.getStartDate();
+        assertEquals(x, y);
+        temp = LocalDateTime.of(2018, 01, 19, 0, 0);
+        x = Timestamp.valueOf(temp);
+        semester1.setStartDate(x);
     }
 
     @Test
@@ -93,9 +101,14 @@ class SemesterTest {
 
     @Test
     void setEndDate() {
-    }
+        LocalDateTime temp = LocalDateTime.of(2018, 9, 8, 10, 0);
+        Timestamp x = Timestamp.valueOf(temp);
+        semester1.setEndDate(x);
+        Timestamp y = semester1.getEndDate();
+        assertEquals(x, y);
+        temp = LocalDateTime.of(2018, 6, 24, 9, 0);
+        x = Timestamp.valueOf(temp);
+        semester1.setEndDate(x);
 
-    @Test
-    void deleteSemester() {
     }
 }
