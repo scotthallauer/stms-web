@@ -19,14 +19,12 @@ CREATE TABLE user (
 CREATE TABLE task (
 	taskID int NOT NULL AUTO_INCREMENT,
     userID int NOT NULL,
-    taskName VARCHAR(25) NOT NULL,
-    deadline DateTime NULL,
-    complete boolean NOT NULL, 
-    priority int NOT NULL,
-    note VARCHAR(200) NOT NULL,
+    description VARCHAR(50) NOT NULL,
+    dueDate DATETIME NULL,
+    complete BOOLEAN NOT NULL,
     PRIMARY KEY (taskID),
     FOREIGN KEY (userID) REFERENCES user(userID),
-    UNIQUE KEY task_uniq (userID, taskName, deadline)
+    UNIQUE KEY task_uniq (userID, description, dueDate)
 );
 
 CREATE TABLE calendarEvent (

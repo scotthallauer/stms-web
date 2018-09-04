@@ -36,6 +36,8 @@
         user.setEmail(user_email);
         user.setPassword(user_password_1);
         if(user.save()){
+            session.setAttribute("auth", true);
+            session.setAttribute("user", user);
             out.print(0); // registration successful
             return;
         }else{

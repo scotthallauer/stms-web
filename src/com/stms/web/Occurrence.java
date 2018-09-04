@@ -20,4 +20,11 @@ public class Occurrence {
         return this.endDate;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if(this == other) return true;
+        if(!(other instanceof Occurrence)) return false;
+        Occurrence otherOccurrence = (Occurrence)other;
+        return this.startDate.equals(otherOccurrence.startDate) && this.endDate.equals(otherOccurrence.endDate);
+    }
 }

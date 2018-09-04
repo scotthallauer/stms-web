@@ -48,7 +48,7 @@
                     JSONObject jo = new JSONObject();
                     jo.put("id", "c" + String.valueOf(courseSessions[k].getSessionID()));
                     jo.put("course_id", courses[j].getCourseID());
-                    jo.put("event_pid", String.valueOf(courseSessions[k].getSessionPID()));
+                    jo.put("event_pid", "c" + String.valueOf(courseSessions[k].getSessionPID()));
                     jo.put("event_type", String.valueOf(courseSessions[k].getType()));
                     if(courses[j].getCode() != null){
                         jo.put("text", courses[j].getCode() + " - " + Utilities.capitalise(courseSessions[k].getType()));
@@ -109,9 +109,11 @@
         }catch(Exception e){
             eventCourseID = null;
         }
-        Integer eventPID;
+        Integer eventPID = null;
         try{
-            eventPID = Integer.valueOf(request.getParameter("event_pid"));
+            if(request.getParameter("event_pid").charAt(0) == 'c') {
+                eventPID = Integer.valueOf(request.getParameter("event_pid").substring(1));
+            }
         }catch(Exception e){
             eventPID = null;
         }

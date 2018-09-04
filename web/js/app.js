@@ -672,10 +672,14 @@ dhtmlxEvent(window, 'load', function(){
     });
 
     // preload semester list table (will reload whenever user switches to this tab - handled in onSelect event for sidebar)
-    //prepareSemesterForm(null);
     loadSemesters(function(){
         if(COURSE_COUNT == 0){
             stms_sidebar.cells("p3_semesters").setActive();
+            swal({
+                icon: "info",
+                title: "Let's get started!",
+                text: "Begin by entering your current semester's start and end dates, as well as all of your courses. Afterwards, you can fill in your schedule with lectures, tests, etc. on the \"Calendar\" page.\n\nIf you're ever feeling lost, you can get help by clicking on your name in the top right. Good luck!"
+            });
         }
     });
 
@@ -758,7 +762,7 @@ function compareSuggestion(a,b) {
 
 function loadSuggestions(){
     $.ajax({
-        url: "./ajax/connect_task_suggestion.jsp"
+        url: "./ajax/connect_suggestions.jsp"
     }).done(function(data){
         $("table#stms_task_suggestion_list tbody").empty(); // clear existing items in suggestion list (need to refresh)
         var suggestions = JSON.parse(data);

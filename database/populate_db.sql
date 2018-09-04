@@ -86,9 +86,9 @@ VALUES (3, '2018-09-04 9:00:00', '2018-09-04 10:00:00', 1, 'Auto generated Study
 INSERT INTO studysession (semesterID,startTime,endTime,confirmed,note) 
 VALUES (5, '2018-09-04 16:00:00', '2018-09-04 17:00:00', 1, 'Auto generated Study Session');
 
-INSERT INTO task (userID, taskName, deadline, complete, priority, note) 
-VALUES (1, 'Capstone', '2018-09-07 17:00:00', 0, 80.0, 'Final project');
-INSERT INTO task (userID, taskName, deadline, complete, priority, note) 
-VALUES (2, 'Capstone', '2018-09-07 17:00:00', 0, 80.0, 'Final project');
-INSERT INTO task (userID, taskName, deadline, complete, priority, note) 
-VALUES (1, 'Test', '2018-09-10 17:00:00', 0, 50.0, 'Genetics Test');
+INSERT INTO task (userID, description, dueDate, complete) 
+VALUES (1, 'Capstone final project', '2018-09-07 17:00:00', 0);
+INSERT INTO task (userID, description, dueDate, complete) 
+VALUES (2, 'Capstone final project', '2018-09-07 17:00:00', 0);
+INSERT INTO task (userID, description, dueDate, complete) 
+VALUES (1, 'Genetics test', '2018-09-10 17:00:00', 0);

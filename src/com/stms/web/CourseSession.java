@@ -21,6 +21,7 @@ public class CourseSession {
 
     private Boolean recordExists;
     private Boolean recordSaved;
+    private CourseSession[] childSessions; // if this is a recurring event, child sessions are occurrences that have been modified or deleted by the user
 
     private Integer sessionID;
     private Integer sessionPID;
@@ -103,8 +104,31 @@ public class CourseSession {
             }
             this.recordExists = true;
             this.recordSaved = true;
+            this.loadChildSessions();
         }else{
             throw new NullPointerException("No CourseSession exists with the sessionID " + sessionID);
+        }
+    }
+
+    private void loadChildSessions(){
+        // check if database is connected
+        if(Database.isConnected()) {
+            String sql = "SELECT sessionID FROM courseSession WHERE sessionPID = ?";
+            Object[] params = new Object[1];
+            int[] types = new int[1];
+            params[0] = this.sessionID;
+            types[0] = Types.INTEGER;
+            ResultSet rs = Database.query(sql, params, types);
+            ArrayList<CourseSession> childSessions = new ArrayList<CourseSession>();
+            try {
+                while(rs.next()){
+                    childSessions.add(new CourseSession(rs.getInt("sessionID")));
+                }
+            }catch(Exception e){
+                System.out.println("Failed to load child sessions for CourseSession (sessionID: " + this.sessionID + ").");
+                e.printStackTrace();
+            }
+            this.childSessions = childSessions.toArray(new CourseSession[0]);
         }
     }
 
@@ -487,6 +511,15 @@ public class CourseSession {
 
             }
 
+        }
+
+        // remove occurrences that have been deleted by the user
+        for(int i = 0 ; i < this.childSessions.length ; i++) {
+            if(this.childSessions[i].getOccurrences(1000).length == 0) {
+                LocalDateTime childStart = this.childSessions[i].getStartDate().toLocalDateTime();
+                LocalDateTime childEnd = this.childSessions[i].getEndDate().toLocalDateTime();
+                occurrences.removeIf(o -> o.equals(new Occurrence(childStart, childEnd)));
+            }
         }
 
         return occurrences.toArray(new Occurrence[0]);
