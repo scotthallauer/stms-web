@@ -1,4 +1,5 @@
 package com.stms.web;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -49,7 +50,7 @@ public class Scheduler {
             System.out.println("Due date has passed.");
             return -1;
         }
-        int avghoursperDay = Math.round(numOfHours / (DaysTilDue+1)) + 1;
+        int avghoursperDay = Math.round(numOfHours / (DaysTilDue+1)) + 3;
 
         timeTable = new boolean[DaysTilDue + 1][24];
         // where timeTable[day][hour]
@@ -62,11 +63,16 @@ public class Scheduler {
                 }
             }
         }
+        int checkToday = LocalDateTime.now().getHour() + 1;
+        System.out.println(checkToday);
         for (int x = 0; x < 24; x++){
             if(x > dueDate.getHour() || x < 8){
                 timeTable[DaysTilDue][x] = false;
             } else {
                 timeTable[DaysTilDue][x] = true;
+            }
+            if(x < checkToday && timeTable[0][x]){
+                timeTable[0][x] = false;
             }
         }
 
@@ -158,6 +164,9 @@ public class Scheduler {
         int fullCount = 0;
         for (int x = DaysTilDue ; x > -1; x--){
             //loop through hours in a day
+            if(x < (DaysTilDue - 3)){
+                avghoursperDay -= 3;
+            }
             for (int y = 0; y < 24; y++){
                 if((timeTable[x][y]) && (hourCount < avghoursperDay) && (fullCount + hourCount < numOfHours)){
                     //Create new studysession
