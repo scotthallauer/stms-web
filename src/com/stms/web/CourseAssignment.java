@@ -225,39 +225,30 @@ public class CourseAssignment {
      * @return true if successful, false otherwise.
      */
     public boolean delete() {
-        boolean flag;
         // check if database is connected
         if(!Database.isConnected()) {
             return false;
         }
+        String sql = "DELETE FROM courseAssignment WHERE assignmentID = ?";
         Object[] params;
         int[] types;
         params = new Object[1];
         types = new int[1];
         params[0] = this.assignmentID;
         types[0] = Types.INTEGER;
-        String sql = "SELECT sSessionID FROM studysession WHERE assignmentID = ?;";
-        ResultSet rs = Database.query(sql, params, types);
-        StudySession ss;
-        flag = true;
-        try{
-            while(rs.next()){
-                try{
-                    ss = new StudySession(rs.getInt(1));
-                    flag = flag && ss.deleteStudySession();
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
+        if(Database.update(sql, params, types)) {
+            sql = "DELETE FROM studySession WHERE assignmentID = ?";
+            params = new Object[1];
+            types = new int[1];
+            params[0] = this.assignmentID;
+            types[0] = Types.INTEGER;
+            if(!Database.update(sql, params, types)){
+                return false;
             }
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-
-        sql = "DELETE FROM courseSession WHERE sessionID = ?";
-        if(!Database.update(sql, params, types)) {
-            System.out.println("Failed to delete course session for courseSessionID: " + this.assignmentID + ".");
+            return true;
+        } else {
+            System.out.println("Failed to delete course assignment for courseAssignmentID: " + this.assignmentID + ".");
             return false;
         }
-        return flag;
     }
 }

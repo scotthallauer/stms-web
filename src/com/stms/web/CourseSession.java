@@ -34,6 +34,7 @@ public class CourseSession {
     private String note;
     private Integer priority;
     private Double weighting;
+    private Integer studyHours;
     private Double possibleMark;
     private Double earnedMark;
 
@@ -87,6 +88,10 @@ public class CourseSession {
             this.weighting = rs.getDouble("weighting");
             if(rs.wasNull()){
                 this.weighting = null;
+            }
+            this.studyHours = rs.getInt("studyHours");
+            if(rs.wasNull()){
+                this.studyHours = null;
             }
             this.possibleMark = rs.getDouble("possibleMark");
             if(rs.wasNull()){
@@ -218,7 +223,30 @@ public class CourseSession {
     }
 
     public Double getWeighting(){
-        return this.weighting;
+        if(this.weighting == null){
+            return 0.0;
+        }else {
+            return this.weighting;
+        }
+    }
+
+    public void setStudyHours(Integer studyHours){
+        if(studyHours == null || studyHours > 0){
+            this.studyHours = studyHours;
+            this.recordSaved = false;
+        }
+    }
+
+    public Integer getStudyHours(){
+        if(this.studyHours == null){
+            return 0;
+        }else {
+            return this.studyHours;
+        }
+    }
+
+    public boolean isGraded(){
+        return (this.priority != null);
     }
 
     public void setPossibleMark(double possibleMark) {
@@ -237,6 +265,44 @@ public class CourseSession {
 
     public Double getEarnedMark() {
         return this.earnedMark;
+    }
+
+    public boolean scheduleStudySessions(){
+
+        // delete old study sessions associated with this course session
+        if(!Database.isConnected()) {
+            return false;
+        }
+        String sql = "DELETE FROM studySession WHERE courseSessionID = ?";
+        Object[] params = new Object[1];
+        int[] types = new int[1];
+        params[0] = this.sessionID;
+        types[0] = Types.INTEGER;
+        if(!Database.update(sql, params, types)){
+            return false;
+        }
+
+        if(this.isGraded()){
+
+            // schedule new study sessions
+            try {
+                int userID = new Semester(new Course(this.courseID).getSemesterID1()).getUserID();
+                Scheduler scheduler = new Scheduler(userID);
+                int unscheduledHours = this.studyHours;
+                for(int i = 0 ; i < 5 && unscheduledHours > 0 ; i++) { // give the scheduling algorithm 5 chances to schedule all required hours
+                    System.out.println(unscheduledHours + " hours to schedule.");
+                    unscheduledHours = scheduler.generateSessions(unscheduledHours, this.startDate.toLocalDateTime(), "coursesession", this.sessionID);
+                }
+                if(unscheduledHours > 0){
+                    return false;
+                }else{
+                    return true;
+                }
+            }catch(Exception e){
+                return false;
+            }
+        }
+        return false;
     }
 
     /**
@@ -475,23 +541,23 @@ public class CourseSession {
         String sql;
         // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
         if(!this.recordExists){
-            sql = "INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, location, note, priority, weighting, possibleMark, earnedMark) "
-                  + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, location, note, priority, weighting, studyHours, possibleMark, earnedMark) "
+                  + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }else{
             sql = "UPDATE courseSession SET sessionPID = ?, courseID = ?, sessionType = ?, startDate = ?, endDate = ?, length = ?, "
-                  + " recType = ?, location = ?, note = ?, priority = ?, weighting = ?, possibleMark = ?, earnedMark = ? WHERE sessionID = ?";
+                  + " recType = ?, location = ?, note = ?, priority = ?, weighting = ?, studyHours = ?, possibleMark = ?, earnedMark = ? WHERE sessionID = ?";
         }
         // prepare query parameters
         Object[] params;
         int[] types;
         if(!this.recordExists){
-            params = new Object[13];
-            types = new int[13];
-        }else{
             params = new Object[14];
             types = new int[14];
-            params[13] = this.sessionID;
-            types[13] = Types.INTEGER;
+        }else{
+            params = new Object[15];
+            types = new int[15];
+            params[14] = this.sessionID;
+            types[14] = Types.INTEGER;
         }
         params[0] = this.sessionPID;
         types[0] = Types.INTEGER;
@@ -515,10 +581,12 @@ public class CourseSession {
         types[9] = Types.INTEGER;
         params[10] = this.weighting;
         types[10] = Types.DOUBLE;
-        params[11] = this.possibleMark;
-        types[11] = Types.DOUBLE;
-        params[12] = this.earnedMark;
+        params[11] = this.studyHours;
+        types[11] = Types.INTEGER;
+        params[12] = this.possibleMark;
         types[12] = Types.DOUBLE;
+        params[13] = this.earnedMark;
+        types[13] = Types.DOUBLE;
         // execute query
         if(Database.update(sql, params, types)){
             // get session ID
@@ -565,42 +633,42 @@ public class CourseSession {
      * @return true if successful, false otherwise.
      */
     public boolean delete() {
-        boolean flag;
         // check if database is connected
         if(!Database.isConnected()) {
             return false;
         }
-        Object[] params;
-        int[] types;
+        // delete associated study sessions (i.e. study sessions that were created for this event)
+        String sql = "DELETE FROM studySession WHERE courseSessionID = ?";
+        Object[] params = new Object[1];
+        int[] types = new int[1];
+        params[0] = this.sessionID;
+        types[0] = Types.INTEGER;
+        if(!Database.update(sql, params, types)){
+            return false;
+        }
+        // delete associated child course sessions (if this is a parent course session for a recurring series)
+        if (this.recType != null && this.recType != "none") {
+            sql = "DELETE FROM courseSession WHERE sessionPID = ?";
+            params = new Object[1];
+            types = new int[1];
+            params[0] = this.sessionID;
+            types[0] = Types.INTEGER;
+            if(!Database.update(sql, params, types)){
+                return false;
+            }
+        }
+        // finally, delete the course session itself
+        sql = "DELETE FROM courseSession WHERE sessionID = ?";
         params = new Object[1];
         types = new int[1];
         params[0] = this.sessionID;
         types[0] = Types.INTEGER;
-        String sql = "SELECT sSessionID FROM studysession WHERE courseSessionID = ?;";
-        ResultSet rs = Database.query(sql, params, types);
-        StudySession ss;
-        flag = true;
-        try{
-            while(rs.next()){
-                try{
-                    ss = new StudySession(rs.getInt("sSessionID"));
-                    flag = flag && ss.deleteStudySession();
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-
-        sql = "DELETE FROM courseSession WHERE sessionID = ?";
         if(Database.update(sql, params, types)) {
-
+            return true;
         } else {
             System.out.println("Failed to delete course session for courseSessionID: " + this.sessionID + ".");
             return false;
         }
-        return flag;
     }
 
 }

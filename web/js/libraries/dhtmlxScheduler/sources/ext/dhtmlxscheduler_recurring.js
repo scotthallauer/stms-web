@@ -740,7 +740,11 @@ scheduler._roll_back_dates = function(ev) {
 };
 
 scheduler._is_virtual_event = function(id){
-	return id.toString().indexOf("#") != -1;
+	try {
+        return id.toString().indexOf("#") != -1;
+    }catch(err){
+		return false;
+	}
 };
 scheduler._is_modified_occurence = function(ev){
 	return (ev.event_pid && ev.event_pid != "0");

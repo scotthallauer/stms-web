@@ -24,12 +24,12 @@ public class Scheduler {
      * The userID is necessary for the class to execute but also has a set method to access it.
      */
 
-    Scheduler(){
+    public Scheduler(){
         toBed = 0;
         toWake = 8;
     }
 
-    Scheduler(int UserID){
+    public Scheduler(int UserID){
         this.UserID = UserID;
         toBed = 0;
         toWake = 8;
@@ -50,7 +50,7 @@ public class Scheduler {
             System.out.println("Due date has passed.");
             return -1;
         }
-        int avghoursperDay = Math.round(numOfHours / (DaysTilDue+1)) + 3;
+        int avghoursperDay = Math.round(numOfHours / (DaysTilDue+1))+3;
 
         timeTable = new boolean[DaysTilDue + 1][24];
         // where timeTable[day][hour]
@@ -185,7 +185,7 @@ public class Scheduler {
                     if (type.equals("assignment")){
                         toSchedule.setAssignmentID(ID);
                     } else if (type.equals("coursesession")){
-                        toSchedule.setCoursesessionID(ID);
+                        toSchedule.setCourseSessionID(ID);
                     }else{
                         System.out.println("No type has been correctly specified");
                     }
@@ -246,7 +246,6 @@ public class Scheduler {
         toWake = wake;
     }
 }
-
 
 
 

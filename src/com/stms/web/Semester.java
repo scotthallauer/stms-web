@@ -24,6 +24,7 @@ public class Semester {
     private LocalDate startDate;
     private LocalDate endDate;
     private Course[] courses;
+    private StudySession[] studySessions;
 
     // CONSTRUCTORS //
 
@@ -101,6 +102,40 @@ public class Semester {
             this.courses = new Course[0];
         }
         return this.courses;
+    }
+
+    /**
+     * Loads all of the study sessions for the semester into an array stored as an attribute.
+     */
+    private void loadStudySessions(){
+        // check if database is connected
+        if(!Database.isConnected()) {
+            return;
+        }
+        String sql = "SELECT * FROM studySession WHERE semesterID = ?";
+        Object[] params = new Object[1];
+        int[] types = new int[1];
+        params[0] = this.semesterID;
+        types[0] = Types.INTEGER;
+        ResultSet rs = Database.query(sql, params, types);
+        ArrayList<StudySession> arr = new ArrayList<StudySession>();
+        try {
+            while(rs.next()){
+                arr.add(new StudySession(rs.getInt("sSessionID")));
+            }
+        } catch (Exception e){
+            System.out.println("Failed to load all study sessions for Semester (semesterID: " + this.semesterID + ").");
+            e.printStackTrace();
+        }
+        this.studySessions = arr.toArray(new StudySession[0]);
+    }
+
+    public StudySession[] getStudySessions() {
+        this.loadStudySessions();
+        if(this.studySessions == null){
+            this.studySessions = new StudySession[0];
+        }
+        return this.studySessions;
     }
 
     public int getSemesterID() {
@@ -292,8 +327,5 @@ public class Semester {
 
     public void addCourse (Course course) {
     }
-
-    public StudySession[] getStudySession() {
-    };
     */
 }

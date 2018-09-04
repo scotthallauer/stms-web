@@ -19,7 +19,7 @@ public class StudySession {
 
     private Integer sSessionID;
     private Integer assignmentID;
-    private Integer coursesessionID;
+    private Integer courseSessionID;
     private Integer semesterID;
     private Timestamp startTime;
     private Timestamp endTime;
@@ -34,15 +34,13 @@ public class StudySession {
     public StudySession () {
         this.recordExists = false;
         this.recordSaved = false;
-        this.assignmentID = null;
-        this.coursesessionID = null;
     }
 
     /**
      * Parameterised constructor used to create and fetch any existing study sessions from the database.
      * @param sSessionID the study session's unique ID in the database
      */
-    StudySession(int sSessionID) throws Exception {
+    public StudySession(int sSessionID) throws Exception {
         // check if database is connected
         if(!Database.isConnected()) {
             throw new SQLException("Database is not connected.");
@@ -61,8 +59,19 @@ public class StudySession {
             this.endTime = rs.getTimestamp("endTime");
             this.confirmed = rs.getBoolean("confirmed");
             this.note = rs.getString("note");
+            if(rs.wasNull()){
+                this.note = null;
+            }
             this.assignmentID = rs.getInt("assignmentID");
-            this.coursesessionID = rs.getInt("courseSessionID");
+            if(rs.wasNull()){
+                this.assignmentID = null;
+            }
+            this.courseSessionID = rs.getInt("courseSessionID");
+            if(rs.wasNull()){
+                this.courseSessionID = null;
+            }
+            this.recordExists = true;
+            this.recordSaved = true;
         } else{
             throw new NullPointerException("No CourseSession exists with the sSessionID " + sSessionID);
         }
@@ -107,7 +116,7 @@ public class StudySession {
         }
         params[0] = this.semesterID;
         types[0] = Types.INTEGER;
-        params[1] = this.coursesessionID;
+        params[1] = this.courseSessionID;
         types[1] = Types.INTEGER;
         params[2] = this.assignmentID;
         types[2] = Types.INTEGER;
@@ -152,7 +161,7 @@ public class StudySession {
      * Delete the course session's details from the database.
      * @return true if successful, false otherwise.
      */
-    private boolean delete() {
+    public boolean delete() {
         // check if database is connected
         if(!Database.isConnected()) {
             return false;
@@ -198,8 +207,8 @@ public class StudySession {
     }
     public Timestamp getEndTime () { return this.endTime; }
 
-    public void setConfirmed(boolean bool) {
-        this.confirmed = bool;
+    public void setConfirmed(boolean confirmed) {
+        this.confirmed = confirmed;
         this.recordSaved = false;
     }
     public boolean getConfirmed() { return this.confirmed;}
@@ -209,12 +218,12 @@ public class StudySession {
         this.recordSaved = false;
     }
 
-    public void setCoursesessionID(int coursesessionID){
-        this.coursesessionID = coursesessionID;
+    public void setCourseSessionID(int courseSessionID){
+        this.courseSessionID = courseSessionID;
     }
 
     public int getCourseSessionID(){
-        return  coursesessionID;
+        return  courseSessionID;
     }
 
     public void setAssignmentID(int AssignmentID){

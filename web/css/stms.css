@@ -548,6 +548,9 @@ table#stms_semesters_list{
         table#stms_semesters_list tr.stms_course_row span.colour_purple{
             background-image: url(/media/colours/purple.png);
         }
+        table#stms_semesters_list tr.stms_course_row span.colour_pink{
+            background-image: url(/media/colours/pink.png);
+        }
 div#stms_semesters_none{
     display: none;
     width: 100%;

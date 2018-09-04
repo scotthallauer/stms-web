@@ -80,13 +80,9 @@ INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate
 VALUES (1, 3, 'lecture', '2018-08-31 09:00:00', '2018-10-31 09:45:00', 1535698800, 'none');
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, priority, weighting)
 VALUES (0, 3, 'test', '2018-08-31 09:00:00', '2018-08-31 09:45:00', 3, 7.5);
-INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, priority, weighting)
-VALUES (0, 3, 'demonstration', '2018-09-07 12:00:00', '2018-09-07 12:45:00', 3, 15);
 
 INSERT INTO studysession (semesterID,startTime,endTime,confirmed,note) 
 VALUES (3, '2018-09-04 9:00:00', '2018-09-04 10:00:00', 1, 'Auto generated Study Session');
-INSERT INTO studysession (semesterID,startTime,endTime,confirmed,note) 
-VALUES (1, '2018-09-04 9:00:00', '2018-09-04 10:00:00', 1, 'Auto generated Study Session');
 INSERT INTO studysession (semesterID,startTime,endTime,confirmed,note) 
 VALUES (5, '2018-09-04 16:00:00', '2018-09-04 17:00:00', 1, 'Auto generated Study Session');
 

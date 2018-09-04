@@ -37,7 +37,7 @@ dhtmlxEvent(window, 'load', function(){
     var stms_account_popup = new dhtmlXPopup();
     stms_account_popup.attachList("option", [
         {id: 1, option: "Account Settings"},
-        {id: 2, option: "User Manual"},
+        {id: 2, option: "Help"},
         stms_account_popup.separator,
         {id: 3, option: "Log Out"}
     ]);
@@ -142,6 +142,11 @@ dhtmlxEvent(window, 'load', function(){
                                 "<td>Weighting:</td>" +
                                 "<td><input type='number' min='0' max='100' step='1'>%</td>" +
                             "</tr>" +
+                            "<tr>" +
+                                "<td></td>" +
+                                "<td>Study Time:</td>" +
+                                "<td><input type='number' min='0' step='1'> hours</td>" +
+                            "</tr>" +
                         "</table>" +
                       "</div>";
             return out;
@@ -151,10 +156,12 @@ dhtmlxEvent(window, 'load', function(){
             try{
                 var priority = parseInt(value.split(",")[0]);
                 var weighting = parseFloat(value.split(",")[1]);
+                var studyHours = parseInt(value.split(",")[2]);
                 if(priority >= 1 && priority <= 3 && weighting >= 0 && weighting <= 100) {
                     $("div#stms_lightbox_grading input[type=checkbox]").click();
                     $("div#stms_lightbox_grading select").val(priority);
-                    $("div#stms_lightbox_grading input[type=number]").val(weighting);
+                    $("div#stms_lightbox_grading input[type=number]:first").val(weighting);
+                    $("div#stms_lightbox_grading input[type=number]:last").val(studyHours);
                 }else{
                     flag = false;
                 }
@@ -163,14 +170,14 @@ dhtmlxEvent(window, 'load', function(){
             }
             if(!flag){
                 $("div#stms_lightbox_grading select").val(2);
-                $("div#stms_lightbox_grading input[type=number]").val(0);
+                $("div#stms_lightbox_grading input[type=number]").val(0); // set both weighting and study hours to 0
             }
         },
         get_value: function(node, ev){
             if($("div#stms_lightbox_grading input[type=checkbox]")[0].checked){
-                return $("div#stms_lightbox_grading select").val() + "," + $("div#stms_lightbox_grading input[type=number]").val();
+                return $("div#stms_lightbox_grading select").val() + "," + $("div#stms_lightbox_grading input[type=number]:first").val() + "," + $("div#stms_lightbox_grading input[type=number]:last").val();
             }else{
-                return "0,0";
+                return "0,0,0";
             }
         },
         focus: function(node){}
@@ -232,6 +239,14 @@ dhtmlxEvent(window, 'load', function(){
         }
     });
 
+    scheduler.attachEvent("onBeforeLightbox", function(id){
+        if(typeof id == "string" && id.substring(0,1) == "s"){
+            return false;
+        }else{
+            return true;
+        }
+    });
+
     scheduler.attachEvent("onLightbox", function(id){
         $("div.dhx_cal_light").css("top", "10px");
         $("div.dhx_cal_larea").css("max-height", ($(window).height()-150) + "px");
@@ -247,6 +262,8 @@ dhtmlxEvent(window, 'load', function(){
         var event = scheduler.getEvent(id);
         if (event.readonly) {
             scheduler.config.icons_select = ["icon_details"];
+        }else if(id.substring(0,1) == "s"){
+            scheduler.config.icons_select = ["icon_delete"];
         }else {
             scheduler.config.icons_select = ["icon_edit", "icon_delete"];
         }
@@ -266,7 +283,7 @@ dhtmlxEvent(window, 'load', function(){
         var type = $("div.dhx_cal_light div.dhx_wrap_section:nth-of-type(2) input[name=types]").val().toLowerCase();
             type = type.charAt(0).toUpperCase() + type.substr(1);
         var course = $("div.dhx_cal_light div.dhx_wrap_section:nth-of-type(1) input[type=text]").val();
-        if(ev.event_grade == "0,0") {
+        if(ev.event_grade == "0,0,0") {
             $("div.dhxcombo_option_selected div.dhxcombo_option_text").each(function (index, element) {
                 if ($(element).text().replace(/\s/g, "") == course.replace(/\s/g, "")) {
                     var url = $(element).css("background-image");
@@ -304,8 +321,14 @@ dhtmlxEvent(window, 'load', function(){
     dp.init(scheduler);
     dp.setTransactionMode("POST", false);
     dp.attachEvent("onAfterUpdate", function(id, action, tid, response){
+        // change the client-side event ID to match the newly assigned server-side event ID
         if(action == "inserted"){
             scheduler.changeEventId(id, tid);
+            id = tid;
+        }
+        // if the updated event was a graded session, then reload the calendar to reflect generated study sessions
+        if(response.refresh != null && response.refresh){
+            loadEvents();
         }
         return true;
     });
@@ -595,7 +618,8 @@ dhtmlxEvent(window, 'load', function(){
                 {value: "yellow", text: "Yellow", img_src: "../media/colours/yellow.png"},
                 {value: "green", text: "Green", img_src: "../media/colours/green.png"},
                 {value: "blue", text: "Blue", img_src: "../media/colours/blue.png"},
-                {value: "purple", text: "Purple", img_src: "../media/colours/purple.png"}
+                {value: "purple", text: "Purple", img_src: "../media/colours/purple.png"},
+                {value: "pink", text: "Pink", img_src: "../media/colours/pink.png"}
             ]}
         ]},
         {type: "block", width: 403, offsetTop: 15, blockOffset: 0, list: [
@@ -676,6 +700,8 @@ function getColourCode(colourName){
         return "#22A7F0";
     }else if(colourName == "purple"){
         return "#875F9A";
+    }else if(colourName == "pink"){
+        return "#F47983";
     }else{
         return "#95A5A6";
     }
