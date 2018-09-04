@@ -49,7 +49,7 @@ public class Scheduler {
             System.out.println("Due date has passed.");
             return -1;
         }
-        int avghoursperDay = Math.round(numOfHours / DaysTilDue) + 2;
+        int avghoursperDay = Math.round(numOfHours / (DaysTilDue+1)) + 1;
 
         timeTable = new boolean[DaysTilDue + 1][24];
         // where timeTable[day][hour]
@@ -106,7 +106,9 @@ public class Scheduler {
 
                         flag = false;
                     }
-                    Occurrence[] occurrences = courseSession.getOccurrences(1000, Utilities.getDateToday(), dueDate.toLocalDate());
+                    long x1 = 1;
+                    LocalDate DD1 = dueDate.toLocalDate().plusDays(x1);
+                    Occurrence[] occurrences = courseSession.getOccurrences(1000, Utilities.getDateToday(),DD1 );
                     for(int x = 0; x < occurrences.length; x++){
                         if (occurrences[x] != null){
                             int start = occurrences[x].getStartDate().getHour();
@@ -235,6 +237,7 @@ public class Scheduler {
         toWake = wake;
     }
 }
+
 
 
 
