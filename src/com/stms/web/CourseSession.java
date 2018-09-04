@@ -564,24 +564,43 @@ public class CourseSession {
      * Delete the course session's details from the database.
      * @return true if successful, false otherwise.
      */
-    private boolean delete() {
+    public boolean delete() {
+        boolean flag;
         // check if database is connected
         if(!Database.isConnected()) {
             return false;
         }
-        String sql = "DELETE FROM courseSession WHERE sessionID = ?";
         Object[] params;
         int[] types;
         params = new Object[1];
         types = new int[1];
         params[0] = this.sessionID;
         types[0] = Types.INTEGER;
+        String sql = "SELECT sSessionID FROM studysession WHERE courseSessionID = ?;";
+        ResultSet rs = Database.query(sql, params, types);
+        StudySession ss;
+        flag = true;
+        try{
+            while(rs.next()){
+                try{
+                    ss = new StudySession(rs.getInt("sSessionID"));
+                    flag = flag && ss.deleteStudySession();
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        sql = "DELETE FROM courseSession WHERE sessionID = ?";
         if(Database.update(sql, params, types)) {
-            return true;
+
         } else {
             System.out.println("Failed to delete course session for courseSessionID: " + this.sessionID + ".");
             return false;
         }
+        return flag;
     }
 
 }
