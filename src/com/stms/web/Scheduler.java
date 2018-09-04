@@ -1,5 +1,4 @@
 package com.stms.web;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -43,15 +42,16 @@ public class Scheduler {
      * @param dueDate The Date that the work must be completed by
      * @return Amount of hours created or negative if no session created
      */
-    public int generateSessions(int numOfHours, LocalDate dueDate, String type, int ID) {
+    public int generateSessions(int numOfHours, LocalDateTime dueDate, String type, int ID) {
+        //LocalDate dueDate = due.toLocalDate();
         DaysTilDue = dueDate.getDayOfYear() - Utilities.getDateToday().getDayOfYear();
-        if (Utilities.getDateToday().isAfter(dueDate)) {
+        if (Utilities.getDateToday().isAfter(dueDate.toLocalDate())) {
             System.out.println("Due date has passed.");
             return -1;
         }
         int avghoursperDay = Math.round(numOfHours / DaysTilDue) + 2;
 
-        timeTable = new boolean[DaysTilDue][24];
+        timeTable = new boolean[DaysTilDue + 1][24];
         // where timeTable[day][hour]
         for (int x = 0; x<DaysTilDue;x++){
             for(int y = 0; y < 24; y++){
@@ -60,6 +60,13 @@ public class Scheduler {
                 } else {//free time before checking scheduled sessions
                     timeTable[x][y] = true;
                 }
+            }
+        }
+        for (int x = 0; x < 24; x++){
+            if(x > dueDate.getHour() || x < 8){
+                timeTable[DaysTilDue][x] = false;
+            } else {
+                timeTable[DaysTilDue][x] = true;
             }
         }
 
@@ -96,9 +103,10 @@ public class Scheduler {
                     if (flag){
                         courseID = courseSession.getCourseID();
                         params[0] = courseID;
+
                         flag = false;
                     }
-                    Occurrence[] occurrences = courseSession.getOccurrences(1000, Utilities.getDateToday(), dueDate);
+                    Occurrence[] occurrences = courseSession.getOccurrences(1000, Utilities.getDateToday(), dueDate.toLocalDate());
                     for(int x = 0; x < occurrences.length; x++){
                         if (occurrences[x] != null){
                             int start = occurrences[x].getStartDate().getHour();
@@ -114,8 +122,6 @@ public class Scheduler {
                     System.out.println("Failed to create CourseSession object");
                     e.printStackTrace();
                 }
-
-
             }
         } catch (SQLException e){
             e.printStackTrace();
@@ -148,7 +154,7 @@ public class Scheduler {
 
         int hourCount = 0;
         int fullCount = 0;
-        for (int x = DaysTilDue -1; x > -1; x--){
+        for (int x = DaysTilDue ; x > -1; x--){
             //loop through hours in a day
             for (int y = 0; y < 24; y++){
                 if((timeTable[x][y]) && (hourCount < avghoursperDay) && (fullCount + hourCount < numOfHours)){
@@ -229,6 +235,7 @@ public class Scheduler {
         toWake = wake;
     }
 }
+
 
 
 
