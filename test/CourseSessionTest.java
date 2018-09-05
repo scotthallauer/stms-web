@@ -1,3 +1,4 @@
+import com.stms.web.Course;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,10 +24,6 @@ class CourseSessionTest {
         } catch (Exception e){
             e.printStackTrace();
         }
-    }
-
-    @AfterEach
-    void tearDown() {
     }
 
     @Test
@@ -68,6 +65,7 @@ class CourseSessionTest {
         int x = CS3.getCourseID();
         assertEquals(5,x);
     }
+
 
     @Test
     void setType() {
@@ -160,35 +158,6 @@ class CourseSessionTest {
     }
 
     @Test
-    void setLocation() {
-        CS1.setLocation("Menzies 5");
-        assertNotNull(CS1.getLocation());
-        assertEquals("Menzies 5", CS1.getLocation());
-        CS1.setLocation(null);
-    }
-
-    @Test
-    void getLocation() {
-        String location = CS1.getLocation();
-        assertEquals("Menzies" ,location);
-    }
-
-    @Test
-    void setNote() {
-        CS3.setNote("Test");
-        assertNotNull(CS3.getNote());
-        assertEquals("Test",CS3.getNote());
-    }
-
-    @Test
-    void getNote() {
-        String s = CS1.getNote();
-
-        assertEquals("Test", s);
-
-    }
-
-    @Test
     void setPriority() {
         CS2.setPriority(2);
         int x = CS2.getPriority();
@@ -205,29 +174,59 @@ class CourseSessionTest {
 
     @Test
     void setWeighting() {
+        CS1.setWeighting(0.25);
+        double x = CS1.getWeighting();
+        assertEquals(0.25, x);
+        CS1.setWeighting(0.2);
     }
 
     @Test
     void getWeighting() {
+        double x = CS3.getWeighting();
+        assertEquals(0.1, x);
     }
 
     @Test
-    void setPossibleMark() {
+    void setStudyHours() {
+        CS1.setStudyHours(500);
+        int x = CS1.getStudyHours();
+        assertEquals(500, x);
+        CS1.setStudyHours(10);
     }
 
     @Test
-    void getPossibleMark() {
+    void getStudyHours() {
+         int x = CS1.getStudyHours();
+         assertEquals(10, x);
     }
 
     @Test
-    void setEarnedMark() {
+    void isGraded() {
+        assertTrue(CS3.isGraded());
     }
 
-    @Test
-    void getEarnedMark() {
-    }
-
+    //Tests save and delete methods
     @Test
     void save() {
+        CourseSession CS = new CourseSession();
+        CS.setStudyHours(5);
+        CS.setCourseID(3);
+        LocalDateTime temp = LocalDateTime.of(2018, 10, 7, 9, 45);
+        Timestamp t= Timestamp.valueOf(temp);
+        CS.setEndDate(t);
+        temp = LocalDateTime.of(2018, 10, 7, 9, 0);
+        t= Timestamp.valueOf(temp);
+        CS.setStartDate(t);
+        CS.setType("test");
+        long x = 2700;
+        CS.setLength(x);
+        CS.setRecType("week_1___1,2,3,4,5#");
+        CS.setPriority(2);
+        CS.setWeighting(0.15);
+        CS.setSessionPID(0);
+        assertTrue(CS.save());
+        assertTrue(CS.delete());
     }
+
+
 }

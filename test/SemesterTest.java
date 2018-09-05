@@ -1,10 +1,8 @@
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.sql.Timestamp;
+import com.stms.web.Semester;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,13 +24,6 @@ class SemesterTest {
 
     }
 
-    @AfterEach
-    void tearDown() {
-    }
-
-    @Test
-    void getCourses() {
-    }
 
     @Test
     void getSemesterID() {
@@ -73,41 +64,36 @@ class SemesterTest {
 
     @Test
     void getStartDate() {
-        LocalDateTime temp = LocalDateTime.of(2018, 01, 19, 0, 0);
-        Timestamp start = Timestamp.valueOf(temp);
-        Timestamp check = semester1.getStartDate();
+        LocalDate start = LocalDate.of(2018, 01, 19);
+
+        LocalDate check = semester1.getStartDate();
         assertEquals(start, check);
     }
 
     @Test
     void setStartDate() {
-        LocalDateTime temp = LocalDateTime.of(2018, 9, 8, 10, 0);
-        Timestamp x = Timestamp.valueOf(temp);
+        LocalDate x = LocalDate.of(2018, 9, 8);
         semester1.setStartDate(x);
-        Timestamp y = semester1.getStartDate();
+        LocalDate y = semester1.getStartDate();
         assertEquals(x, y);
-        temp = LocalDateTime.of(2018, 01, 19, 0, 0);
-        x = Timestamp.valueOf(temp);
+        x = LocalDate.of(2018, 01, 1);
         semester1.setStartDate(x);
     }
 
     @Test
     void getEndDate() {
-        LocalDateTime temp = LocalDateTime.of(2018, 06, 24, 0, 0);
-        Timestamp end = Timestamp.valueOf(temp);
-        Timestamp check = semester1.getEndDate();
+        LocalDate end = LocalDate.of(2018, 06, 24);
+        LocalDate check = semester1.getEndDate();
         assertEquals(end, check);
     }
 
     @Test
     void setEndDate() {
-        LocalDateTime temp = LocalDateTime.of(2018, 9, 8, 10, 0);
-        Timestamp x = Timestamp.valueOf(temp);
+        LocalDate x = LocalDate.of(2018, 9, 8);
         semester1.setEndDate(x);
-        Timestamp y = semester1.getEndDate();
+        LocalDate y = semester1.getEndDate();
         assertEquals(x, y);
-        temp = LocalDateTime.of(2018, 6, 24, 9, 0);
-        x = Timestamp.valueOf(temp);
+        x = LocalDate.of(2018, 6, 24);
         semester1.setEndDate(x);
 
     }
