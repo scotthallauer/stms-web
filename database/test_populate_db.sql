@@ -58,7 +58,7 @@ VALUES (2, NULL, 'Genetics', 'MCB3012Z', 'red');
 INSERT INTO courseassignment (courseID, description, dueDate, priority, weighting, studyHours, complete) 
 VALUES (1, 'Capstone', '2018-09-07 17:00:00', 3, 15.0, 0, false);
 INSERT INTO courseassignment (courseID, description, dueDate, priority, weighting, studyHours, complete) 
-VALUES (6, 'Capstone', '2018-09-07 17:00:00', 3, 15.0, 0, false);
+VALUES (6, 'Capstone', '2018-09-07 17:00:00', 3, 15.0, 5, false);
 INSERT INTO courseassignment (courseID, description, dueDate, priority, weighting, studyHours, complete) 
 VALUES (8, 'gen prac', '2018-08-16 10:00:00', 1, 1.5, 0, true);
 

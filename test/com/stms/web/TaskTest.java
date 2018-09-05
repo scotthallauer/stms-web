@@ -1,3 +1,4 @@
+package com.stms.web;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,10 +23,6 @@ class TaskTest {
         } catch (Exception e){
             e.printStackTrace();
         }
-    }
-
-    @AfterEach
-    void tearDown() {
     }
 
     @Test
@@ -53,96 +50,63 @@ class TaskTest {
     }
 
     @Test
-    void getName() {
-        String s = task1.getName();
-        assertEquals("Capstone", s);
+    void getDescription() {
+        String s = task1.getDescription();
+        assertEquals("Capstone final project", s);
     }
 
     @Test
-    void setName() {
-        task2.setName("Test");
-        String s = task2.getName();
-        assertEquals("Test", s);
-        task2.setName("Capstone");
-        s = task2.getName();
-        assertEquals("Capstone", s);
+    void setDescription() {
+        task3.setDescription("Testing");
+        String s = task3.getDescription();
+        assertEquals("Testing", s);
+        task3.setDescription("Genetics Test");
     }
 
     @Test
-    void getDeadline() {
+    void getDueDate() {
         LocalDateTime temp = LocalDateTime.of(2018, 9, 7, 17, 0);
         Timestamp start = Timestamp.valueOf(temp);
-        Timestamp check = task1.getDeadline();
+        Timestamp check = task1.getDueDate();
         assertEquals(start, check);
     }
 
     @Test
-    void setDeadline() {
+    void setDueDate() {
         LocalDateTime temp = LocalDateTime.of(2018, 9, 8, 10, 0);
         Timestamp x = Timestamp.valueOf(temp);
-        task1.setDeadline(x);
-        Timestamp y = task1.getDeadline();
+        task1.setDueDate(x);
+        Timestamp y = task1.getDueDate();
         assertEquals(x, y);
         temp = LocalDateTime.of(2018, 9, 7, 17, 0);
         x = Timestamp.valueOf(temp);
-        task1.setDeadline(x);
+        task1.setDueDate(x);
     }
 
     @Test
-    void getCompleted() {
-        assertFalse(task1.getCompleted());
+    void isComplete() {
+        assertFalse(task1.isComplete());
+        assertFalse(task3.isComplete());
     }
 
     @Test
-    void setCompleted() {
-        task3.setCompleted(false);
-        assertFalse(task3.getCompleted());
-        task3.setCompleted(true);
-        assertTrue(task3.getCompleted());
-    }
-
-    @Test
-    void getPriority() {
-        double x =  task1.getPriority();
-        assertEquals(80.0, x);
-        assertEquals(task1.getPriority(), task2.getPriority());
-    }
-
-    @Test
-    void setPriority() {
-        task1.setPriority(1);
-        double x = task1.getPriority();
-        assertEquals(x, 1);
-        task1.setPriority(80);
-        x =  task1.getPriority();
-        assertEquals(80.0, x);
-    }
-
-    @Test
-    void getNote() {
-        String s = task1.getNote();
-        assertEquals("Final project", s);
-    }
-
-    @Test
-    void setNote() {
-        task3.setNote("Testing");
-        String s = task3.getNote();
-        assertEquals("Testing", s);
-        task3.setNote("Genetics Test");
+    void setComplete() {
+        task3.setComplete(true);
+        assertTrue(task3.isComplete());
+        task3.setComplete(false);
     }
 
     @Test
     void save() {
         Task task = new Task();
         task.setUserID(1);
-        task.setName("Test");
+        task.setDescription("Test");
         LocalDateTime temp = LocalDateTime.of(2018, 11, 7, 11, 0);
         Timestamp x = Timestamp.valueOf(temp);
-        task.setDeadline(x);
-        task.setCompleted(false);
-        task.setPriority(33);
-        task.setNote("Test");
+        task.setDueDate(x);
+        task.setComplete(false);
         assertTrue(task.save());
+        assertTrue(task.delete());
     }
+
 }
