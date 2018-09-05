@@ -51,6 +51,115 @@
 				</div>
 			</div>
 		</div>
+		<div id="stms_assignments_upcoming">
+			<h4>Your Assignments<div class='dhx_assignment_create_button' aria-label='Create' role='button'>Create</div></h4>
+			<table id="stms_assignments_upcoming_list" class="stms_assignments_list_table">
+				<tbody>
+					<tr class="stms_assignments_duedate_row">
+						<td>Due Yesterday</td>
+					</tr>
+					<tr class="stms_assignments_task_row">
+						<td>
+							<table class="stms_assignment_block colour_blue overdue">
+								<tbody>
+								<tr class="stms_assignment_header_row">
+									<td><div class="coloured_checkbox colour_blue"><input type="checkbox"></div>CSC3003S - Computer Science</td>
+									<td>09:00</td>
+								</tr>
+								<tr class="stms_assignment_cont_row stms_assignment_course_row">
+									<td colspan="2">Capstone Project</td>
+								</tr>
+								<tr class="stms_assignment_cont_row">
+									<td colspan="2">Priority: High</td>
+								</tr>
+								<tr class="stms_assignment_cont_row stms_assignment_weighting_row">
+									<td colspan="2">Weighting: 10%</td>
+								</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+					<tr class="stms_assignments_duedate_row">
+						<td>Due Tomorrow</td>
+					</tr>
+					<tr class="stms_assignments_task_row">
+						<td>
+							<table class="stms_assignment_block colour_green">
+								<tbody>
+								<tr class="stms_assignment_header_row">
+									<td><div class="coloured_checkbox colour_green"><input type="checkbox"></div>MCB3023S - Genetics</td>
+									<td>17:00</td>
+								</tr>
+								<tr class="stms_assignment_cont_row stms_assignment_course_row">
+									<td colspan="2">Mid-term Report</td>
+								</tr>
+								<tr class="stms_assignment_cont_row">
+									<td colspan="2">Priority: High</td>
+								</tr>
+								<tr class="stms_assignment_cont_row stms_assignment_weighting_row">
+									<td colspan="2">Weighting: 10%</td>
+								</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+					<tr class="stms_assignments_duedate_row">
+						<td>Due 12 September</td>
+					</tr>
+					<tr class="stms_assignments_task_row">
+						<td>
+							<table class="stms_assignment_block colour_blue">
+								<tbody>
+								<tr class="stms_assignment_header_row">
+									<td><div class="coloured_checkbox colour_blue"><input type="checkbox"></div>CSC3003S - Computer Science</td>
+									<td>09:00</td>
+								</tr>
+								<tr class="stms_assignment_cont_row stms_assignment_course_row">
+									<td colspan="2">Capstone Project</td>
+								</tr>
+								<tr class="stms_assignment_cont_row">
+									<td colspan="2">Priority: High</td>
+								</tr>
+								<tr class="stms_assignment_cont_row stms_assignment_weighting_row">
+									<td colspan="2">Weighting: 10%</td>
+								</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+					<tr class="stms_assignments_task_row">
+						<td>
+							<table class="stms_assignment_block colour_green">
+								<tbody>
+								<tr class="stms_assignment_header_row">
+									<td><div class="coloured_checkbox colour_green"><input type="checkbox"></div>MCB3023S - Genetics</td>
+									<td>17:00</td>
+								</tr>
+								<tr class="stms_assignment_cont_row stms_assignment_course_row">
+									<td colspan="2">Mid-term Report</td>
+								</tr>
+								<tr class="stms_assignment_cont_row">
+									<td colspan="2">Priority: High</td>
+								</tr>
+								<tr class="stms_assignment_cont_row stms_assignment_weighting_row">
+									<td colspan="2">Weighting: 10%</td>
+								</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="stms_assignments_none">No Upcoming Assignments</div>
+		</div>
+		<div id="stms_assignments_completed">
+			<table id="stms_assignments_completed_list" class="stms_assignments_list_table">
+				<tbody>
+
+				</tbody>
+			</table>
+			<div class="stms_assignments_none">No Completed Assignments</div>
+		</div>
         <div id="stms_semesters_left">
             <div id="stms_semesters_button_bar"><h2>Semesters</h2><div id='stms_semester_create_button' class='dhx_semester_create_button' aria-label='Create' role='button'>Create</div></div>
             <div id="stms_semesters_list_wrapper">

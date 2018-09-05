@@ -475,15 +475,15 @@ dhtmlxEvent(window, 'load', function(){
 
     });
 
-    var stms_assignment_list_1 = stms_assignment_tabbar.tabs("b1").attachList({
-        type:{
-            template:"<span style='font-weight: bold'>#course#: #name#</span><br/>Priority: #priority#"
-        }
+    stms_assignment_tabbar.tabs("b1").attachObject("stms_assignments_upcoming");
+    stms_assignment_tabbar.tabs("b2").attachObject("stms_assignments_completed");
+
+    $("div.coloured_checkbox").on("click", function(){
+        var checkbox = $(this).find("input");
+        checkbox.prop("checked", !checkbox.prop("checked"));
     });
-    stms_assignment_list_1.add({
-        course: "CSC3002S",
-        name: "Progress Report",
-        priority: "Medium"
+    $("div.coloured_checkbox input").on("click", function(e){
+        e.stopPropagation();
     });
 
     ////////////////////
@@ -877,6 +877,108 @@ function saveTask(id){
             });
         }
     }, timeout);
+}
+
+function compareAssignments(a,b) {
+    var aD = a.due_date;
+    var bD = b.due_date;
+    if (moment(aD).isBefore(bD))
+        return 1;
+    if (moment(aD).isAfter(bD))
+        return -1;
+    return 0;
+}
+
+function loadAssignments(callback){
+    $.ajax({
+        url: "./ajax/connect_assignments.jsp"
+    }).done(function(data){
+        $("table#stms_assignments_upcoming_list tbody").empty(); // clear existing items in assignments list (need to refresh)
+        $("table#stms_assignments_completed_list tbody").empty();
+        var assignments = JSON.parse(data);
+        assignments.sort(compareAssignments); // sort based on priority (high to low)
+        var upcoming = new Array();
+        var completed = new Array();
+        for(var i = 0 ; i < assignments.length ; i++){
+            if(assignments[i].complete){
+                completed.push(assignments[i]);
+            }else{
+                upcoming.push(assignments[i]);
+            }
+        }
+        if(upcoming.length == 0){
+            $("div#stms_assignments_upcoming h4").hide();
+            $("table#stms_assignments_upcoming_list").hide(); // if there are no upcoming assignments, then hide the table
+            $("div#stms_assignments_upcoming div.stms_assignments_none").show();
+        }else{
+            $("div#stms_assignments_upcoming h4").show();
+            $("table#stms_assignments_upcoming_list").show();
+            $("div#stms_assignments_upcoming div.stms_assignments_none").hide();
+        }
+        if(completed.length == 0){
+            $("div#stms_assignments_completed h4").hide();
+            $("table#stms_assignments_completed_list").hide(); // if there are no upcoming assignments, then hide the table
+            $("div#stms_assignments_completed_list div.stms_assignments_none").show();
+        }else{
+            $("div#stms_assignments_completed h4").show();
+            $("table#stms_assignments_completed_list").show();
+            $("div#stms_assignments_completed_list div.stms_assignments_none").hide();
+        }
+        var today = moment().startOf('day');
+        var yesterday = moment().subtract(1, 'days').startOf('day');
+        var tomorrow = moment().add(1, 'days').startOf('day');
+
+        for(var i = 0 ; i < upcoming.length; i++){
+            var html = "";
+            var assignment_date = moment(upcoming[i].due_date).format("YYYY-MM-DD");
+            var readable_date = moment(upcoming[i].due_date).format("D MMMM");
+            if(moment(upcoming[i].due_date).isSame(yesterday, 'd')){
+                readable_date = "Yesterday";
+            }else if(moment(upcoming[i].due_date).isSame(today, 'd')){
+                readable_date = "Today";
+            }else if(moment(upcoming[i].due_date).isSame(tomorrow, 'd')){
+                readable_date = "Tomorrow";
+            }
+            var overdue = moment().isAfter(upcoming[i].due_date);
+            html += "<tr class='stms_assignments_duedate_row'><td>Due " + readable_date + "</td></tr>";
+            do{
+                var assignment_id = upcoming[i].id;
+                var assignment_desc = upcoming[i].description;
+                var assignment_time = moment(upcoming[i].due_date).format("HH:mm");
+                var assignment_weighting = upcoming[i].weighting;
+                var course_name = upcoming[i].course_name;
+                var course_code = upcoming[i].course_code;
+                var course_colour = upcoming[i].colour;
+                html += "<tr class='stms_assignments_task_row'>" +
+                        "<td>" +
+                            "<table class='stms_assignment_block colour_" + course_colour + (overdue ? " overdue" : "") + "'>" +
+                                "<tbody>" +
+                                    "<tr class='stms_assignment_header_row'>" +
+                                        "<td><div class='coloured_checkbox colour_" + course_colour + "'><input type='checkbox'></div>" + assignment_desc + "</td>" +
+                                        "<td>" + assignment_time + "</td>" +
+                                    "</tr>" +
+                                    "<tr class='stms_assignment_cont_row stms_assignment_course_row'>" +
+                                        "<td colspan='2'>" + course_code + " - " + course_name + "</td>" +
+                                    "</tr>" +
+                                    "<tr class='stms_assignment_cont_row'>" +
+                                        "<td colspan='2'>Priority: High</td>" +
+                                    "</tr>" +
+                                    "<tr class='stms_assignment_cont_row stms_assignment_weighting_row'>" +
+                                        "<td colspan='2'>Weighting: " + assignment_weighting + "%</td>" +
+                                    "</tr>" +
+                                "</tbody>" +
+                            "</table>" +
+                        "</td>" +
+                        "</tr>";
+                i++;
+            }while(i < upcoming.length && moment(upcoming[i].due_date).format("YYYY-MM-DD") == assignment_date);
+            i--; // decrement so that we don't miss this assignment in the next pass of the loop
+            $("table#stms_assignments_upcoming_list tbody").append(html);
+        }
+        if(callback && typeof callback === "function"){
+            callback();
+        }
+    });
 }
 
 function compareSemester(a,b) {

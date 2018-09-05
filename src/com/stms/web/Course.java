@@ -23,6 +23,7 @@ public class Course {
     private String code;
     private String colour;
     private CourseSession[] sessions;
+    private CourseAssignment[] assignments;
 
     // CONSTRUCTORS //
 
@@ -105,6 +106,40 @@ public class Course {
             this.sessions = new CourseSession[0];
         }
         return this.sessions;
+    }
+
+    /**
+     * Loads all course assignments for the course into an array stored as an attribute.
+     */
+    private void loadCourseAssignments(){
+        // check if database is connected
+        if(!Database.isConnected()) {
+            return;
+        }
+        String sql = "SELECT * FROM courseAssignment WHERE courseID = ?";
+        Object[] params = new Object[1];
+        int[] types = new int[1];
+        params[0] = this.courseID;
+        types[0] = Types.INTEGER;
+        ResultSet rs = Database.query(sql, params, types);
+        ArrayList<CourseAssignment> arr = new ArrayList<CourseAssignment>();
+        try {
+            while(rs.next()){
+                arr.add(new CourseAssignment(rs.getInt("assignmentID")));
+            }
+        } catch (Exception e){
+            System.out.println("Failed to load all course assignments for Course (courseID: " + this.courseID + ").");
+            e.printStackTrace();
+        }
+        this.assignments = arr.toArray(new CourseAssignment[0]);
+    }
+
+    public CourseAssignment[] getAssignments () {
+        this.loadCourseAssignments();
+        if(this.assignments == null){
+            this.assignments = new CourseAssignment[0];
+        }
+        return this.assignments;
     }
 
     public CourseSession[] getGradedSessions(){

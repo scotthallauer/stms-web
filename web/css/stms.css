@@ -430,6 +430,193 @@ div.dhx_task_create_button:hover{
 div#stms_tasks_grid tr.stms_task_disabled{
     text-decoration: line-through;
 }
+/* assignments */
+div#stms_assignments_upcoming, div#stms_assignments_completed{
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: auto;
+    padding: 10px;
+    font-family: Roboto, Arial, Helvetica;
+}
+div.dhx_assignment_create_button{
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    font-style: normal;
+    color: #0288d1;
+    float: right;
+    margin-top: -10px;
+    background-image: none;
+    background-position: -62px 0;
+    background-repeat: no-repeat;
+    height: 30px;
+    width: 80px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    line-height: 30px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+div.dhx_assignment_create_button:hover{
+    border: 1px solid transparent;
+    background-color: rgba(0,0,0,.1);
+    transition: all .1s ease-in-out;
+}
+div#stms_assignments_upcoming h4, div#stms_assignments_completed h4{
+    margin: 6px 0 20px 0;
+    font-family: Roboto, Arial, Helvetica;
+    font-style: italic;
+    font-weight: normal;
+    font-size: 15px;
+}
+table.stms_assignments_list_table{
+    width: 100%;
+}
+    tr.stms_assignments_duedate_row td{
+        font-size: 16px;
+        font-weight: bold;
+        padding: 8px 0 5px 0;
+    }
+    tr.stms_assignments_task_row > td{
+        padding-bottom: 5px;
+    }
+        table.stms_assignment_block{
+            padding: 5px;
+            width: 100%;
+            background-color: rgba(149,165,166, 0.2);
+            border: 1px solid #888;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+        table.stms_assignment_block:hover{
+            background-color: rgba(149,165,166, 0.25);
+        }
+        table.stms_assignment_block.colour_red{
+            background-color: rgba(195,39,43,0.2);
+        }
+        table.stms_assignment_block.colour_red:hover{
+            background-color: rgba(195,39,43,0.25);
+        }
+        table.stms_assignment_block.colour_orange{
+            background-color: rgba(249,105,14,0.2);
+        }
+        table.stms_assignment_block.colour_orange:hover{
+            background-color: rgba(249,105,14,0.25);
+        }
+        table.stms_assignment_block.colour_yellow{
+            background-color: rgba(255,164,0,0.2);
+        }
+        table.stms_assignment_block.colour_yellow:hover{
+            background-color: rgba(255,164,0,0.25);
+        }
+        table.stms_assignment_block.colour_green{
+            background-color: rgba(38,166,91,0.2);
+        }
+        table.stms_assignment_block.colour_green:hover{
+            background-color: rgba(38,166,91,0.25);
+        }
+        table.stms_assignment_block.colour_blue{
+            background-color: rgba(34,167,240,0.2);
+        }
+        table.stms_assignment_block.colour_blue:hover{
+            background-color: rgba(34,167,240,0.25);
+        }
+        table.stms_assignment_block.colour_purple{
+            background-color: rgba(135,95,154,0.2);
+        }
+        table.stms_assignment_block.colour_purple:hover{
+            background-color: rgba(135,95,154,0.25);
+        }
+        table.stms_assignment_block.colour_pink{
+            background-color: rgba(244,121,131,0.2);
+        }
+        table.stms_assignment_block.colour_pink:hover{
+            background-color: rgba(244,121,131,0.25);
+        }
+            tr.stms_assignment_header_row{
+                font-weight: bold;
+            }
+                table.stms_assignment_block.overdue tr.stms_assignment_header_row td{
+                    color: red;
+                }
+                tr.stms_assignment_header_row td:last-of-type{ /* due time cell */
+                    text-align: right;
+                }
+            tr.stms_assignment_cont_row td{
+                font-size: 12px;
+                padding-left: 24px;
+                color: #555;
+            }
+            table.stms_assignment_block tr.stms_assignment_cont_row.stms_assignment_course_row td{ /* assignment course cell */
+                font-size: 15px;
+                padding-bottom: 3px;
+                color: #000;
+            }
+            table.stms_assignment_block tr.stms_assignment_cont_row.stms_assignment_weighting_row td{ /* assignment weighting cell */
+                padding-bottom: 3px;
+            }
+table.stms_assignment_block div.coloured_checkbox{
+    width: 18px;
+    height: 18px;
+    display: block;
+    position: relative;
+    float: left;
+    text-align: center;
+    margin-right: 5px;
+    cursor: pointer;
+}
+table.stms_assignment_block div.coloured_checkbox::after{
+    content: "";
+    opacity: 0.5;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: -1;
+    border-radius: 2px;
+}
+table.stms_assignment_block div.coloured_checkbox:hover::after{
+    opacity: 0.85;
+}
+table.stms_assignment_block div.coloured_checkbox input{
+    vertical-align: middle;
+    cursor: pointer;
+}
+table.stms_assignment_block div.colour_red::after{
+    background-image: url(/media/colours/red.png);
+}
+table.stms_assignment_block div.colour_orange::after{
+    background-image: url(/media/colours/orange.png);
+}
+table.stms_assignment_block div.colour_yellow::after{
+    background-image: url(/media/colours/yellow.png);
+}
+table.stms_assignment_block div.colour_green::after{
+    background-image: url(/media/colours/green.png);
+}
+table.stms_assignment_block div.colour_blue::after{
+    background-image: url(/media/colours/blue.png);
+}
+table.stms_assignment_block div.colour_purple::after{
+    background-image: url(/media/colours/purple.png);
+}
+table.stms_assignment_block div.colour_pink::after{
+    background-image: url(/media/colours/pink.png);
+}
+div.stms_assignments_none{
+    display: none;
+    width: 100%;
+    text-align: center;
+    padding: 80px 0;
+    font-size: 15px;
+    color: #AAA;
+}
+div.stms_assignments_none.assignments_empty{
+    display: block;
+}
 
 /* SEMESTERS PAGE */
 div#stms_semesters_left{
