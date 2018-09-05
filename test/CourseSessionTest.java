@@ -1,9 +1,9 @@
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import com.stms.web.CourseSession;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +18,7 @@ class CourseSessionTest {
         try{
             CS1 = new CourseSession(1);
             CS2 = new CourseSession(8);
-            CS3 = new CourseSession(10);
+            CS3 = new CourseSession(5);
 
         } catch (Exception e){
             e.printStackTrace();
@@ -66,14 +66,14 @@ class CourseSessionTest {
     @Test
     void getCourseID() {
         int x = CS3.getCourseID();
-        assertEquals(3,x);
+        assertEquals(5,x);
     }
 
     @Test
     void setType() {
         CS2.setType("Test");
         String s= CS2.getType();
-        assertEquals("Test", s);
+        assertEquals("test", s);//Force all types to lowercase
         CS2.setType("lecture");
         s= CS2.getType();
         assertEquals("lecture", s);
@@ -128,10 +128,19 @@ class CourseSessionTest {
 
     @Test
     void setLength() {
+        long x1 = 3000;
+        CS1.setLength(x1);
+        long x2 = CS1.getLength();
+        assertEquals(x1, x2);
+        x1 = 2700;
+        CS1.setLength(x1);
     }
 
     @Test
     void getLength() {
+        long x1 = 2700;
+        long x2 = CS1.getLength();
+        assertEquals(x1, x2);
 
     }
 
@@ -161,7 +170,7 @@ class CourseSessionTest {
     @Test
     void getLocation() {
         String location = CS1.getLocation();
-        assertNull(location);
+        assertEquals("Menzies" ,location);
     }
 
     @Test
@@ -175,7 +184,7 @@ class CourseSessionTest {
     void getNote() {
         String s = CS1.getNote();
 
-        assertNull(s);
+        assertEquals("Test", s);
 
     }
 
@@ -190,8 +199,8 @@ class CourseSessionTest {
 
     @Test
     void getPriority() {
-        int prio = CS3.getPriority();
-        assertEquals(3, prio);
+        int prio = CS1.getPriority();
+        assertEquals(2, prio);
     }
 
     @Test

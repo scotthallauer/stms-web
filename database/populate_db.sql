@@ -62,24 +62,22 @@ VALUES (6, 'Capstone', '2018-09-07 17:00:00', 80.0, 50, null, 0.2, 'Final projec
 INSERT INTO courseassignment (courseID, assignmentName, dueDate, priority, possibleMark, earnedMark, weighting, note, complete) 
 VALUES (8, 'gen prac', '2018-08-16 10:00:00', 25.0, 100, 45, 0.1, 'Genetics Prac', true);
 
-INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
-VALUES (0, 3, 'lecture', '2018-07-23 09:00:00', '2018-10-07 09:45:00', 2700, 'week_1___1,2,3,4,5#');
-INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
-VALUES (0, 4, 'lecture', '2018-07-23 11:00:00', '2018-10-07 11:45:00', 2700, 'week_1___1,2,3,4,5#');
-INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
-VALUES (0, 5, 'lecture', '2018-07-23 15:00:00', '2018-10-07 15:45:00', 2700, 'week_1___1,2,3,4,5#');
-INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
-VALUES (0, 5, 'lecture', '2018-07-23 11:00:00', '2018-10-25 12:00:00', 2700, 'week_1___1,2,3,4,5#');
-INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
-VALUES (0, 5, 'lecture', '2018-07-23 07:00:00', '2018-10-25 8:00:00', 2700, 'week_1___1,2,3,4,5#');
-INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
-VALUES (0, 5, 'lecture', '2018-07-23 09:00:00', '2018-10-25 10:00:00', 2700, 'week_1___1,2,3,4,5#');
-INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
-VALUES (0, 5, 'lecture', '2018-07-23 16:00:00', '2018-10-25 17:00:00', 2700, 'week_1___1,2,3,4,5#');
-INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType)
-VALUES (1, 3, 'lecture', '2018-08-31 09:00:00', '2018-10-31 09:45:00', 1535698800, 'none');
-INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, priority, weighting)
-VALUES (0, 3, 'test', '2018-08-31 09:00:00', '2018-08-31 09:45:00', 3, 7.5);
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, location,note, priority, weighting, studyHours, possibleMark, earnedMark)
+VALUES (0, 3, 'lecture', '2018-07-23 09:00:00', '2018-10-07 09:45:00', 2700, 'week_1___1,2,3,4,5#', 'Menzies','Test', 2, 0.2, 10, 45, null);
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, location,note, priority, weighting, studyHours, possibleMark, earnedMark)
+VALUES (0, 4, 'lecture', '2018-07-23 11:00:00', '2018-10-07 11:45:00', 2700, 'week_1___1,2,3,4,5#', 'Menzies','Test', 2, 0.2, 10, 45, null);
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, location,note, priority, weighting, studyHours, possibleMark, earnedMark)
+VALUES (0, 5, 'lecture', '2018-07-23 15:00:00', '2018-10-07 15:45:00', 2700, 'week_1___1,2,3,4,5#', 'Menzies','Test', 2, 0.2, 10, 45, null);
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, location,note, priority, weighting, studyHours, possibleMark, earnedMark)
+VALUES (0, 5, 'lecture', '2018-07-23 11:00:00', '2018-10-25 12:00:00', 2700, 'week_1___1,2,3,4,5#', 'Menzies','Test', 2, 0.2, 10, 45, null);
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, location,note, priority, weighting, studyHours, possibleMark, earnedMark)
+VALUES (0, 5, 'lecture', '2018-07-23 07:00:00', '2018-10-25 8:00:00', 2700, 'week_1___1,2,3,4,5#', 'Menzies','Test', 2, 0.2, 10, 45, null);
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, location,note, priority, weighting, studyHours, possibleMark, earnedMark)
+VALUES (0, 5, 'lecture', '2018-07-23 09:00:00', '2018-10-25 10:00:00', 2700, 'week_1___1,2,3,4,5#', 'Menzies','Test', 2, 0.2, 10, 45, null);
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, location,note, priority, weighting, studyHours, possibleMark, earnedMark)
+VALUES (0, 5, 'lecture', '2018-07-23 16:00:00', '2018-10-25 17:00:00', 2700, 'week_1___1,2,3,4,5#', 'Menzies','Test', 2, 0.2, 10, 45, null);
+INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, location,note, priority, weighting, studyHours, possibleMark, earnedMark)
+VALUES (1, 3, 'lecture', '2018-08-31 09:00:00', '2018-10-31 09:45:00', 1535698800, 'none', 'Menzies','Test', 2, 0.2, 10, 45, null);
 
 INSERT INTO studysession (semesterID,startTime,endTime,confirmed,note) 
 VALUES (3, '2018-09-04 9:00:00', '2018-09-04 10:00:00', 1, 'Auto generated Study Session');
