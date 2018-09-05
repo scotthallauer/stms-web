@@ -83,7 +83,7 @@ CREATE TABLE courseSession (
 CREATE TABLE courseAssignment (
 	assignmentID int NOT NULL AUTO_INCREMENT,
     courseID int NOT NULL,
-    description VARCHAR(25) NOT NULL,
+    description VARCHAR(30) NOT NULL,
     dueDate DATETIME NOT NULL,
     priority int NULL,
     weighting double NULL,
