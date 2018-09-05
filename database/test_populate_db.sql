@@ -81,10 +81,12 @@ VALUES (1, 3, 'lecture', '2018-09-14 09:00:00', '2018-09-14 09:45:00', 153690840
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, priority, weighting, studyHours)
 VALUES (0, 3, 'test', '2018-09-14 09:00:00', '2018-09-14 09:45:00', null, null, 3, 7.5, null);
 
+INSERT INTO studysession (semesterID,startTime,endTime,confirmed,note, courseSessionID) 
+VALUES (3, '2018-09-04 9:00:00', '2018-09-04 10:00:00', 1, 'Auto generated Study Session', 3);
+INSERT INTO studysession (semesterID,startTime,endTime,confirmed,note, assignmentID) 
+VALUES (5, '2018-09-04 16:00:00', '2018-09-04 17:00:00', 1, 'Auto generated Study Session', 2);
 INSERT INTO studysession (semesterID,startTime,endTime,confirmed,note) 
-VALUES (3, '2018-09-04 9:00:00', '2018-09-04 10:00:00', 1, 'Auto generated Study Session');
-INSERT INTO studysession (semesterID,startTime,endTime,confirmed,note) 
-VALUES (5, '2018-09-04 16:00:00', '2018-09-04 17:00:00', 1, 'Auto generated Study Session');
+VALUES (3, '2018-09-04 16:00:00', '2018-09-04 17:00:00', 1, 'Auto generated Study Session');
 
 INSERT INTO task (userID, description, dueDate, complete) 
 VALUES (1, 'Capstone final project', '2018-09-07 17:00:00', 0);

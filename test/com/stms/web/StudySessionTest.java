@@ -1,3 +1,4 @@
+package com.stms.web;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,10 +25,7 @@ class StudySessionTest {
         }
     }
 
-    @AfterEach
-    void tearDown() {
-    }
-
+    //Tests save and delete
     @Test
     void save() {
         StudySession s = new StudySession();
@@ -38,10 +36,12 @@ class StudySessionTest {
         temp = LocalDateTime.of(2018, 11, 7, 12, 0);
         x = Timestamp.valueOf(temp);
         s.setEndTime(x);
-        s.setCoursesessionID(9);
+        s.setCourseSessionID(9);
         s.setNote("Test 12");
         s.setSemesterID(2);
         assertTrue(s.save());
+        assertNotNull(s.getStudySessionID()); //This shows that it is in the DB
+        assertTrue(s.delete());
     }
 
     @Test
@@ -64,8 +64,8 @@ class StudySessionTest {
     void getSemesterID() {
         int x1 = SS2.getSemesterID();
         int x2 = SS3.getSemesterID();
-        assertEquals(1, x1);
-        assertEquals(5, x2);
+        assertEquals(5, x1);
+        assertEquals(3, x2);
         assertNotEquals(x1, x2);
     }
 
@@ -107,8 +107,8 @@ class StudySessionTest {
         Timestamp end = Timestamp.valueOf(temp);
         Timestamp check = SS1.getEndTime();
         assertEquals(end, check);
-        assertEquals(SS1.getEndTime(), SS2.getEndTime());
-        assertNotEquals(SS1.getEndTime(), SS3.getEndTime());
+        assertEquals(SS3.getEndTime(), SS2.getEndTime());
+        assertNotEquals(SS1.getEndTime(), SS2.getEndTime());
     }
 
     @Test
@@ -139,4 +139,32 @@ class StudySessionTest {
     void getNote() {
         assertEquals("Auto generated Study Session", SS1.getNote());
     }
+    @Test
+    void setCourseSessionID() {
+        SS1.setCourseSessionID(5);
+        int x = SS1.getCourseSessionID();
+        assertEquals(5,x);
+        SS1.setCourseSessionID(3);
+    }
+
+    @Test
+    void getCourseSessionID() {
+        int x = SS1.getCourseSessionID();
+        assertEquals(3,x);
+    }
+
+    @Test
+    void setAssignmentID() {
+        SS2.setAssignmentID(4);
+        int x = SS2.getAssignmentID();
+        assertEquals(4, x);
+        SS2.setAssignmentID(2);
+    }
+
+    @Test
+    void getAssignmentID() {
+        int x = SS2.getAssignmentID();
+        assertEquals(2, x);
+    }
+
 }
