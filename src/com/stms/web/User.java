@@ -33,6 +33,7 @@ public class User {
     private String tokenCode;
     private Timestamp tokenDate;
     private Semester[] semesters;
+    private Task[] tasks;
 
     // CONSTRUCTOR //
 
@@ -112,6 +113,40 @@ public class User {
             this.semesters = new Semester[0];
         }
         return this.semesters;
+    }
+
+    /**
+     * Loads all of the tasks for the user into an array stored as an attribute.
+     */
+    private void loadTasks() {
+        // check if database is connected
+        if(!Database.isConnected()) {
+            return;
+        }
+        String sql = "SELECT * FROM task WHERE userID = ?";
+        Object[] params = new Object[1];
+        int[] types = new int[1];
+        params[0] = this.userID;
+        types[0] = Types.INTEGER;
+        ResultSet rs = Database.query(sql, params, types);
+        ArrayList<Task> arr = new ArrayList<Task>();
+        try {
+            while(rs.next()){
+                arr.add(new Task(rs.getInt("taskID")));
+            }
+        } catch (Exception e){
+            System.out.println("Failed to load all tasks for User (userID: " + this.userID + ").");
+            e.printStackTrace();
+        }
+        this.tasks = arr.toArray(new Task[0]);
+    }
+
+    public Task[] getTasks(){
+        this.loadTasks();
+        if(this.tasks == null){
+            this.tasks = new Task[0];
+        }
+        return this.tasks;
     }
 
     public Integer getUserID(){

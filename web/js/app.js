@@ -1,6 +1,8 @@
 // global variables used as flags in app (they can be updated after AJAX calls and referred to from anywhere)
 SEMESTER_COUNT = 0;
 COURSE_COUNT = 0;
+TASKS_LOADED = false;
+TASKS_ROW_ADDED = true;
 
 // Set-up the page layout when the full HTML document has been downloaded
 dhtmlxEvent(window, 'load', function(){
@@ -102,7 +104,7 @@ dhtmlxEvent(window, 'load', function(){
         if(id == "p1_calendar"){
             loadEvents();
         }else if(id == "p2_tasks"){
-            taskListResize();
+            loadTasks();
             loadSuggestions(); // suggestion list table
         }else if(id == "p3_semesters"){
             loadSemesters();
@@ -317,19 +319,22 @@ dhtmlxEvent(window, 'load', function(){
     loadEvents();
 
     // dataProcessor to communicate updates to events with the server
-    dp = new dataProcessor("./ajax/connect_scheduler.jsp");
-    dp.init(scheduler);
-    dp.setTransactionMode("POST", false);
-    dp.attachEvent("onAfterUpdate", function(id, action, tid, response){
+    var scheduler_dp = new dataProcessor("./ajax/connect_scheduler.jsp");
+    scheduler_dp.init(scheduler);
+    scheduler_dp.setTransactionMode("POST", false);
+    scheduler_dp.attachEvent("onAfterUpdate", function(id, action, tid, response){
         // change the client-side event ID to match the newly assigned server-side event ID
         if(action == "inserted"){
             scheduler.changeEventId(id, tid);
             id = tid;
         }
+        /*
         // if the updated event was a graded session, then reload the calendar to reflect generated study sessions
         if(response.refresh != null && response.refresh){
             loadEvents();
         }
+        */
+        loadEvents(); // quick fix for a bug with deleting a series of events (i.e. always reload the calendar after an update)
         return true;
     });
 
@@ -387,7 +392,7 @@ dhtmlxEvent(window, 'load', function(){
     loadSuggestions();
 
     // task list grid
-    var stms_task_grid = new dhtmlXGridObject("stms_tasks_grid");
+    stms_task_grid = new dhtmlXGridObject("stms_tasks_grid");
     stms_task_grid.setImagePath("../js/libraries/dhtmlxSuite/imgs/");
     stms_task_grid.setHeader("Done,Task,Due");
     stms_task_grid.setNoHeader(true);
@@ -403,9 +408,12 @@ dhtmlxEvent(window, 'load', function(){
 
     // enable create button at the top of the task list
     $("div.dhx_task_create_button").click(function () {
-        var newID = (new Date()).valueOf(); // generate unique id based on datetime
-        var newDate = moment().add(1, 'days').format("DD/MM/YYYY [at 12:00]");
-        stms_task_grid.addRow(newID, "0,," + newDate, 0); // insert row in grid with unchecked checkbox, empty task name and tomorrow noon as default due date
+        setTimeout(function() {
+            TASKS_ROW_ADDED = false; // temporarily disable AJAX syncing
+            var newID = (new Date()).valueOf(); // generate unique id based on datetime
+            var newDate = moment().add(1, 'days').format("DD/MM/YYYY [at 12:00]");
+            stms_task_grid.addRow("new" + newID, "0,," + newDate, 0); // insert row in grid with unchecked checkbox, empty task name and tomorrow noon as default due date
+        }, 0);
     });
 
     stms_task_grid.attachEvent("onRowAdded", function(rID){
@@ -416,9 +424,16 @@ dhtmlxEvent(window, 'load', function(){
         setTimeout( // weird workaround to focus cell (honestly have no clue why it doesn't work without the timeout)
             function() {
                 $("div#stms_tasks_grid tr.rowselected td.cellselected").trigger("click");
+                TASKS_ROW_ADDED = true;
             },
             0
         );
+    });
+
+    stms_task_grid.attachEvent("onCellChanged", function(rID, cInd, nValue){
+        if(TASKS_LOADED && TASKS_ROW_ADDED) {
+            saveTask(rID);
+        }
     });
 
     stms_task_grid.attachEvent("onCheck", function(rID, cInd, state){
@@ -427,13 +442,6 @@ dhtmlxEvent(window, 'load', function(){
             stms_task_grid.cells(rID, 1).setDisabled(true);
             stms_task_grid.cells(rID, 2).setDisabled(true);
             $("div#stms_tasks_grid tr.rowselected").addClass("stms_task_disabled");
-            setTimeout(function(){ // give user 2 seconds to uncheck task before it disappears
-                    if(stms_task_grid.cells(rID, 0).isChecked()){
-                        stms_task_grid.deleteRow(rID);
-                    }
-                },
-                2000
-            )
         }else{
             stms_task_grid.cells(rID, 1).setDisabled(false);
             stms_task_grid.cells(rID, 2).setDisabled(false);
@@ -448,14 +456,8 @@ dhtmlxEvent(window, 'load', function(){
        }
     });
 
-    var data = {
-        rows:[
-            { id:1, data: ["0", "Hand in plagiarism form", "27/08/2018 at 12:00"]},
-            { id:2, data: ["0", "Pay for lab coat", "29/08/2018 at 12:00"]},
-            { id:3, data: ["0", "Set up study timetable", "02/09/2018 at 12:00"]}
-        ]
-    };
-    stms_task_grid.parse(data,"json"); // populate task list
+    // preload task list table (will reload whenever user switches to this tab - handled in onSelect event for sidebar)
+    loadTasks();
 
     var stms_assignment_tabbar = stms_task_layout.cells("b").attachTabbar({
 
@@ -732,7 +734,12 @@ function lightboxResize(){
 
 function taskListResize(){
     var newWidth = $("div#stms_tasks").width()-22;
-    var newHeight = $("div#stms_tasks").height()-$("div#stms_task_suggestion_wrapper").height()-180;
+    var newHeight = 0;
+    if($("div#stms_task_suggestion_wrapper").is(":visible")) {
+        newHeight = $("div#stms_tasks").height() - $("div#stms_task_suggestion_wrapper").height() - 180;
+    }else{
+        newHeight = $("div#stms_tasks").height() - 155;
+    }
     if(newHeight > 0) {
         $("div#stms_tasks_grid").css("max-height", newHeight);
     }
@@ -812,6 +819,64 @@ function loadSuggestions(){
             taskListResize();
         }
     });
+}
+
+function loadTasks(){
+    TASKS_LOADED = false;
+    $.ajax({
+        url: "./ajax/connect_tasks.jsp"
+    }).done(function(data) {
+        stms_task_grid.clearAll();
+        stms_task_grid.parse(JSON.parse(data), "json");
+        stms_task_grid.sortRows(2, "date", "asc");
+        if(stms_task_grid.getRowsNum() <= 0){
+            $("div#stms_tasks_grid").addClass("gridbox_empty");
+            $("div#stms_tasks_none").addClass("gridbox_empty");
+        }else{
+            $("div#stms_tasks_grid").removeClass("gridbox_empty");
+            $("div#stms_tasks_none").removeClass("gridbox_empty");
+        }
+        TASKS_LOADED = true;
+        taskListResize();
+    });
+}
+
+function saveTask(id){
+    if(id == null){
+        return;
+    }
+    var requestAction = "updated";
+    if(stms_task_grid.cells(id, 0).isChecked()){ // if task has been marked as complete
+        requestAction = "deleted";
+    }else if(typeof id == "string" && id.length > 3 && id.substring(0, 3) == "new"){
+        requestAction = "inserted";
+    }
+    var timeout = (requestAction == "deleted" ? 2000 : 0); // if the user is deleting the task, give them 2 seconds to cancel before permanently deleting
+    setTimeout(function(){
+        if(requestAction != "deleted" || (requestAction == "deleted" && stms_task_grid.cells(id, 0).isChecked())) {
+            $.ajax({
+                method: "POST",
+                url: "./ajax/connect_tasks.jsp",
+                data: {
+                    id: id,
+                    complete: stms_task_grid.cells(id, 0).getValue(),
+                    action: requestAction,
+                    description: stms_task_grid.cells(id, 1).getValue(),
+                    due_date: stms_task_grid.cells(id, 2).getValue()
+                }
+            }).done(function (response) {
+                try {
+                    var data = JSON.parse(response);
+                    if (data.action != null && data.action == "inserted") {
+                        stms_task_grid.changeRowId(id, data.tid);
+                    } else if (data.action != null && data.action == "deleted") {
+                        stms_task_grid.deleteRow(id);
+                    }
+                } catch (err) {
+                }
+            });
+        }
+    }, timeout);
 }
 
 function compareSemester(a,b) {

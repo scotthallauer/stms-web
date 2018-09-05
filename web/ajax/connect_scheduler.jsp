@@ -48,7 +48,11 @@
                     JSONObject jo = new JSONObject();
                     jo.put("id", "c" + String.valueOf(courseSessions[k].getSessionID()));
                     jo.put("course_id", courses[j].getCourseID());
-                    jo.put("event_pid", "c" + String.valueOf(courseSessions[k].getSessionPID()));
+                    if(courseSessions[k].getSessionPID() != 0) {
+                        jo.put("event_pid", "c" + String.valueOf(courseSessions[k].getSessionPID()));
+                    }else{
+                        jo.put("event_pid", 0);
+                    }
                     jo.put("event_type", String.valueOf(courseSessions[k].getType()));
                     if(courses[j].getCode() != null){
                         jo.put("text", courses[j].getCode() + " - " + Utilities.capitalise(courseSessions[k].getType()));

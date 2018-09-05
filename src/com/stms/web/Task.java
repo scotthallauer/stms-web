@@ -18,11 +18,9 @@ public class Task {
 
     private Integer taskID;
     private Integer userID;
-    private String name;
-    private Timestamp deadline;
-    private boolean complete;
-    private Integer priority;
-    private String note;
+    private String description;
+    private Timestamp dueDate;
+    private Boolean complete;
 
     // CONSTRUCTORS //
 
@@ -53,15 +51,13 @@ public class Task {
         if (rs.first()) {
             this.taskID = rs.getInt("taskID");
             this.userID = rs.getInt("userID");
-            this.name = rs.getString("taskName");
-            this.deadline = rs.getTimestamp("deadline");
+            this.description = rs.getString("description");
+            this.dueDate = rs.getTimestamp("dueDate");
             this.complete = rs.getBoolean("complete");
-            this.priority = rs.getInt("priority");
-            this.note = rs.getString("note");
             this.recordExists = true;
             this.recordSaved = true;
         }else{
-            throw new NullPointerException("No Semester exists with the semesterID " + taskID);
+            throw new NullPointerException("No Task exists with the taskID " + taskID);
         }
     }
 
@@ -78,46 +74,28 @@ public class Task {
         this.recordSaved = false;
     }
 
-    public String getName() {
-        return this.name;
+    public String getDescription() {
+        return this.description;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(String description) {
+        this.description = description;
         this.recordSaved = false;
     }
 
-    public Timestamp getDeadline() {
-        return this.deadline;
+    public Timestamp getDueDate() {
+        return this.dueDate;
     }
 
-    public void setDeadline(Timestamp deadline) {
-        this.deadline = deadline;
+    public void setDueDate(Timestamp dueDate) {
+        this.dueDate = dueDate;
         this.recordSaved = false;
     }
 
-    public boolean getCompleted() { return this.complete;}
+    public Boolean isComplete() { return this.complete;}
 
-    public void setCompleted(boolean bool) {
-        this.complete = bool;
-        this.recordSaved = false;
-    }
-
-    public Integer getPriority() {
-        return this.priority;
-    }
-
-    public void setPriority(int priority) {
-        this.priority = priority;
-        this.recordSaved = false;
-    }
-
-    public String getNote() {
-        return this.note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
+    public void setComplete(Boolean complete) {
+        this.complete = complete;
         this.recordSaved = false;
     }
 
@@ -142,47 +120,43 @@ public class Task {
         String sql;
         // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
         if (!this.recordExists) {
-            sql = "INSERT INTO task (userID, taskName, deadline, complete, priority, note) VALUES (?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO task (userID, description, dueDate, complete) VALUES (?, ?, ?, ?)";
         } else{
-            sql = "UPDATE task SET userID = ?, taskName = ?, deadline = ?, complete = ?, priority = ?, note = ? WHERE taskID = ?";
+            sql = "UPDATE task SET userID = ?, description = ?, dueDate = ?, complete = ? WHERE taskID = ?";
         }
         // prepare query parameters
         Object[] params;
         int[] types;
         if(!this.recordExists){
-            params = new Object[6];
-            types = new int[6];
+            params = new Object[4];
+            types = new int[4];
         }else{
-            params = new Object[7];
-            types = new int[7];
-            params[6] = this.taskID;
-            types[6] = Types.INTEGER;
+            params = new Object[5];
+            types = new int[5];
+            params[4] = this.taskID;
+            types[4] = Types.INTEGER;
         }
         params[0] = this.userID;
         types[0] = Types.INTEGER;
-        params[1] = this.name;
+        params[1] = this.description;
         types[1] = Types.VARCHAR;
-        params[2] = this.deadline;
+        params[2] = this.dueDate;
         types[2] = Types.TIMESTAMP;
         params[3] = this.complete;
         types[3] = Types.BOOLEAN;
-        params[4] = this.priority;
-        types[4] = Types.INTEGER;
-        params[6] = this.note;
-        types[6] = Types.VARCHAR;
         // execute query
         if(Database.update(sql, params, types)) {
             // get task ID
-            sql = "SELECT taskID FROM task WHERE userID = ? AND taskName = ? AND deadline = ?";
+            sql = "SELECT taskID FROM task WHERE userID = ? AND description = ? AND dueDate = ?";
             params = new Object[3];
             types = new int[3];
             params[0] = this.userID;
             types[0] = Types.INTEGER;
-            params[1] = this.name;
+            params[1] = this.description;
             types[1] = Types.VARCHAR;
-            params[2] = this.deadline;
+            params[2] = this.dueDate;
             types[2] = Types.TIMESTAMP;
-            ResultSet rs = Database.query(sql, params, types); // if fetching the semesterID fails, this object will no longer be able to save data to the database (i.e. save() will always return false)
+            ResultSet rs = Database.query(sql, params, types); // if fetching the taskID fails, this object will no longer be able to save data to the database (i.e. save() will always return false)
             try {
                 if (rs.first()) {
                     this.taskID = rs.getInt("taskID");
@@ -200,7 +174,7 @@ public class Task {
      * Delete the task's details from the database.
      * @return true if successful, false otherwise.
      */
-    private boolean delete() {
+    public boolean delete() {
         // check if database is connected
         if(!Database.isConnected()) {
             return false;

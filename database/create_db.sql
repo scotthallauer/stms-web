@@ -20,7 +20,7 @@ CREATE TABLE task (
 	taskID int NOT NULL AUTO_INCREMENT,
     userID int NOT NULL,
     description VARCHAR(50) NOT NULL,
-    dueDate DATETIME NULL,
+    dueDate DATETIME NOT NULL,
     complete BOOLEAN NOT NULL,
     PRIMARY KEY (taskID),
     FOREIGN KEY (userID) REFERENCES user(userID),
@@ -72,13 +72,9 @@ CREATE TABLE courseSession (
     endDate DateTime NOT NULL,
     length bigint NULL, # duration of session in seconds (only required for recurring events) 
     recType VARCHAR(40) NULL,
-    location VARCHAR(25) NULL,
-    note VARCHAR(500) NULL,
     priority int NULL,
     weighting double NULL,
     studyHours int NULL,
-    possibleMark double NULL,
-    earnedMark double NULL,
     PRIMARY KEY (sessionID),
     FOREIGN KEY (courseID) REFERENCES course(courseID),
     UNIQUE KEY course_session_uniq (courseID, sessionType, startDate, endDate, length)

@@ -1,13 +1,11 @@
 package com.stms.web;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.sql.*;
+import java.util.TimeZone;
 
 /**
  * CourseSession class for Student Time Management System
@@ -31,13 +29,9 @@ public class CourseSession {
     private Timestamp endDate;
     private Long length;
     private String recType;
-    private String location;
-    private String note;
     private Integer priority;
     private Double weighting;
     private Integer studyHours;
-    private Double possibleMark;
-    private Double earnedMark;
 
     // CONSTRUCTORS //
 
@@ -80,8 +74,6 @@ public class CourseSession {
             if(rs.wasNull()){
                 this.recType = null;
             }
-            this.location = rs.getString("location");
-            this.note = rs.getString("note");
             this.priority = rs.getInt("priority");
             if(rs.wasNull()){
                 this.priority = null;
@@ -93,14 +85,6 @@ public class CourseSession {
             this.studyHours = rs.getInt("studyHours");
             if(rs.wasNull()){
                 this.studyHours = null;
-            }
-            this.possibleMark = rs.getDouble("possibleMark");
-            if(rs.wasNull()){
-                this.possibleMark = null;
-            }
-            this.earnedMark = rs.getDouble("earnedMark");
-            if(rs.wasNull()){
-                this.earnedMark = null;
             }
             this.recordExists = true;
             this.recordSaved = true;
@@ -210,24 +194,6 @@ public class CourseSession {
         return this.recType;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
-        this.recordSaved = false;
-    }
-
-    public String getLocation() {
-        return this.location;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-        this.recordSaved = false;
-    }
-
-    public String getNote() {
-        return this.note;
-    }
-
     public void setPriority(Integer priority){
         if(priority == null || (priority >= 1 && priority <= 3)){
             this.priority = priority;
@@ -271,24 +237,6 @@ public class CourseSession {
 
     public boolean isGraded(){
         return (this.priority != null);
-    }
-
-    public void setPossibleMark(double possibleMark) {
-        this.possibleMark = possibleMark;
-        this.recordSaved = false;
-    }
-
-    public Double getPossibleMark() {
-        return this.possibleMark;
-    }
-
-    public void setEarnedMark(double earnedMark) {
-        this.earnedMark = earnedMark;
-        this.recordSaved = false;
-    }
-
-    public Double getEarnedMark() {
-        return this.earnedMark;
     }
 
     public boolean scheduleStudySessions(){
@@ -513,12 +461,20 @@ public class CourseSession {
 
         }
 
-        // remove occurrences that have been deleted by the user
         for(int i = 0 ; i < this.childSessions.length ; i++) {
+            // remove occurrences that have been deleted by the user
             if(this.childSessions[i].getOccurrences(1000).length == 0) {
                 LocalDateTime childStart = this.childSessions[i].getStartDate().toLocalDateTime();
                 LocalDateTime childEnd = this.childSessions[i].getEndDate().toLocalDateTime();
                 occurrences.removeIf(o -> o.equals(new Occurrence(childStart, childEnd)));
+            // replace occurrences that have been modified by the user
+            }else{
+                LocalDateTime childNewStart = this.childSessions[i].getStartDate().toLocalDateTime();
+                LocalDateTime childNewEnd = this.childSessions[i].getEndDate().toLocalDateTime();
+                LocalDateTime childOldStart = LocalDateTime.ofInstant(Instant.ofEpochSecond(this.childSessions[i].getLength()), TimeZone.getDefault().toZoneId());
+                LocalDateTime childOldEnd = childOldStart.plusSeconds(Duration.between(childNewStart, childNewEnd).getSeconds());
+                occurrences.add(new Occurrence(childNewStart, childNewEnd));
+                occurrences.removeIf(o -> o.equals(new Occurrence(childOldStart, childOldEnd)));
             }
         }
 
@@ -573,23 +529,23 @@ public class CourseSession {
         String sql;
         // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
         if(!this.recordExists){
-            sql = "INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, location, note, priority, weighting, studyHours, possibleMark, earnedMark) "
-                  + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, priority, weighting, studyHours) "
+                  + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }else{
             sql = "UPDATE courseSession SET sessionPID = ?, courseID = ?, sessionType = ?, startDate = ?, endDate = ?, length = ?, "
-                  + " recType = ?, location = ?, note = ?, priority = ?, weighting = ?, studyHours = ?, possibleMark = ?, earnedMark = ? WHERE sessionID = ?";
+                  + " recType = ?, priority = ?, weighting = ?, studyHours = ? WHERE sessionID = ?";
         }
         // prepare query parameters
         Object[] params;
         int[] types;
         if(!this.recordExists){
-            params = new Object[14];
-            types = new int[14];
+            params = new Object[10];
+            types = new int[10];
         }else{
-            params = new Object[15];
-            types = new int[15];
-            params[14] = this.sessionID;
-            types[14] = Types.INTEGER;
+            params = new Object[11];
+            types = new int[11];
+            params[10] = this.sessionID;
+            types[10] = Types.INTEGER;
         }
         params[0] = this.sessionPID;
         types[0] = Types.INTEGER;
@@ -605,20 +561,12 @@ public class CourseSession {
         types[5] = Types.BIGINT;
         params[6] = this.recType;
         types[6] = Types.VARCHAR;
-        params[7] = this.location;
-        types[7] = Types.VARCHAR;
-        params[8] = this.note;
-        types[8] = Types.VARCHAR;
-        params[9] = this.priority;
+        params[7] = this.priority;
+        types[7] = Types.INTEGER;
+        params[8] = this.weighting;
+        types[8] = Types.DOUBLE;
+        params[9] = this.studyHours;
         types[9] = Types.INTEGER;
-        params[10] = this.weighting;
-        types[10] = Types.DOUBLE;
-        params[11] = this.studyHours;
-        types[11] = Types.INTEGER;
-        params[12] = this.possibleMark;
-        types[12] = Types.DOUBLE;
-        params[13] = this.earnedMark;
-        types[13] = Types.DOUBLE;
         // execute query
         if(Database.update(sql, params, types)){
             // get session ID
