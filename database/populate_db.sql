@@ -55,12 +55,12 @@ VALUES (6, NULL, 'Genetics :D', 'MCB3023S', 'green');
 INSERT INTO course (semesterID1,semesterID2,courseName,courseCode,colour) 
 VALUES (2, NULL, 'Genetics', 'MCB3012Z', 'red');
 
-INSERT INTO courseassignment (courseID, assignmentName, dueDate, priority, possibleMark, earnedMark, weighting, note, complete) 
-VALUES (1, 'Capstone', '2018-09-07 17:00:00', 80.0, 50, null, 0.2, 'Final project', false);
-INSERT INTO courseassignment (courseID, assignmentName, dueDate, priority, possibleMark, earnedMark, weighting, note, complete) 
-VALUES (6, 'Capstone', '2018-09-07 17:00:00', 80.0, 50, null, 0.2, 'Final project', false);
-INSERT INTO courseassignment (courseID, assignmentName, dueDate, priority, possibleMark, earnedMark, weighting, note, complete) 
-VALUES (8, 'gen prac', '2018-08-16 10:00:00', 25.0, 100, 45, 0.1, 'Genetics Prac', true);
+INSERT INTO courseassignment (courseID, description, dueDate, priority, weighting, studyHours, complete) 
+VALUES (1, 'Capstone', '2018-09-07 17:00:00', 3, 15.0, 0, false);
+INSERT INTO courseassignment (courseID, description, dueDate, priority, weighting, studyHours, complete) 
+VALUES (6, 'Capstone', '2018-09-07 17:00:00', 3, 15.0, 0, false);
+INSERT INTO courseassignment (courseID, description, dueDate, priority, weighting, studyHours, complete) 
+VALUES (8, 'gen prac', '2018-08-16 10:00:00', 1, 1.5, 0, true);
 
 INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, priority, weighting, studyHours)
 VALUES (0, 3, 'lecture', '2018-07-23 09:00:00', '2018-10-07 09:45:00', 2700, 'week_1___1,2,3,4,5#', null, null, null);

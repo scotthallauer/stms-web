@@ -68,8 +68,8 @@ CREATE TABLE courseSession (
 	sessionPID int NOT NULL,
     courseID int NOT NULL,
     sessionType VARCHAR(30) NOT NULL,
-    startDate DateTime NOT NULL,
-    endDate DateTime NOT NULL,
+    startDate DATETIME NOT NULL,
+    endDate DATETIME NOT NULL,
     length bigint NULL, # duration of session in seconds (only required for recurring events) 
     recType VARCHAR(40) NULL,
     priority int NULL,
@@ -83,17 +83,15 @@ CREATE TABLE courseSession (
 CREATE TABLE courseAssignment (
 	assignmentID int NOT NULL AUTO_INCREMENT,
     courseID int NOT NULL,
-    assignmentName VARCHAR(25) NOT NULL,
-    dueDate DateTime NOT NULL,
+    description VARCHAR(25) NOT NULL,
+    dueDate DATETIME NOT NULL,
     priority int NULL,
-    possibleMark double NULL,
-    earnedMark double NULL,
     weighting double NULL,
-    note VARCHAR(500) NULL,
+    studyHours int NULL,
     complete boolean NOT NULL,
     PRIMARY KEY (assignmentID),
     FOREIGN KEY (courseID) REFERENCES course(courseID),
-    UNIQUE KEY course_assignment_uniq (courseID, assignmentName, dueDate)
+    UNIQUE KEY course_assignment_uniq (courseID, description, dueDate)
 );
 
 CREATE TABLE studySession (
