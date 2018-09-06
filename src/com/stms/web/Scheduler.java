@@ -38,11 +38,6 @@ public class Scheduler {
      * @return Amount of hours created or negative if no session created
      */
     public int generateSessions(int numOfHours, LocalDateTime dueDate, String type, int ID) {
-        System.out.println("NEW");
-        System.out.println(numOfHours);
-        System.out.println(dueDate);
-        System.out.println(type);
-        System.out.println(ID);
         //LocalDate dueDate = due.toLocalDate();
         DaysTilDue = dueDate.getDayOfYear() - Utilities.getDateToday().getDayOfYear();
         if (Utilities.getDateToday().isAfter(dueDate.toLocalDate())) {
@@ -222,8 +217,6 @@ public class Scheduler {
             if (startTime.getHour() == 23){
                 timeTable[dayNum][23] = false;
             }
-        } else {
-            System.out.println("Study session has already been completed");
         }
     }
 

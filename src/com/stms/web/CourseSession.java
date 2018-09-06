@@ -260,11 +260,16 @@ public class CourseSession {
             try {
                 int userID = new Semester(new Course(this.courseID).getSemesterID1()).getUserID();
                 Scheduler scheduler = new Scheduler(userID);
-                int unscheduledHours = this.studyHours;
-                for(int i = 0 ; i < 5 && unscheduledHours > 0 ; i++) { // give the scheduling algorithm 5 chances to schedule all required hours
-                    unscheduledHours = scheduler.generateSessions(unscheduledHours, this.startDate.toLocalDateTime(), "coursesession", this.sessionID);
+                Occurrence[] occurrences = this.getOccurrences(1000);
+                int totalUnscheduledHours = 0;
+                for(int j = 0 ; j < occurrences.length ; j++) {
+                    int unscheduledHours = this.studyHours;
+                    for (int i = 0; i < 5 && unscheduledHours > 0; i++) { // give the scheduling algorithm 5 chances to schedule all required hours
+                        unscheduledHours = scheduler.generateSessions(unscheduledHours, occurrences[j].getStartDate(), "coursesession", this.sessionID);
+                    }
+                    totalUnscheduledHours += unscheduledHours;
                 }
-                if(unscheduledHours > 0){
+                if(totalUnscheduledHours > 0){
                     return false;
                 }else{
                     return true;

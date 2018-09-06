@@ -168,7 +168,7 @@ public class CourseAssignment {
             return false;
         }
 
-        if(this.isGraded()){
+        if(this.isGraded() && !this.isComplete()){
 
             // schedule new study sessions
             try {

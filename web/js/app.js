@@ -3,6 +3,7 @@ SEMESTER_COUNT = 0;
 COURSE_COUNT = 0;
 TASKS_LOADED = false;
 TASKS_ROW_ADDED = true;
+APP_LOAD_COUNT = 0; // used to track when the initial AJAX calls finish during app loading (5 initial AJAX calls)
 
 // Set-up the page layout when the full HTML document has been downloaded
 dhtmlxEvent(window, 'load', function(){
@@ -38,15 +39,13 @@ dhtmlxEvent(window, 'load', function(){
     // Pop-up for when user clicks their name in the top right
     var stms_account_popup = new dhtmlXPopup();
     stms_account_popup.attachList("option", [
-        {id: 1, option: "Account Settings"},
-        {id: 2, option: "Help"},
-        stms_account_popup.separator,
-        {id: 3, option: "Log Out"}
+        {id: 1, option: "Help"},
+        {id: 2, option: "Log Out&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"} // &nbsp; is a work around to get the right width for the popup
     ]);
     stms_account_popup.attachEvent("onClick", function(id){
-        if(id == 2){
+        if(id == 1){
             window.open("/media/documents/user_manual.pdf");
-        }else if(id == 3){
+        }else if(id == 2){
             window.location = "/logout.jsp";
         }
     });
@@ -126,6 +125,8 @@ dhtmlxEvent(window, 'load', function(){
     scheduler.config.details_on_create = true;
     scheduler.config.details_on_dblclick = true;
     scheduler.config.time_step = 15;
+    scheduler.config.event_duration = 60;
+    scheduler.config.auto_end_date = true;
     scheduler.locale.labels.section_courses = "Course";
     scheduler.locale.labels.section_types = "Type";
     scheduler.locale.labels.section_grades = "Graded";
@@ -230,8 +231,36 @@ dhtmlxEvent(window, 'load', function(){
 
     stms_sidebar.cells("p1_calendar").attachScheduler(new Date(), 'week');
 
+    // Pop-up for when user clicks create button on the calendar page (choose new session or new assignment)
+    stms_calendar_popup = new dhtmlXPopup();
+    stms_calendar_popup.attachList("option", [
+        {id: 1, option: "New Session"},
+        {id: 2, option: "New Assignment"}
+    ]);
+    stms_calendar_popup.attachEvent("onClick", function(id){
+        // new course session
+        if(id == 1){
+            scheduler.addEventNow({
+                text: "New Session",
+                start_date: moment().startOf("hour").toDate(),
+                end_date: moment().startOf("hour").add(1, "hour").toDate()
+            });
+        // new course assignment
+        }else{
+            scheduler.addEventNow({
+                text: "New Assignment",
+                assignment_desc: "Assignment",
+                event_grade: "2,0,0",
+                assignment_complete: false,
+                start_date: moment().startOf("hour").toDate(),
+                end_date: moment().startOf("hour").add(1, "hour").toDate(),
+                assignment_duedate: moment().startOf("hour").add(1, "day").toDate()
+            });
+        }
+    });
+
     // Add a create button to the top right of the calendar
-    $("div.dhx_cal_navline").append("<div class='dhx_cal_create_button' aria-label='Create' role='button'>Create</div>");
+    $("div.dhx_cal_navline").append("<div id='stms_calendar_create_button' class='dhx_cal_create_button' aria-label='Create' role='button'>Create</div>");
     $("div.dhx_cal_create_button").click(function () {
         if(COURSE_COUNT == 0){
             swal({
@@ -240,16 +269,24 @@ dhtmlxEvent(window, 'load', function(){
                 text: "You haven't created any courses yet! Go to the \"Semesters\" page to create some semesters and courses."
             });
         }else{
-            scheduler.addEventNow({
-                text: "New Session",
-                start_date: moment().startOf("hour").toDate(),
-                end_date: moment().startOf("hour").add(1, "hour").toDate()
-            });
+            if(stms_calendar_popup.isVisible()){
+                stms_calendar_popup.hide();
+            }else {
+                var stms_calendar_area = document.getElementById("stms_calendar_create_button");
+                var x = window.dhx.absLeft(stms_calendar_area);
+                var y = window.dhx.absTop(stms_calendar_area)-6;
+                var width = stms_calendar_area.offsetWidth;
+                var height = stms_calendar_area.offsetHeight;
+                stms_calendar_popup.show(x, y, width, height);
+            }
         }
     });
 
     // Set event details to default values when creating an event by dragging on the calendar
     scheduler.attachEvent("onEventCreated", function(id, ev){
+        if(scheduler.getEvent(id).text == "New event"){
+            scheduler.getEvent(id).text = "New Session";
+        }
         scheduler.getEvent(id).color = getColourCode("blue");
         scheduler.getEvent(id).textColor = "#FFFFFF";
         return true;
@@ -325,7 +362,7 @@ dhtmlxEvent(window, 'load', function(){
             type = type.charAt(0).toUpperCase() + type.substr(1);
         }
         var course = $("div.dhx_cal_light div.dhx_wrap_section:nth-of-type(1) input[type=text]").val();
-        if(ev.event_grade == "0,0,0") {
+        if(ev.event_grade == "0,0,0" || (ev.assignment_complete != null && ev.assignment_complete)) {
             $("div.dhxcombo_option_selected div.dhxcombo_option_text").each(function (index, element) {
                 if ($(element).text().replace(/\s/g, "") == course.replace(/\s/g, "")) {
                     var url = $(element).css("background-image");
@@ -545,9 +582,11 @@ dhtmlxEvent(window, 'load', function(){
             scheduler.addEventNow({
                 text: "New Assignment",
                 assignment_desc: "Assignment",
+                event_grade: "2,0,0",
                 assignment_complete: false,
                 start_date: moment().startOf("hour").toDate(),
-                end_date: moment().startOf("hour").add(1, "hour").toDate()
+                end_date: moment().startOf("hour").add(1, "hour").toDate(),
+                assignment_duedate: moment().startOf("hour").add(1, "day").toDate()
             });
         }
     });
@@ -754,13 +793,11 @@ dhtmlxEvent(window, 'load', function(){
         }
     });
 
-    // hide loading screen after app has finished loading
-    $("div#stms_loader").hide();
-    $("body").loadingModal("hide");
-
 });
 
-// utility functions
+///////////////////
+// APP FUNCTIONS //
+///////////////////
 function getColourCode(colourName){
     colourName = colourName.toLowerCase();
     if(colourName == "red"){
@@ -788,6 +825,8 @@ function loadEvents(){
     }).done(function(data) {
         scheduler.clearAll();
         scheduler.parse(JSON.parse(data), "json");
+        APP_LOAD_COUNT++;
+        checkAppLoader();
     });
 }
 
@@ -887,6 +926,8 @@ function loadSuggestions(){
             $("table#stms_task_suggestion_list tbody").append(html);
             taskListResize();
         }
+        APP_LOAD_COUNT++;
+        checkAppLoader();
     });
 }
 
@@ -907,6 +948,8 @@ function loadTasks(){
         }
         TASKS_LOADED = true;
         taskListResize();
+        APP_LOAD_COUNT++;
+        checkAppLoader();
     });
 }
 
@@ -1003,6 +1046,7 @@ function loadAssignments(callback){
         var assignment_weighting;
         var course_name;
         var course_code;
+        var course_desc;
         var course_colour;
 
         // populate upcoming assignments list
@@ -1034,9 +1078,14 @@ function loadAssignments(callback){
                     assignment_priority = null;
                 }
                 assignment_weighting = upcoming[i].weighting;
+                course_colour = upcoming[i].colour;
                 course_name = upcoming[i].course_name;
                 course_code = upcoming[i].course_code;
-                course_colour = upcoming[i].colour;
+                if(course_code != null && course_code.length > 0){
+                    course_desc = course_code + " - " + course_name;
+                }else{
+                    course_desc = course_name;
+                }
                 html += "<tr class='stms_assignments_task_row' data-assignment-id='" + assignment_id + "'>" +
                     "<td>" +
                     "<table class='stms_assignment_block colour_" + course_colour + (overdue ? " overdue" : "") + "'>" +
@@ -1046,7 +1095,7 @@ function loadAssignments(callback){
                     "<td>" + assignment_time + "</td>" +
                     "</tr>" +
                     "<tr class='stms_assignment_cont_row stms_assignment_course_row'>" +
-                    "<td colspan='2'>" + course_code + " - " + course_name + "</td>" +
+                    "<td colspan='2'>" + course_desc + "</td>" +
                     "</tr>";
                 if(assignment_priority != null) {
                     html += "<tr class='stms_assignment_cont_row stms_assignment_priority_row'>" +
@@ -1096,9 +1145,14 @@ function loadAssignments(callback){
                     assignment_priority = null;
                 }
                 assignment_weighting = completed[i].weighting;
+                course_colour = completed[i].colour;
                 course_name = completed[i].course_name;
                 course_code = completed[i].course_code;
-                course_colour = completed[i].colour;
+                if(course_code != null && course_code.length > 0){
+                    course_desc = course_code + " - " + course_name;
+                }else{
+                    course_desc = course_name;
+                }
                 html += "<tr class='stms_assignments_task_row' data-assignment-id='" + assignment_id + "'>" +
                     "<td>" +
                     "<table class='stms_assignment_block colour_" + course_colour + "'>" +
@@ -1108,7 +1162,7 @@ function loadAssignments(callback){
                     "<td>" + assignment_time + "</td>" +
                     "</tr>" +
                     "<tr class='stms_assignment_cont_row stms_assignment_course_row'>" +
-                    "<td colspan='2'>" + course_code + " - " + course_name + "</td>" +
+                    "<td colspan='2'>" + course_desc + "</td>" +
                     "</tr>";
                 if(assignment_priority != null) {
                     html += "<tr class='stms_assignment_cont_row stms_assignment_priority_row'>" +
@@ -1159,6 +1213,8 @@ function loadAssignments(callback){
         if(callback && typeof callback === "function"){
             callback();
         }
+        APP_LOAD_COUNT++;
+        checkAppLoader();
     });
 }
 
@@ -1278,6 +1334,8 @@ function loadSemesters(callback){
         if(callback && typeof callback === "function"){
             callback();
         }
+        APP_LOAD_COUNT++;
+        checkAppLoader();
     });
 }
 
@@ -1418,4 +1476,12 @@ function selectSemester(id){
 
 function selectCourse(id){
     $("table#stms_semesters_list tr.stms_course_row[data-course-id=" + id + "]").click();
+}
+
+// hide loading screen after app has finished loading
+function checkAppLoader() {
+    if(APP_LOAD_COUNT == 5) {
+        $("div#stms_loader").hide();
+        $("body").loadingModal("hide");
+    }
 }

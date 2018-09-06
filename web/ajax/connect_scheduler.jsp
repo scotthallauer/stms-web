@@ -98,9 +98,12 @@
                     jo.put("assignment_duedate", courseAssignments[k].getDueDate().toString());
                     if(courseAssignments[k].getPriority() != null){
                         jo.put("event_grade", String.valueOf(courseAssignments[k].getPriority()) + "," + String.valueOf(courseAssignments[k].getWeighting()) + "," + String.valueOf(courseAssignments[k].getStudyHours()));
-                        jo.put("color", "red");
                     }else{
                         jo.put("event_grade", "0,0,0");
+                    }
+                    if(courseAssignments[k].getPriority() != null && !courseAssignments[k].isComplete()){
+                        jo.put("color", "red");
+                    }else{
                         jo.put("color", getColourCode(courses[j].getColour()));
                     }
                     jo.put("start_date", courseAssignments[k].getDueDate().toLocalDateTime().toLocalDate().atStartOfDay().format(formatter));
@@ -345,9 +348,11 @@
                 boolean oldIsGraded = ca.isGraded();
                 Integer oldStudyHours = null;
                 Timestamp oldDueDate = null;
+                Boolean oldComplete = null;
                 if (ca.isGraded()) {
                     oldStudyHours = ca.getStudyHours();
                     oldDueDate = ca.getDueDate();
+                    oldComplete = ca.isComplete();
                     jo.put("refresh", true);
                 }
                 ca.setCourseID(eventCourseID);
@@ -358,7 +363,7 @@
                 ca.setComplete(assignmentComplete);
                 ca.setDueDate(assignmentDueDate);
                 if (ca.save()) {
-                    if ((ca.isGraded() && (oldStudyHours != eventStudyHours || !oldDueDate.equals(assignmentDueDate))) ||
+                    if ((ca.isGraded() && (oldStudyHours != eventStudyHours || !oldDueDate.equals(assignmentDueDate) || oldComplete != assignmentComplete)) ||
                             (oldIsGraded && !ca.isGraded())) {
                         ca.scheduleStudySessions();
                     }
