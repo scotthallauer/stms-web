@@ -87,8 +87,8 @@ INSERT INTO studysession (semesterID,startTime,endTime,confirmed,note)
 VALUES (5, '2018-09-04 16:00:00', '2018-09-04 17:00:00', 1, 'Auto generated Study Session');
 
 INSERT INTO task (userID, description, dueDate, complete) 
-VALUES (1, 'Capstone final project', '2018-09-07 17:00:00', 0);
+VALUES (1, 'Study chapter 5 for computer science', '2018-09-14 20:00:00', 0);
 INSERT INTO task (userID, description, dueDate, complete) 
-VALUES (2, 'Capstone final project', '2018-09-07 17:00:00', 0);
+VALUES (2, 'Study chapter 2 for computer science', '2018-09-11 17:00:00', 0);
 INSERT INTO task (userID, description, dueDate, complete) 
-VALUES (1, 'Genetics test', '2018-09-10 17:00:00', 0);
+VALUES (1, 'Bring R30 for Microsoft Visio', '2018-09-15 08:00:00', 0);

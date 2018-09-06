@@ -30,8 +30,6 @@ public class User {
     private String email;
     private String pwdHash;
     private String pwdSalt;
-    private String tokenCode;
-    private Timestamp tokenDate;
     private Semester[] semesters;
     private Task[] tasks;
 
@@ -68,10 +66,6 @@ public class User {
             this.email = rs.getString("email");
             this.pwdHash = rs.getString("pwdHash");
             this.pwdSalt = rs.getString("pwdSalt");
-            this.tokenCode = rs.getString("tokenCode");
-            if(rs.wasNull()) this.tokenCode = null;
-            this.tokenDate = rs.getTimestamp("tokenDate");
-            if(rs.wasNull()) this.tokenDate = null;
             this.recordExists = true;
             this.recordSaved = true;
         }else{
@@ -189,28 +183,6 @@ public class User {
         }
     }
 
-    public String getTokenCode() {
-        return this.tokenCode;
-    }
-
-    public Timestamp getTokenDate(){
-        return this.tokenDate;
-    }
-
-    private void generateToken(){
-        this.tokenCode = Utilities.randomString(64);
-        this.tokenDate = Utilities.getCurrentTimestamp();
-        this.recordSaved = false;
-    }
-
-    private void clearToken(){
-        if(this.tokenCode != null || this.tokenDate != null) {
-            this.tokenCode = null;
-            this.tokenDate = null;
-            this.recordSaved = false;
-        }
-    }
-
     /**
      * Checks if the supplied password matches the hashed password in the database.
      * @param plaintext the plaintext password to check
@@ -238,16 +210,6 @@ public class User {
         }
     }
 
-    public boolean forgotPassword () {
-        this.generateToken();
-        if(this.save()) {
-            // SEND EMAIL WITH TOKEN
-            return true;
-        }else{
-            return false;
-        }
-    }
-
     /**
      * Save the user's details to the database.
      * @return true if successful, false otherwise.
@@ -269,21 +231,21 @@ public class User {
         String sql;
         // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
         if(!this.recordExists){
-            sql = "INSERT INTO user (firstName, lastName, email, pwdHash, pwdSalt, tokenCode, tokenDate) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO user (firstName, lastName, email, pwdHash, pwdSalt) VALUES (?, ?, ?, ?, ?)";
         }else{
-            sql = "UPDATE user SET firstName = ?, lastName = ?, email = ?, pwdHash = ?, pwdSalt = ?, tokenCode = ?, tokenDate = ? WHERE userID = ?";
+            sql = "UPDATE user SET firstName = ?, lastName = ?, email = ?, pwdHash = ?, pwdSalt = ? WHERE userID = ?";
         }
         // prepare query parameters
         Object[] params;
         int[] types;
         if(!this.recordExists){
-            params = new Object[7];
-            types = new int[7];
+            params = new Object[5];
+            types = new int[5];
         }else{
-            params = new Object[8];
-            types = new int[8];
-            params[7] = this.userID;
-            types[7] = Types.INTEGER;
+            params = new Object[6];
+            types = new int[6];
+            params[5] = this.userID;
+            types[5] = Types.INTEGER;
         }
         params[0] = this.firstName;
         types[0] = Types.VARCHAR;
@@ -295,10 +257,6 @@ public class User {
         types[3] = Types.VARCHAR;
         params[4] = this.pwdSalt;
         types[4] = Types.VARCHAR;
-        params[5] = this.tokenCode;
-        types[5] = Types.VARCHAR;
-        params[6] = this.tokenDate;
-        types[6] = Types.TIMESTAMP;
         // execute query
         if(Database.update(sql, params, types)){
             // get user ID

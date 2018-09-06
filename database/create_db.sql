@@ -11,8 +11,6 @@ CREATE TABLE user (
     email VARCHAR(40) NOT NULL UNIQUE,
     pwdHash VARCHAR(64) NOT NULL,
     pwdSalt VARCHAR(15) NOT NULL,
-    tokenCode VARCHAR(64) NULL UNIQUE,
-    tokenDate DATETIME NULL,
     PRIMARY KEY (userID)
 );
 
@@ -25,18 +23,6 @@ CREATE TABLE task (
     PRIMARY KEY (taskID),
     FOREIGN KEY (userID) REFERENCES user(userID),
     UNIQUE KEY task_uniq (userID, description, dueDate)
-);
-
-CREATE TABLE calendarEvent (
-	eventID int NOT NULL AUTO_INCREMENT,
-    userID int NOT NULL,
-    eventName VARCHAR(25) NOT NULL,
-    location VARCHAR(40) NOT NULL,
-    startTime DATETIME NOT NULL,
-    endTime DATETIME NOT NULL,
-    notes VARCHAR(200) NULL,
-    PRIMARY KEY (eventID),
-    FOREIGN KEY (userID) REFERENCES user(userID)
 );
 
 CREATE TABLE semester (

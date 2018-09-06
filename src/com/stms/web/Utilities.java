@@ -67,56 +67,6 @@ public class Utilities {
         return salt;
     }
 
-    public static Timestamp getCurrentTimestamp(){
-        return new Timestamp(new Date().getTime());
-    }
-
-    /**
-     * This method checks to see whether or not the DHTLMX Has scheduled a session in said time period
-     *
-     * @param rrule The DHTMLX repeating String
-     * @param day The integer value of the checking day Mon = 1 and Sun = 7
-     * @return true if not scheduled on said day else false
-     */
-
-    public static boolean checkDHT(String rrule, char day){
-        rrule = rrule.substring(rrule.indexOf(',') - 1);
-        System.out.println(rrule);
-        if (rrule.indexOf(day) != -1){
-            return true;
-        } else {
-            return false;
-        }
-    }
-	
-	/**
-     * Translate the day you get from a calendar instance into a char character corresponding to the day where monday =1
-     * and sunday = 7. 0 is invalid input
-     *
-     * @param dayPrefix Prefix of the day from the calendar object e.g. mon
-     * @return Corresponding char in numeric form for the prefix
-     */
-    public static int dayToInt(String dayPrefix){
-        if (dayPrefix.equals("Mon")){
-            return 1;
-        } else if (dayPrefix.equals("Tue")){
-            return 2;
-        } else if (dayPrefix.equals("Wed")){
-            return 3;
-        } else if (dayPrefix.equals("Thu")){
-            return 4;
-        } else if (dayPrefix.equals("Fri")){
-            return 5;
-        } else if (dayPrefix.equals("Sat")){
-            return 6;
-        } else if (dayPrefix.equals("Sun")){
-            return 7;
-        } else{
-            System.out.println("Invalid input " + dayPrefix + ".");
-            return '0';
-        }
-    }
-
     /**
      * Gets and returns the current date in the form of LocalDate
      *
