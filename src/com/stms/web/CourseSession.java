@@ -19,10 +19,9 @@ public class CourseSession {
 
     private Boolean recordExists;
     private Boolean recordSaved;
-    private CourseSession[] childSessions;
-    /**
-     *  if it is a recurring event, child sessions are occurrences that have been modified or deleted by the user
-     */
+    private CourseSession[] childSessions; // if this is a recurring event, child sessions are occurrences that have been modified or deleted by the user
+    private CourseSession parentSession; // if this is a modified occurrence of a repeating event, the parent session is the original series
+
     private Integer sessionID;
     private Integer sessionPID;
     private Integer courseID;
@@ -93,6 +92,29 @@ public class CourseSession {
             this.loadChildSessions();
         }else{
             throw new NullPointerException("No CourseSession exists with the sessionID " + sessionID);
+        }
+    }
+
+    /**
+     * Loads the session that has this CourseSession's parentID as their ID.
+     */
+    private void loadParentSession(){
+        // check if database is connected
+        if(Database.isConnected()) {
+            String sql = "SELECT sessionID FROM courseSession WHERE sessionID = ?";
+            Object[] params = new Object[1];
+            int[] types = new int[1];
+            params[0] = this.sessionPID;
+            types[0] = Types.INTEGER;
+            ResultSet rs = Database.query(sql, params, types);
+            try {
+                while(rs.next()){
+                    this.parentSession = new CourseSession(rs.getInt("sessionID"));
+                }
+            }catch(Exception e){
+                System.out.println("Failed to load parent session for CourseSession (sessionID: " + this.sessionID + ").");
+                e.printStackTrace();
+            }
         }
     }
 
@@ -257,6 +279,7 @@ public class CourseSession {
      */
     public boolean scheduleStudySessions(){
 
+        // delete old study sessions associated with this course session
         if(!Database.isConnected()) {
             return false;
         }
@@ -267,6 +290,10 @@ public class CourseSession {
         types[0] = Types.INTEGER;
         if(!Database.update(sql, params, types)){
             return false;
+        }
+
+        if(this.parentSession != null){
+            return this.parentSession.scheduleStudySessions(); // if this is a child session (reschedule via the parent session instead)
         }
 
         if(this.isGraded()){
@@ -375,7 +402,7 @@ public class CourseSession {
 
                 if(days.length > 0) {
                     // add first occurrence
-                    period = new Occurrence(startDate.plusDays(days[0] - 1), startDate.plusSeconds(this.length));
+                    period = new Occurrence(startDate.plusDays(days[0] - 1), startDate.plusDays(days[0] - 1).plusSeconds(this.length));
                     occurrences.add(period);
 
                     // add all other occurrences
@@ -495,8 +522,8 @@ public class CourseSession {
                 LocalDateTime childNewEnd = this.childSessions[i].getEndDate().toLocalDateTime();
                 LocalDateTime childOldStart = LocalDateTime.ofInstant(Instant.ofEpochSecond(this.childSessions[i].getLength()), TimeZone.getDefault().toZoneId());
                 LocalDateTime childOldEnd = childOldStart.plusSeconds(Duration.between(childNewStart, childNewEnd).getSeconds());
-                occurrences.add(new Occurrence(childNewStart, childNewEnd));
                 occurrences.removeIf(o -> o.equals(new Occurrence(childOldStart, childOldEnd)));
+                occurrences.add(new Occurrence(childNewStart, childNewEnd));
             }
         }
 
@@ -616,7 +643,8 @@ public class CourseSession {
                 if (rs.first()) {
                     this.sessionID = rs.getInt("sessionID");
                 }
-                this.loadChildSessions(); // once the sessionID has been fetched we can now run loadChildSessions()
+                this.loadChildSessions(); // once the sessionID has been fetched we can now run loadChildSessions() and loadParentSession()
+                this.loadParentSession();
             }catch (Exception e){}
             this.recordExists = true;
             this.recordSaved = true;
