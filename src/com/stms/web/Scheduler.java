@@ -14,24 +14,18 @@ public class Scheduler {
     private boolean timeTable[][];
     private int DaysTilDue;
     private int SemesterID;
-    private int toBed;
     private int toWake;
 
     //Add a foreign key for coursessionID or assignmentID
 
     /**
-     * Constructors for the class. One that is blank and another that passes the UserID to the class.
-     * The userID is necessary for the class to execute but also has a set method to access it.
+     * Constuctor for the Scheduler class that sets the userID and initiates the sleep variable for the class
+     * which can be set to a different number if future iteration want to allow user to input sleep
+     * schedule
      */
-
-    public Scheduler(){
-        toBed = 0;
-        toWake = 8;
-    }
 
     public Scheduler(int UserID){
         this.UserID = UserID;
-        toBed = 0;
         toWake = 8;
     }
 
@@ -226,23 +220,6 @@ public class Scheduler {
         } else {
             System.out.println("Study session has already been completed");
         }
-    }
-
-
-    public void setUserID(int UserID){
-        this.UserID = UserID;
-    }
-
-    public int getUserID(){
-        return UserID;
-    }
-
-    public  void setBedTime(int bedTime){
-        toBed = bedTime;
-    }
-
-    public void setWakeTime(int wake){
-        toWake = wake;
     }
 }
 
