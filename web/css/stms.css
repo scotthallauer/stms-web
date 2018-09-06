@@ -627,8 +627,8 @@ div.stms_assignments_none{
     display: none;
     width: 100%;
     text-align: center;
-    padding: 80px 0;
-    font-size: 15px;
+    padding: 70px 0;
+    font-size: 12px;
     color: #AAA;
 }
 div.stms_assignments_none.assignments_empty{

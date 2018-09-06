@@ -942,6 +942,16 @@ function loadTasks(){
         stms_task_grid.clearAll();
         stms_task_grid.parse(JSON.parse(data), "json");
         stms_task_grid.sortRows(2, "date", "asc");
+        stms_task_grid.forEachRow(function(id){
+            var task_date = moment(stms_task_grid.cells(id, 2).getValue(), "DD/MM/YYYY [at] HH:mm");
+            if(moment().isAfter(task_date)){
+                stms_task_grid.cells(id, 1).setTextColor("red");
+                stms_task_grid.cells(id, 2).setTextColor("red");
+            }else{
+                stms_task_grid.cells(id, 1).setTextColor("#000");
+                stms_task_grid.cells(id, 2).setTextColor("#000");
+            }
+        });
         if(stms_task_grid.getRowsNum() <= 0){
             $("div#stms_tasks_grid").addClass("gridbox_empty");
             $("div#stms_tasks_none").addClass("gridbox_empty");
@@ -959,6 +969,14 @@ function loadTasks(){
 function saveTask(id){
     if(id == null){
         return;
+    }
+    var task_date = moment(stms_task_grid.cells(id, 2).getValue(), "DD/MM/YYYY [at] HH:mm");
+    if(moment().isAfter(task_date)){
+        stms_task_grid.cells(id, 1).setTextColor("red");
+        stms_task_grid.cells(id, 2).setTextColor("red");
+    }else{
+        stms_task_grid.cells(id, 1).setTextColor("#000");
+        stms_task_grid.cells(id, 2).setTextColor("#000");
     }
     var requestAction = "updated";
     if(stms_task_grid.cells(id, 0).isChecked()){ // if task has been marked as complete
