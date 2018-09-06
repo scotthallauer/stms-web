@@ -94,6 +94,10 @@ public class CourseSession {
         }
     }
 
+    /**
+     * Loads all the sessions that have this CourseSession's ID as their parentID. Mainly used for deleted sessions
+     * that are associated to this using the DHTMLX format
+     */
     private void loadChildSessions(){
         // check if database is connected
         if(Database.isConnected()) {
@@ -116,6 +120,9 @@ public class CourseSession {
         }
     }
 
+    /**
+     * Getters and setters for the class
+     */
     public Integer getSessionID() {
         return this.sessionID;
     }
@@ -239,6 +246,13 @@ public class CourseSession {
         return (this.priority != null);
     }
 
+    /**
+     * Deletes old study sessions that are associated to this course session and calls scheduler to reschedule the
+     * amount of hours necessary for this application. This method is used when Users move the CourseSession with
+     * studySessions already scheduled
+     *
+     * @return true if all study sessions are scheduled and false if not all could be scheduled
+     */
     public boolean scheduleStudySessions(){
 
         // delete old study sessions associated with this course session

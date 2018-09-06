@@ -61,7 +61,9 @@ public class Task {
         }
     }
 
-    // METHODS //
+    /**
+     * Getters and setters for this class
+     */
 
     public Integer getTaskID () { return this.taskID;}
 

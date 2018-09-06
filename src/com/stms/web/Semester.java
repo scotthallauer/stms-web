@@ -96,6 +96,12 @@ public class Semester {
         this.courses = arr.toArray(new Course[0]);
     }
 
+    /**
+     * loads courses if they haven't been loaded yet and then returns the array of courses that are associated
+     * with this semester
+     *
+     * @return an array of courses associated with this semesters
+     */
     public Course[] getCourses () {
         this.loadCourses();
         if(this.courses == null){
@@ -130,6 +136,12 @@ public class Semester {
         this.studySessions = arr.toArray(new StudySession[0]);
     }
 
+    /**
+     * Loads an all the study sessions associated with this semester into an array in the class is not already loaded
+     * and then returns said array
+     *
+     * @return all the study sessions associated with this semester
+     */
     public StudySession[] getStudySessions() {
         this.loadStudySessions();
         if(this.studySessions == null){
@@ -138,6 +150,9 @@ public class Semester {
         return this.studySessions;
     }
 
+    /**
+     * Setters and getters for the class
+     */
     public int getSemesterID() {
         return this.semesterID;
     }
@@ -318,14 +333,4 @@ public class Semester {
         return true;
     }
 
-
-    // Methods still to be implemented
-    /*
-    public void setCourses(Course[] crs) {
-        this.courses = crs; }
-
-
-    public void addCourse (Course course) {
-    }
-    */
 }

@@ -16,7 +16,6 @@ public class Scheduler {
     private int SemesterID;
     private int toWake;
 
-    //Add a foreign key for coursessionID or assignmentID
 
     /**
      * Constuctor for the Scheduler class that sets the userID and initiates the sleep variable for the class
@@ -150,8 +149,10 @@ public class Scheduler {
             e.printStackTrace();
         }
 
-        //END OF BUILD PHASE
-        //Start of burn phase
+        /**
+         * The boolean array has been populated with all users timeslots in the time period and is now ready
+         * for the scheduler to schedule the study sessions for the user
+         */
 
         int hourCount = 0;
         int fullCount = 0;

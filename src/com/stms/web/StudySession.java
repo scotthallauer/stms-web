@@ -16,7 +16,6 @@ public class StudySession {
 
     private Boolean recordExists;
     private Boolean recordSaved;
-
     private Integer sSessionID;
     private Integer assignmentID;
     private Integer courseSessionID;
@@ -181,6 +180,9 @@ public class StudySession {
         }
     }
 
+    /**
+     * Getters and setters for this class
+     */
     public Integer getStudySessionID() {
         return this.sSessionID;
     }
