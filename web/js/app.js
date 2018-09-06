@@ -336,7 +336,9 @@ dhtmlxEvent(window, 'load', function(){
     // configure scheduler to only show "details" button when event is readonly, otherwise show "edit" and "delete" icon
     scheduler.attachEvent("onClick", function(id){
         var event = scheduler.getEvent(id);
-        if (id.substring(0,1) == "s") {
+        if (typeof id == "string" && id.substring(0,1) == "a"){
+            scheduler.showLightbox(id); // open the lightbox if a user single clicks on an assignment
+        }else if (typeof id == "string" && id.substring(0,1) == "s") {
             scheduler.config.icons_select = ["icon_delete"];
         }else if (event.readonly) {
             scheduler.config.icons_select = ["icon_details"];
