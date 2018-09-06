@@ -252,8 +252,8 @@ dhtmlxEvent(window, 'load', function(){
                 assignment_desc: "Assignment",
                 event_grade: "2,0,0",
                 assignment_complete: false,
-                start_date: moment().startOf("hour").toDate(),
-                end_date: moment().startOf("hour").add(1, "hour").toDate(),
+                start_date: moment().startOf("day").add(1, "day").toDate(),
+                end_date: moment().startOf("day").add(2, "day").toDate(),
                 assignment_duedate: moment().startOf("hour").add(1, "day").toDate()
             });
         }
@@ -551,6 +551,7 @@ dhtmlxEvent(window, 'load', function(){
     // preload task list table (will reload whenever user switches to this tab - handled in onSelect event for sidebar)
     loadTasks();
 
+    // ASSIGNMENT COLUMN //
     var stms_assignment_tabbar = stms_task_layout.cells("b").attachTabbar({
 
         tabs: [
@@ -584,8 +585,8 @@ dhtmlxEvent(window, 'load', function(){
                 assignment_desc: "Assignment",
                 event_grade: "2,0,0",
                 assignment_complete: false,
-                start_date: moment().startOf("hour").toDate(),
-                end_date: moment().startOf("hour").add(1, "hour").toDate(),
+                start_date: moment().startOf("day").add(1, "day").toDate(),
+                end_date: moment().startOf("day").add(2, "day").toDate(),
                 assignment_duedate: moment().startOf("hour").add(1, "day").toDate()
             });
         }
