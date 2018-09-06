@@ -16,10 +16,10 @@
 
     ArrayList<JSONObject> oa = new ArrayList<JSONObject>();
 
-    // add upcoming graded sessions to the array
     for(int i = 0 ; i < semesters.length ; i++) {
         Course[] courses = semesters[i].getCourses();
         for (int j = 0; j < courses.length; j++) {
+            // add upcoming graded sessions to the array
             CourseSession[] sessions = courses[j].getGradedSessions(); // only interested in graded sessions
             for (int k = 0; k < sessions.length; k++) {
                 Occurrence[] occurrences = sessions[k].getOccurrences(1000);
@@ -32,7 +32,6 @@
                         } else {
                             jo.put("action", "Prepare for");
                         }
-                        jo.put("type", sessions[k].getType());
                         jo.put("courseName", courses[j].getName());
                         jo.put("courseCode", courses[j].getCode());
                         jo.put("type", Utilities.capitalise(sessions[k].getType()));
@@ -40,13 +39,35 @@
                         Integer userPriority = sessions[k].getPriority();
                         Double weighting = sessions[k].getWeighting();
                         jo.put("priority", Priority.calculate(dueDate, userPriority, weighting));
-                        if (weighting != null) {
+                        if (weighting != 0) {
                             DecimalFormat decimal = new DecimalFormat("0.##");
                             jo.put("weighting", decimal.format(weighting));
                         }
                         jo.put("dueDate", Timestamp.valueOf(occurrences[n].getStartDate()).toString());
                         oa.add(jo);
                     }
+                }
+            }
+            // add upcoming assignments to the array
+            CourseAssignment[] assignments = courses[j].getAssignments();
+            for (int k = 0; k < assignments.length; k++) {
+                if (!assignments[k].isComplete()) {
+                    JSONObject jo = new JSONObject();
+                    jo.put("id", "a" + assignments[k].getAssignmentID());
+                    jo.put("action", "Work on");
+                    jo.put("courseName", courses[j].getName());
+                    jo.put("courseCode", courses[j].getCode());
+                    jo.put("type", Utilities.capitalise(assignments[k].getDescription()));
+                    LocalDate dueDate = assignments[k].getDueDate().toLocalDateTime().toLocalDate();
+                    Integer userPriority = assignments[k].getPriority();
+                    Double weighting = assignments[k].getWeighting();
+                    jo.put("priority", Priority.calculate(dueDate, userPriority, weighting));
+                    if (weighting != 0) {
+                        DecimalFormat decimal = new DecimalFormat("0.##");
+                        jo.put("weighting", decimal.format(weighting));
+                    }
+                    jo.put("dueDate", assignments[k].getDueDate().toString());
+                    oa.add(jo);
                 }
             }
         }

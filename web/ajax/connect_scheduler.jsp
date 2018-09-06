@@ -2,6 +2,7 @@
 <%@ page import="org.json.*" %>
 <%@ page import="java.sql.Types" %>
 <%@ page import="java.sql.Timestamp" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <%! boolean authRequired = true; %>
 <%! boolean ajaxRequest = true; %>
 <%@ include file="../includes/session.jsp" %>
@@ -37,12 +38,14 @@
     if(method.equals("GET")){
 
         Semester[] semesters = user.getSemesters();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         JSONArray ja = new JSONArray();
         for(int i = 0 ; i < semesters.length ; i++) {
-            // load course sessions
+
             Course[] courses = semesters[i].getCourses();
             for (int j = 0; j < courses.length; j++) {
+                // load course sessions
                 CourseSession[] courseSessions = courses[j].getSessions();
                 for (int k = 0; k < courseSessions.length; k++) {
                     JSONObject jo = new JSONObject();
@@ -73,6 +76,38 @@
                     jo.put("textColor", "#FFFFFF");
                     ja.put(jo);
                 }
+                // load course assignments
+                CourseAssignment[] courseAssignments = courses[j].getAssignments();
+                for (int k = 0; k < courseAssignments.length; k++) {
+                    JSONObject jo = new JSONObject();
+                    jo.put("id", "a" + String.valueOf(courseAssignments[k].getAssignmentID()));
+                    jo.put("course_id", courses[j].getCourseID());
+                    String priority = "";
+                    if(courseAssignments[k].getPriority() != null) {
+                        if (courseAssignments[k].getPriority() == 3) {
+                            priority = "!!! ";
+                        } else if (courseAssignments[k].getPriority() == 2) {
+                            priority = "!! ";
+                        } else if (courseAssignments[k].getPriority() == 1) {
+                            priority = "! ";
+                        }
+                    }
+                    jo.put("text", priority + courseAssignments[k].getDescription());
+                    jo.put("assignment_desc", courseAssignments[k].getDescription());
+                    jo.put("assignment_complete", courseAssignments[k].isComplete());
+                    jo.put("assignment_duedate", courseAssignments[k].getDueDate().toString());
+                    if(courseAssignments[k].getPriority() != null){
+                        jo.put("event_grade", String.valueOf(courseAssignments[k].getPriority()) + "," + String.valueOf(courseAssignments[k].getWeighting()) + "," + String.valueOf(courseAssignments[k].getStudyHours()));
+                        jo.put("color", "red");
+                    }else{
+                        jo.put("event_grade", "0,0,0");
+                        jo.put("color", getColourCode(courses[j].getColour()));
+                    }
+                    jo.put("start_date", courseAssignments[k].getDueDate().toLocalDateTime().toLocalDate().atStartOfDay().format(formatter));
+                    jo.put("end_date", courseAssignments[k].getDueDate().toLocalDateTime().plusDays(1).toLocalDate().atStartOfDay().format(formatter));
+                    jo.put("textColor", "#FFFFFF");
+                    ja.put(jo);
+                }
             }
             // load study sessions
             StudySession[] studySessions = semesters[i].getStudySessions();
@@ -93,13 +128,17 @@
     // MODIFY CALENDAR //
     else{
         String action = request.getParameter("!nativeeditor_status");
+        if(action == null || action.length() < 1){
+            action = "updated";
+        }
 
         // Get parameters
-        boolean eventIsCourseSession = (request.getParameter("id").charAt(0) == 'c' || request.getParameter("id").charAt(0) != 's');
+        boolean eventIsCourseSession = (request.getParameter("id").charAt(0) == 'c' || (request.getParameter("id").charAt(0) != 's' && request.getParameter("id").charAt(0) != 'a' && request.getParameter("assignment_desc") == null));
         boolean eventIsStudySession = (request.getParameter("id").charAt(0) == 's');
+        boolean eventIsAssignment = (request.getParameter("id").charAt(0) == 'a' || (request.getParameter("id").charAt(0) != 's' && request.getParameter("id").charAt(0) != 'c' && request.getParameter("assignment_desc") != null));
         Integer eventID;
         try {
-            if(request.getParameter("id").charAt(0) == 'c' || request.getParameter("id").charAt(0) == 's') {
+            if(request.getParameter("id").charAt(0) == 'c' || request.getParameter("id").charAt(0) == 's' || request.getParameter("id").charAt(0) == 'a') {
                 eventID = Integer.valueOf(request.getParameter("id").substring(1));
             }else{
                 eventID = Integer.valueOf(request.getParameter("id"));
@@ -129,6 +168,27 @@
             }
         }catch(Exception e){
             eventType = null;
+        }
+        String assignmentDesc;
+        try {
+            assignmentDesc = String.valueOf(request.getParameter("assignment_desc"));
+            if(assignmentDesc.length() < 1){
+                assignmentDesc = null;
+            }
+        }catch(Exception e){
+            assignmentDesc = null;
+        }
+        Boolean assignmentComplete;
+        try {
+            assignmentComplete = Boolean.valueOf(request.getParameter("assignment_complete"));
+        }catch(Exception e){
+            assignmentComplete = false;
+        }
+        Timestamp assignmentDueDate;
+        try {
+            assignmentDueDate = Timestamp.valueOf(request.getParameter("assignment_duedate"));
+        }catch(Exception e){
+            assignmentDueDate = null;
         }
         Integer eventPriority;
         try{
@@ -201,11 +261,35 @@
                             jo.put("refresh", true);
                         }
                         jo.put("action", "inserted");
-                        jo.put("tid", cs.getSessionID());
+                        jo.put("tid", "c" + cs.getSessionID());
                     }
                 } else {
                     jo.put("action", "error");
                 }
+
+            }else if(eventIsAssignment){
+
+                CourseAssignment ca = new CourseAssignment();
+                ca.setCourseID(eventCourseID);
+                ca.setDescription(assignmentDesc);
+                ca.setPriority(eventPriority);
+                ca.setWeighting(eventWeighting);
+                ca.setStudyHours(eventStudyHours);
+                ca.setComplete(assignmentComplete);
+                ca.setDueDate(assignmentDueDate);
+                if (ca.save()) {
+
+                        if (ca.isGraded()) {
+                            ca.scheduleStudySessions();
+                            jo.put("refresh", true);
+                        }
+                        jo.put("action", "inserted");
+                        jo.put("tid", "a" + ca.getAssignmentID());
+
+                } else {
+                    jo.put("action", "error");
+                }
+
 
             // user can't insert new study session (only delete and edit existing ones)
             }else{
@@ -245,9 +329,38 @@
                         types[0] = Types.INTEGER;
                         Database.update(sql, params, types);
                     }
-                    if((cs.isGraded() && (oldStudyHours != eventStudyHours || !oldStartDate.equals(eventStartDate))) ||
-                       (oldIsGraded && !cs.isGraded())){
+                    if ((cs.isGraded() && (oldStudyHours != eventStudyHours || !oldStartDate.equals(eventStartDate))) ||
+                            (oldIsGraded && !cs.isGraded())) {
                         cs.scheduleStudySessions();
+                    }
+                    jo.put("action", "updated");
+                } else {
+                    jo.put("action", "error");
+                }
+
+            // update existing course assignments
+            }else if(eventIsAssignment){
+
+                CourseAssignment ca = new CourseAssignment(eventID);
+                boolean oldIsGraded = ca.isGraded();
+                Integer oldStudyHours = null;
+                Timestamp oldDueDate = null;
+                if (ca.isGraded()) {
+                    oldStudyHours = ca.getStudyHours();
+                    oldDueDate = ca.getDueDate();
+                    jo.put("refresh", true);
+                }
+                ca.setCourseID(eventCourseID);
+                ca.setDescription(assignmentDesc);
+                ca.setPriority(eventPriority);
+                ca.setWeighting(eventWeighting);
+                ca.setStudyHours(eventStudyHours);
+                ca.setComplete(assignmentComplete);
+                ca.setDueDate(assignmentDueDate);
+                if (ca.save()) {
+                    if ((ca.isGraded() && (oldStudyHours != eventStudyHours || !oldDueDate.equals(assignmentDueDate))) ||
+                            (oldIsGraded && !ca.isGraded())) {
+                        ca.scheduleStudySessions();
                     }
                     jo.put("action", "updated");
                 } else {
@@ -308,13 +421,26 @@
                 if (cs.isGraded()) {
                     jo.put("refresh", true);
                 }
-                if(cs.delete()){
+                if (cs.delete()) {
                     jo.put("action", "deleted");
-                }else{
+                } else {
                     jo.put("action", "error");
                 }
 
-            // delete exisitng study session
+            // delete existing course assignment
+            }else if(eventIsAssignment){
+
+                CourseAssignment ca = new CourseAssignment(eventID);
+                if (ca.isGraded()) {
+                    jo.put("refresh", true);
+                }
+                if (ca.delete()) {
+                    jo.put("action", "deleted");
+                } else {
+                    jo.put("action", "error");
+                }
+
+            // delete existing study session
             }else if(eventIsStudySession){
 
                 StudySession ss = new StudySession(eventID);

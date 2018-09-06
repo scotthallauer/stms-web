@@ -114,7 +114,7 @@ public class CourseAssignment {
     }
 
     public void setWeighting(Double weighting){
-        if(weighting == null || (weighting >= 0.0 && weighting <= 100.0)){
+        if(weighting == null || (weighting > 0.0 && weighting <= 100.0)){
             this.weighting = weighting;
             this.recordSaved = false;
         }
@@ -143,11 +143,52 @@ public class CourseAssignment {
         }
     }
 
+    public boolean isGraded(){
+        return (this.priority != null);
+    }
+
     public void setComplete(Boolean complete) {
         this.complete = complete;
         this.recordSaved = false;
     }
     public boolean isComplete() { return this.complete;}
+
+    public boolean scheduleStudySessions(){
+
+        // delete old study sessions associated with this course assignment
+        if(!Database.isConnected()) {
+            return false;
+        }
+        String sql = "DELETE FROM studySession WHERE assignmentID = ?";
+        Object[] params = new Object[1];
+        int[] types = new int[1];
+        params[0] = this.assignmentID;
+        types[0] = Types.INTEGER;
+        if(!Database.update(sql, params, types)){
+            return false;
+        }
+
+        if(this.isGraded()){
+
+            // schedule new study sessions
+            try {
+                int userID = new Semester(new Course(this.courseID).getSemesterID1()).getUserID();
+                Scheduler scheduler = new Scheduler(userID);
+                int unscheduledHours = this.studyHours;
+                for(int i = 0 ; i < 5 && unscheduledHours > 0 ; i++) { // give the scheduling algorithm 5 chances to schedule all required hours
+                    unscheduledHours = scheduler.generateSessions(unscheduledHours, this.dueDate.toLocalDateTime(), "assignment", this.assignmentID);
+                }
+                if(unscheduledHours > 0){
+                    return false;
+                }else{
+                    return true;
+                }
+            }catch(Exception e){
+                return false;
+            }
+        }
+        return false;
+    }
 
     /**
      * Save the course assignment's details to the database.

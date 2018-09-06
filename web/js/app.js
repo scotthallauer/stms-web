@@ -104,8 +104,9 @@ dhtmlxEvent(window, 'load', function(){
         if(id == "p1_calendar"){
             loadEvents();
         }else if(id == "p2_tasks"){
+            loadSuggestions();
             loadTasks();
-            loadSuggestions(); // suggestion list table
+            loadAssignments();
         }else if(id == "p3_semesters"){
             loadSemesters();
         }
@@ -128,6 +129,9 @@ dhtmlxEvent(window, 'load', function(){
     scheduler.locale.labels.section_courses = "Course";
     scheduler.locale.labels.section_types = "Type";
     scheduler.locale.labels.section_grades = "Graded";
+    scheduler.locale.labels.section_desc = "Description";
+    scheduler.locale.labels.section_complete = "Completed";
+    scheduler.locale.labels.section_due = "Due Date";
 
     // custom lightbox form section for graded sessions
     scheduler.form_blocks["grading"] = {
@@ -185,12 +189,43 @@ dhtmlxEvent(window, 'load', function(){
         focus: function(node){}
     };
 
-    scheduler.config.lightbox.sections = [
+    // custom lightbox form section for assignment due dates
+    scheduler.form_blocks["duedate"] = {
+        render: function(sns){
+            var out = "<input type='text' id='stms_lightbox_duedate'/>";
+            return out;
+        },
+        set_value: function(node, value, ev){
+            stms_duedate_calendar = new dhtmlXCalendarObject("stms_lightbox_duedate");
+            stms_duedate_calendar.setDateFormat("%d/%m/%Y %H:%i");
+            stms_duedate_calendar.setDate(moment(value).format("DD/MM/YYYY HH:mm"));
+            $("input#stms_lightbox_duedate").val(moment(value).format("DD/MM/YYYY HH:mm"));
+            stms_duedate_calendar.attachEvent("onTimeChange", function(d){
+                // your code here
+                stms_duedate_calendar.setDate(moment(d).format("DD/MM/YYYY HH:mm"));
+                $("input#stms_lightbox_duedate").val(moment(d).format("DD/MM/YYYY HH:mm"));
+            });
+        },
+        get_value: function(node, ev){
+            return stms_duedate_calendar.getDate();
+        },
+        focus: function(node){}
+    };
+
+    session_lightbox = [
         {name: "courses", height: 30, type: "combo", map_to: "course_id", filtering: false, script_path: "./ajax/connect_course_combo.jsp"},
         {name: "types", height: 30, type: "combo", map_to: "event_type", filtering: false, script_path: "./ajax/connect_type_combo.jsp"},
         {name: "grades", type: "grading", map_to: "event_grade"},
         {name: "recurring", height: 115, type: "recurring", map_to: "rec_type", button: "recurring"},
         {name: "time", height: 72, type: "time", map_to: "auto"}
+    ];
+
+    assignment_lightbox = [
+        {name: "courses", height: 30, type: "combo", map_to: "course_id", filtering: false, script_path: "./ajax/connect_course_combo.jsp"},
+        {name: "desc", height: 30, type: "textarea", map_to: "assignment_desc"},
+        {name: "complete", type: "checkbox", map_to: "assignment_complete"},
+        {name: "grades", type: "grading", map_to: "event_grade"},
+        {name: "due", type: "duedate", map_to: "assignment_duedate"}
     ];
 
     stms_sidebar.cells("p1_calendar").attachScheduler(new Date(), 'week');
@@ -207,7 +242,6 @@ dhtmlxEvent(window, 'load', function(){
         }else{
             scheduler.addEventNow({
                 text: "New Session",
-                color: getColourCode("blue"),
                 start_date: moment().startOf("hour").toDate(),
                 end_date: moment().startOf("hour").add(1, "hour").toDate()
             });
@@ -216,7 +250,6 @@ dhtmlxEvent(window, 'load', function(){
 
     // Set event details to default values when creating an event by dragging on the calendar
     scheduler.attachEvent("onEventCreated", function(id, ev){
-        scheduler.getEvent(id).text = "New Session";
         scheduler.getEvent(id).color = getColourCode("blue");
         scheduler.getEvent(id).textColor = "#FFFFFF";
         return true;
@@ -242,11 +275,15 @@ dhtmlxEvent(window, 'load', function(){
     });
 
     scheduler.attachEvent("onBeforeLightbox", function(id){
+        scheduler.resetLightbox();
         if(typeof id == "string" && id.substring(0,1) == "s"){
             return false;
+        }else if((typeof id == "string" && id.substring(0,1) == "a") || (typeof id == "number" && scheduler.getEvent(id).text == "New Assignment")){
+            scheduler.config.lightbox.sections = assignment_lightbox;
         }else{
-            return true;
+            scheduler.config.lightbox.sections = session_lightbox;
         }
+        return true;
     });
 
     scheduler.attachEvent("onLightbox", function(id){
@@ -262,10 +299,10 @@ dhtmlxEvent(window, 'load', function(){
     // configure scheduler to only show "details" button when event is readonly, otherwise show "edit" and "delete" icon
     scheduler.attachEvent("onClick", function(id){
         var event = scheduler.getEvent(id);
-        if (event.readonly) {
-            scheduler.config.icons_select = ["icon_details"];
-        }else if(id.substring(0,1) == "s"){
+        if (id.substring(0,1) == "s") {
             scheduler.config.icons_select = ["icon_delete"];
+        }else if (event.readonly) {
+            scheduler.config.icons_select = ["icon_details"];
         }else {
             scheduler.config.icons_select = ["icon_edit", "icon_delete"];
         }
@@ -282,8 +319,11 @@ dhtmlxEvent(window, 'load', function(){
     //     this method fetches that value and correctly assigns it as the combo box value so that it gets submitted with the form
     //     ...it's a bit of a workaround because DHTMLX does not handle this like it's supposed to :(
     scheduler.attachEvent("onEventSave", function(id, ev, is_new){
-        var type = $("div.dhx_cal_light div.dhx_wrap_section:nth-of-type(2) input[name=types]").val().toLowerCase();
+        var type = null;
+        if((typeof id == "string" && id.substring(0,1) != "a") || (typeof id == "number" && scheduler.getEvent(id).text != "New Assignment")) {
+            type = $("div.dhx_cal_light div.dhx_wrap_section:nth-of-type(2) input[name=types]").val().toLowerCase();
             type = type.charAt(0).toUpperCase() + type.substr(1);
+        }
         var course = $("div.dhx_cal_light div.dhx_wrap_section:nth-of-type(1) input[type=text]").val();
         if(ev.event_grade == "0,0,0") {
             $("div.dhxcombo_option_selected div.dhxcombo_option_text").each(function (index, element) {
@@ -304,12 +344,22 @@ dhtmlxEvent(window, 'load', function(){
             course_name = course.substr(course.indexOf("-")+2);
             course_code = course.substring(0, course.indexOf("-")-1);
         }
-        if(course_code != null) {
+        if(type == null) { // assignments
+            var priority = "";
+            if(ev.event_grade.substring(0,1) == 3){
+                priority = "!!! ";
+            }else if(ev.event_grade.substring(0,1) == 2){
+                priority = "!! ";
+            }else if(ev.event_grade.substring(0,1) == 1){
+                priority = "! ";
+            }
+            ev.text = priority + ev.assignment_desc;
+        }else if(course_code != null) {
             ev.text = course_code + " - " + type;
         }else{
             ev.text = course_name + " - " + type;
         }
-        if(ev.event_type == null) {
+        if(ev.event_type == null && type != null) {
             ev.event_type = type.toLowerCase();
         }
         return true;
@@ -319,7 +369,7 @@ dhtmlxEvent(window, 'load', function(){
     loadEvents();
 
     // dataProcessor to communicate updates to events with the server
-    var scheduler_dp = new dataProcessor("./ajax/connect_scheduler.jsp");
+    scheduler_dp = new dataProcessor("./ajax/connect_scheduler.jsp");
     scheduler_dp.init(scheduler);
     scheduler_dp.setTransactionMode("POST", false);
     scheduler_dp.attachEvent("onAfterUpdate", function(id, action, tid, response){
@@ -327,6 +377,11 @@ dhtmlxEvent(window, 'load', function(){
         if(action == "inserted"){
             scheduler.changeEventId(id, tid);
             id = tid;
+        }
+        // reload assignments and suggestions on the assignments page if the event that was updated was an assignment
+        if((typeof id == "string" && id.substring(0,1) == "a") || (typeof tid == "string" && tid.substring(0,1) == "a")){
+            loadAssignments();
+            loadSuggestions();
         }
         /*
         // if the updated event was a graded session, then reload the calendar to reflect generated study sessions
@@ -478,13 +533,27 @@ dhtmlxEvent(window, 'load', function(){
     stms_assignment_tabbar.tabs("b1").attachObject("stms_assignments_upcoming");
     stms_assignment_tabbar.tabs("b2").attachObject("stms_assignments_completed");
 
-    $("div.coloured_checkbox").on("click", function(){
-        var checkbox = $(this).find("input");
-        checkbox.prop("checked", !checkbox.prop("checked"));
+    // enable create button at the top of the assignment list
+    $("div.dhx_assignment_create_button").click(function () {
+        if(COURSE_COUNT == 0){
+            swal({
+                icon: "warning",
+                title: "No Courses",
+                text: "You haven't created any courses yet! Go to the \"Semesters\" page to create some semesters and courses."
+            });
+        }else{
+            scheduler.addEventNow({
+                text: "New Assignment",
+                assignment_desc: "Assignment",
+                assignment_complete: false,
+                start_date: moment().startOf("hour").toDate(),
+                end_date: moment().startOf("hour").add(1, "hour").toDate()
+            });
+        }
     });
-    $("div.coloured_checkbox input").on("click", function(e){
-        e.stopPropagation();
-    });
+
+    // preload assignment list tables (will reload whenever user switches to this tab - handled in onSelect event for sidebar)
+    loadAssignments();
 
     ////////////////////
     // SEMESTERS PAGE //
@@ -883,9 +952,9 @@ function compareAssignments(a,b) {
     var aD = a.due_date;
     var bD = b.due_date;
     if (moment(aD).isBefore(bD))
-        return 1;
-    if (moment(aD).isAfter(bD))
         return -1;
+    if (moment(aD).isAfter(bD))
+        return 1;
     return 0;
 }
 
@@ -896,10 +965,11 @@ function loadAssignments(callback){
         $("table#stms_assignments_upcoming_list tbody").empty(); // clear existing items in assignments list (need to refresh)
         $("table#stms_assignments_completed_list tbody").empty();
         var assignments = JSON.parse(data);
-        assignments.sort(compareAssignments); // sort based on priority (high to low)
-        var upcoming = new Array();
-        var completed = new Array();
-        for(var i = 0 ; i < assignments.length ; i++){
+        assignments.sort(compareAssignments); // sort based on date (first to last)
+        var upcoming = [];
+        var completed = [];
+        var i;
+        for(i = 0 ; i < assignments.length ; i++){
             if(assignments[i].complete){
                 completed.push(assignments[i]);
             }else{
@@ -907,31 +977,39 @@ function loadAssignments(callback){
             }
         }
         if(upcoming.length == 0){
-            $("div#stms_assignments_upcoming h4").hide();
             $("table#stms_assignments_upcoming_list").hide(); // if there are no upcoming assignments, then hide the table
-            $("div#stms_assignments_upcoming div.stms_assignments_none").show();
+            $("div#stms_assignments_upcoming div.stms_assignments_none").addClass("assignments_empty");
         }else{
-            $("div#stms_assignments_upcoming h4").show();
             $("table#stms_assignments_upcoming_list").show();
-            $("div#stms_assignments_upcoming div.stms_assignments_none").hide();
+            $("div#stms_assignments_upcoming div.stms_assignments_none").removeClass("assignments_empty");
         }
         if(completed.length == 0){
-            $("div#stms_assignments_completed h4").hide();
             $("table#stms_assignments_completed_list").hide(); // if there are no upcoming assignments, then hide the table
-            $("div#stms_assignments_completed_list div.stms_assignments_none").show();
+            $("div#stms_assignments_completed div.stms_assignments_none").addClass("assignments_empty");
         }else{
-            $("div#stms_assignments_completed h4").show();
             $("table#stms_assignments_completed_list").show();
-            $("div#stms_assignments_completed_list div.stms_assignments_none").hide();
+            $("div#stms_assignments_completed div.stms_assignments_none").removeClass("assignments_empty");
         }
         var today = moment().startOf('day');
         var yesterday = moment().subtract(1, 'days').startOf('day');
         var tomorrow = moment().add(1, 'days').startOf('day');
+        var html;
+        var assignment_id;
+        var assignment_date;
+        var readable_date;
+        var assignment_desc;
+        var assignment_time;
+        var assignment_priority;
+        var assignment_weighting;
+        var course_name;
+        var course_code;
+        var course_colour;
 
-        for(var i = 0 ; i < upcoming.length; i++){
-            var html = "";
-            var assignment_date = moment(upcoming[i].due_date).format("YYYY-MM-DD");
-            var readable_date = moment(upcoming[i].due_date).format("D MMMM");
+        // populate upcoming assignments list
+        for(i = 0 ; i < upcoming.length; i++){
+            html = "";
+            assignment_date = moment(upcoming[i].due_date).format("YYYY-MM-DD");
+            readable_date = moment(upcoming[i].due_date).format("D MMMM");
             if(moment(upcoming[i].due_date).isSame(yesterday, 'd')){
                 readable_date = "Yesterday";
             }else if(moment(upcoming[i].due_date).isSame(today, 'd')){
@@ -942,39 +1020,142 @@ function loadAssignments(callback){
             var overdue = moment().isAfter(upcoming[i].due_date);
             html += "<tr class='stms_assignments_duedate_row'><td>Due " + readable_date + "</td></tr>";
             do{
-                var assignment_id = upcoming[i].id;
-                var assignment_desc = upcoming[i].description;
-                var assignment_time = moment(upcoming[i].due_date).format("HH:mm");
-                var assignment_weighting = upcoming[i].weighting;
-                var course_name = upcoming[i].course_name;
-                var course_code = upcoming[i].course_code;
-                var course_colour = upcoming[i].colour;
-                html += "<tr class='stms_assignments_task_row'>" +
-                        "<td>" +
-                            "<table class='stms_assignment_block colour_" + course_colour + (overdue ? " overdue" : "") + "'>" +
-                                "<tbody>" +
-                                    "<tr class='stms_assignment_header_row'>" +
-                                        "<td><div class='coloured_checkbox colour_" + course_colour + "'><input type='checkbox'></div>" + assignment_desc + "</td>" +
-                                        "<td>" + assignment_time + "</td>" +
-                                    "</tr>" +
-                                    "<tr class='stms_assignment_cont_row stms_assignment_course_row'>" +
-                                        "<td colspan='2'>" + course_code + " - " + course_name + "</td>" +
-                                    "</tr>" +
-                                    "<tr class='stms_assignment_cont_row'>" +
-                                        "<td colspan='2'>Priority: High</td>" +
-                                    "</tr>" +
-                                    "<tr class='stms_assignment_cont_row stms_assignment_weighting_row'>" +
-                                        "<td colspan='2'>Weighting: " + assignment_weighting + "%</td>" +
-                                    "</tr>" +
-                                "</tbody>" +
-                            "</table>" +
-                        "</td>" +
+                assignment_id = upcoming[i].id;
+                assignment_desc = upcoming[i].description;
+                assignment_time = moment(upcoming[i].due_date).format("HH:mm");
+                assignment_priority = upcoming[i].priority;
+                if(assignment_priority == 3){
+                    assignment_priority = "High";
+                }else if(assignment_priority == 2){
+                    assignment_priority = "Normal";
+                }else if(assignment_priority == 1){
+                    assignment_priority = "Low";
+                }else{
+                    assignment_priority = null;
+                }
+                assignment_weighting = upcoming[i].weighting;
+                course_name = upcoming[i].course_name;
+                course_code = upcoming[i].course_code;
+                course_colour = upcoming[i].colour;
+                html += "<tr class='stms_assignments_task_row' data-assignment-id='" + assignment_id + "'>" +
+                    "<td>" +
+                    "<table class='stms_assignment_block colour_" + course_colour + (overdue ? " overdue" : "") + "'>" +
+                    "<tbody>" +
+                    "<tr class='stms_assignment_header_row'>" +
+                    "<td><div class='coloured_checkbox colour_" + course_colour + "'><input type='checkbox' data-assignment-id='" + assignment_id + "'></div>" + assignment_desc + "</td>" +
+                    "<td>" + assignment_time + "</td>" +
+                    "</tr>" +
+                    "<tr class='stms_assignment_cont_row stms_assignment_course_row'>" +
+                    "<td colspan='2'>" + course_code + " - " + course_name + "</td>" +
+                    "</tr>";
+                if(assignment_priority != null) {
+                    html += "<tr class='stms_assignment_cont_row stms_assignment_priority_row'>" +
+                        "<td colspan='2'>Priority: " + assignment_priority + "</td>" +
                         "</tr>";
+                }
+                if(assignment_weighting != 0) {
+                    html += "<tr class='stms_assignment_cont_row stms_assignment_weighting_row'>" +
+                        "<td colspan='2'>Weighting: " + assignment_weighting + "%</td>" +
+                        "</tr>";
+                }
+                html += "</tbody>" +
+                    "</table>" +
+                    "</td>" +
+                    "</tr>";
                 i++;
             }while(i < upcoming.length && moment(upcoming[i].due_date).format("YYYY-MM-DD") == assignment_date);
             i--; // decrement so that we don't miss this assignment in the next pass of the loop
-            $("table#stms_assignments_upcoming_list tbody").append(html);
+            $("table#stms_assignments_upcoming_list > tbody").append(html);
         }
+
+        // populate completed assignments list
+        for(i = 0 ; i < completed.length; i++){
+            html = "";
+            assignment_date = moment(completed[i].due_date).format("YYYY-MM-DD");
+            readable_date = moment(completed[i].due_date).format("D MMMM");
+            if(moment(completed[i].due_date).isSame(yesterday, 'd')){
+                readable_date = "Yesterday";
+            }else if(moment(completed[i].due_date).isSame(today, 'd')){
+                readable_date = "Today";
+            }else if(moment(completed[i].due_date).isSame(tomorrow, 'd')){
+                readable_date = "Tomorrow";
+            }
+            html += "<tr class='stms_assignments_duedate_row'><td>Due " + readable_date + "</td></tr>";
+            do{
+                assignment_id = completed[i].id;
+                assignment_desc = completed[i].description;
+                assignment_time = moment(completed[i].due_date).format("HH:mm");
+                assignment_priority = completed[i].priority;
+                if(assignment_priority == 3){
+                    assignment_priority = "High";
+                }else if(assignment_priority == 2){
+                    assignment_priority = "Normal";
+                }else if(assignment_priority == 1){
+                    assignment_priority = "Low";
+                }else{
+                    assignment_priority = null;
+                }
+                assignment_weighting = completed[i].weighting;
+                course_name = completed[i].course_name;
+                course_code = completed[i].course_code;
+                course_colour = completed[i].colour;
+                html += "<tr class='stms_assignments_task_row' data-assignment-id='" + assignment_id + "'>" +
+                    "<td>" +
+                    "<table class='stms_assignment_block colour_" + course_colour + "'>" +
+                    "<tbody>" +
+                    "<tr class='stms_assignment_header_row'>" +
+                    "<td><div class='coloured_checkbox colour_" + course_colour + "'><input type='checkbox' data-assignment-id='" + assignment_id + "'></div>" + assignment_desc + "</td>" +
+                    "<td>" + assignment_time + "</td>" +
+                    "</tr>" +
+                    "<tr class='stms_assignment_cont_row stms_assignment_course_row'>" +
+                    "<td colspan='2'>" + course_code + " - " + course_name + "</td>" +
+                    "</tr>";
+                if(assignment_priority != null) {
+                    html += "<tr class='stms_assignment_cont_row stms_assignment_priority_row'>" +
+                    "<td colspan='2'>Priority: " + assignment_priority + "</td>" +
+                    "</tr>";
+                }
+                if(assignment_weighting != 0) {
+                    html += "<tr class='stms_assignment_cont_row stms_assignment_weighting_row'>" +
+                        "<td colspan='2'>Weighting: " + assignment_weighting + "%</td>" +
+                        "</tr>";
+                }
+                html += "</tbody>" +
+                    "</table>" +
+                    "</td>" +
+                    "</tr>";
+                i++;
+            }while(i < completed.length && moment(completed[i].due_date).format("YYYY-MM-DD") == assignment_date);
+            i--; // decrement so that we don't miss this assignment in the next pass of the loop
+            $("table#stms_assignments_completed_list > tbody").append(html);
+        }
+
+        // set all checkboxes in the completed assignments list to checked
+        $("div#stms_assignments_completed div.coloured_checkbox input").prop("checked", true);
+
+        // set up event handlers for checkboxes
+        $("div.coloured_checkbox").off("click");
+        $("div.coloured_checkbox").on("click", function(e){
+            e.stopPropagation();
+            var checkbox = $(this).find("input");
+            checkbox.prop("checked", !checkbox.prop("checked"));
+            scheduler.getEvent(checkbox.attr("data-assignment-id")).assignment_complete = checkbox.prop("checked");
+            scheduler.updateEvent(checkbox.attr("data-assignment-id"));
+            scheduler_dp.sendData(checkbox.attr("data-assignment-id")); // save updated assignment to server
+
+        });
+        $("div.coloured_checkbox input").off("click");
+        $("div.coloured_checkbox input").on("click", function(e){
+            e.stopPropagation();
+            scheduler.getEvent($(this).attr("data-assignment-id")).assignment_complete = $(this).prop("checked");
+            scheduler.updateEvent($(this).attr("data-assignment-id"));
+            scheduler_dp.sendData($(this).attr("data-assignment-id")); // save updated assignment to server
+        });
+        $("tr.stms_assignments_task_row").off("click");
+        $("tr.stms_assignments_task_row").on("click", function(e){
+            scheduler.showLightbox($(this).attr("data-assignment-id"));
+        });
+
         if(callback && typeof callback === "function"){
             callback();
         }

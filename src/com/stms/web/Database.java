@@ -34,7 +34,7 @@ public class Database{
         // load the MySQL driver
         Class.forName("com.mysql.cj.jdbc.Driver");
         // MySQL database log-in details
-        String url = "jdbc:mysql://localhost:3306/stms";
+        String url = "jdbc:mysql://localhost:4040/stms";
         String user = "root";
         String password = "";
         // set up the connection (this will throw an exception if it fails to connect)

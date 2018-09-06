@@ -1,6 +1,7 @@
 <%@ page import="com.stms.web.*" %>
 <%@ page import="org.json.*" %>
 <%@ page import="java.time.LocalDate" %>
+<%@ page import="java.text.DecimalFormat" %>
 <%! boolean authRequired = true; %>
 <%! boolean ajaxRequest = true; %>
 <%@ include file="../includes/session.jsp" %>
@@ -21,14 +22,15 @@
                 CourseAssignment[] assignments = courses[j].getAssignments();
                 for(int k = 0 ; k < assignments.length ; k++) {
                     JSONObject jo = new JSONObject();
-                    jo.put("id", assignments[k].getAssignmentID());
+                    jo.put("id", "a" + assignments[k].getAssignmentID());
                     jo.put("course_name", courses[j].getName());
                     jo.put("course_code", courses[j].getCode());
                     jo.put("colour", courses[j].getColour());
                     jo.put("description", assignments[k].getDescription());
                     jo.put("due_date", assignments[k].getDueDate());
                     jo.put("priority", assignments[k].getPriority());
-                    jo.put("weighting", assignments[k].getWeighting());
+                    DecimalFormat decimal = new DecimalFormat("0.##");
+                    jo.put("weighting", decimal.format(assignments[k].getWeighting()));
                     jo.put("study_hours", assignments[k].getStudyHours());
                     jo.put("complete", assignments[k].isComplete());
                     ja.put(jo);

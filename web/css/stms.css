@@ -431,6 +431,23 @@ div#stms_tasks_grid tr.stms_task_disabled{
     text-decoration: line-through;
 }
 /* assignments */
+.dhx_wrap_section .dhx_cal_wide_checkbox input[type=checkbox]{
+    margin-left: 13px;
+}
+.dhx_cal_light_wide .dhx_cal_ltext{
+    margin: 0 0 0 108px;
+    width: 335px;
+}
+input#stms_lightbox_duedate{
+    height: 26px;
+    width: 115px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 13px;
+    font-size: 14px;
+    color: #000;
+    border: 1px solid rgba(0,0,0,.1);
+}
 div#stms_assignments_upcoming, div#stms_assignments_completed{
     width: 100%;
     height: 100%;
@@ -554,7 +571,7 @@ table.stms_assignments_list_table{
                 padding-bottom: 3px;
                 color: #000;
             }
-            table.stms_assignment_block tr.stms_assignment_cont_row.stms_assignment_weighting_row td{ /* assignment weighting cell */
+            table.stms_assignment_block tr:last-of-type td{ /* assignment weighting cell */
                 padding-bottom: 3px;
             }
 table.stms_assignment_block div.coloured_checkbox{
