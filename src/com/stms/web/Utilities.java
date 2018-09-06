@@ -1,24 +1,12 @@
 package com.stms.web;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.security.MessageDigest;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.time.LocalDate;
 
 public class Utilities {
-
-   Utilities(){
-   
-   }
 
     public static boolean validateEmail(String email){
         Matcher matcher = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE).matcher(email);

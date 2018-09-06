@@ -1,7 +1,6 @@
 package com.stms.web;
 
 import java.sql.*;
-import java.util.Date;
 
 /**
  * StudySessiom class for Student Time Management System

@@ -1,14 +1,7 @@
 package com.stms.web;
 
-import javax.rmi.CORBA.Util;
-import javax.swing.*;
 import java.sql.*;
-import static java.sql.Types.*;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.security.MessageDigest;
-import java.util.Random;
 
 /**
  * User class for Student Time Management System
