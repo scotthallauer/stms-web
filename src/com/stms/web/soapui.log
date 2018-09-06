@@ -1,5 +1,0 @@
-2018-09-06 16:02:14,552 WARN  [DefaultSoapUICore] Missing folder [C:\Users\Karma\ext] for external libraries
-2018-09-06 16:02:14,757 INFO  [DefaultSoapUICore] initialized soapui-settings from [C:\Users\Karma\soapui-settings.xml]
-2018-09-06 16:02:15,104 INFO  [WorkspaceImpl] Loading workspace from [C:\Users\Karma\intellij-soapui-workspace.xml]
-2018-09-06 16:23:34,240 INFO  [WorkspaceImpl] Saved workspace to [C:\Users\Karma\intellij-soapui-workspace.xml]
-2018-09-06 16:23:34,243 INFO  [DefaultSoapUICore] Settings saved to [C:\Users\Karma\soapui-settings.xml]
