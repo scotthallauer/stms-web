@@ -1,11 +1,10 @@
 package com.stms.web;
 
-import org.junit.jupiter.api.AfterEach;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import com.stms.web.CourseSession;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -227,6 +226,11 @@ class CourseSessionTest {
         CS.setSessionPID(0);
         assertTrue(CS.save());
         assertTrue(CS.delete());
+    }
+
+    @Test
+    void getOccurrences(){
+        assertNotNull(CS1.getOccurrences(500));
     }
 
 

@@ -1,4 +1,5 @@
-import org.junit.jupiter.api.AfterEach;
+package com.stms.web;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,10 +23,6 @@ class UserTest {
         }
     }
 
-    @AfterEach
-    void tearDown() {
-    }
-
     @Test
     void getSemesters() {
         Semester[] semesters = user1.getSemesters();
@@ -33,16 +30,13 @@ class UserTest {
     }
 
     @Test
-    void getUserID() {
-        int x = user1.getUserID();
-        assertEquals(1, x);
+    void getTasks() {
     }
 
     @Test
-    void FgetUserID() {
+    void getUserID() {
         int x = user1.getUserID();
-        int y = user2.getUserID();
-        assertNotEquals(x, y);
+        assertEquals(1, x);
     }
 
     @Test
@@ -98,41 +92,25 @@ class UserTest {
     }
 
     @Test
-    void getTokenCode() {
-    }
-
-    @Test
-    void getTokenDate() {
-    }
-
-    @Test
     void checkPassword() {
-        boolean s = user2.checkPassword("12345678");
-        assertTrue(s);
-        assertFalse(user2.checkPassword("123456789"));
+        assertTrue(user1.checkPassword("password"));
+        assertTrue(user2.checkPassword("12345678"));
     }
 
     @Test
     void setPassword() {
-    }
-
-    @Test
-    void forgotPassword() {
-    }
-
-    @Test
-    void isActivated() {
-        assertTrue(user1.isActivated());
-    }
-
-    @Test
-    void setActivated() {
-        user3.setActivated(false);
-        assertFalse(user3.isActivated());
-        user3.setActivated(true);
+        user3.setPassword("ThisisApassword");
+        assertTrue(user3.checkPassword("ThisisApassword"));
+        user3.setPassword("p3gasus");
     }
 
     @Test
     void save() {
+        User user = new User();
+        user.setPassword("12345678");
+        user.setEmail("123Test@Test.test.test");
+        user.setFirstName("Testy");
+        user.setLastName("McTester");
+        assertTrue(user.save());
     }
 }

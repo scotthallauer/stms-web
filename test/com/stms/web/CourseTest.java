@@ -1,4 +1,5 @@
-import org.junit.jupiter.api.AfterEach;
+package com.stms.web;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,10 +23,6 @@ class CourseTest {
         }
     }
 
-    @AfterEach
-    void tearDown() {
-    }
-
     @Test
     void getSessions() {
         assertNotNull(course1.getSessions());
@@ -34,6 +31,12 @@ class CourseTest {
     @Test
     void getGradedSessions() {
         assertNotNull(course1.getGradedSessions());
+    }
+
+    @Test
+    void getAssignments() {
+        assertNotNull(course2.getAssignments());
+
     }
 
     @Test
@@ -55,7 +58,6 @@ class CourseTest {
         assertEquals(5, x);
         course1.setSemesterID1(1);
     }
-
 
     @Test
     void getName() {
@@ -91,9 +93,28 @@ class CourseTest {
 
     @Test
     void getColour() {
+        String s = course1.getColour();
+        assertEquals("blue", s);
     }
 
     @Test
     void setColour() {
+        course1.setColour("green");
+        String s = course1.getColour();
+        assertEquals("green", s);
+        course1.setColour("blue");
+    }
+
+    //Test save and delete in the same test
+    @Test
+    void save() {
+        Course course = new Course();
+        course.setColour("green");
+        course.setSemesterID1(3);
+        course.setCode("CSC3302F");
+        course.setName("Comsci");
+        assertTrue(course.save());
+
+        assertTrue(course.delete());
     }
 }

@@ -1,5 +1,5 @@
 package com.stms.web;
-import org.junit.jupiter.api.AfterEach;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class StudySessionTest {
+public class StudySessionTest {
 
     private StudySession SS1;
     private StudySession SS2;
