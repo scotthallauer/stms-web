@@ -19,8 +19,10 @@ public class CourseSession {
 
     private Boolean recordExists;
     private Boolean recordSaved;
-    private CourseSession[] childSessions; // if this is a recurring event, child sessions are occurrences that have been modified or deleted by the user
-
+    private CourseSession[] childSessions;
+    /**
+     *  if it is a recurring event, child sessions are occurrences that have been modified or deleted by the user
+     */
     private Integer sessionID;
     private Integer sessionPID;
     private Integer courseID;
@@ -255,7 +257,6 @@ public class CourseSession {
      */
     public boolean scheduleStudySessions(){
 
-        // delete old study sessions associated with this course session
         if(!Database.isConnected()) {
             return false;
         }
