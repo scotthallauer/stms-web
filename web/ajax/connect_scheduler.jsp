@@ -257,6 +257,7 @@
                 if (cs.save()) {
 
                     if (eventRecType != null && eventRecType.equals("none")) {
+                        cs.scheduleStudySessions();
                         jo.put("action", "deleted");
                     } else {
                         if (cs.isGraded()) {
@@ -330,7 +331,9 @@
                         int[] types = new int[1];
                         params[0] = eventID;
                         types[0] = Types.INTEGER;
-                        Database.update(sql, params, types);
+                        if(Database.update(sql, params, types)) {
+                            cs.scheduleStudySessions();
+                        }
                     }
                     if ((cs.isGraded() && (oldStudyHours != eventStudyHours || !oldStartDate.equals(eventStartDate))) ||
                             (oldIsGraded && !cs.isGraded())) {
@@ -408,6 +411,7 @@
                 cs.setLength(eventLength);
                 cs.setRecType(eventRecType);
                 if (cs.save()) {
+                    cs.scheduleStudySessions();
                     jo.put("action", "deleted");
                 } else {
                     jo.put("action", "error");

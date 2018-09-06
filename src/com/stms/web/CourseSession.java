@@ -372,31 +372,33 @@ public class CourseSession {
 
             }else if(type.equals("week")){
 
-                // add first occurrence
-                period = new Occurrence(startDate, startDate.plusSeconds(this.length));
-                occurrences.add(period);
+                if(days.length > 0) {
+                    // add first occurrence
+                    period = new Occurrence(startDate.plusDays(days[0] - 1), startDate.plusSeconds(this.length));
+                    occurrences.add(period);
 
-                // add all other occurrences
-                boolean flag = false;
-                for(int i = 1 ; i < max && !flag ; i++){
-                    for(int j = 1 ; j < days.length && i < max && !flag ; j++){
-                        LocalDateTime start = period.getStartDate().plusDays(days[j]-days[j-1]);
+                    // add all other occurrences
+                    boolean flag = false;
+                    for (int i = 1; i < max && !flag; i++) {
+                        for (int j = 1; j < days.length && i < max && !flag; j++) {
+                            LocalDateTime start = period.getStartDate().plusDays(days[j] - days[j - 1]);
+                            LocalDateTime end = start.plusSeconds(this.length);
+                            if (end.isBefore(endDate) || end.isEqual(endDate)) {
+                                period = new Occurrence(start, end);
+                                occurrences.add(period);
+                                i++;
+                            } else {
+                                flag = true;
+                            }
+                        }
+                        LocalDateTime start = period.getStartDate().minusDays(days[days.length - 1] - days[0]).plusWeeks(count);
                         LocalDateTime end = start.plusSeconds(this.length);
-                        if(end.isBefore(endDate) || end.isEqual(endDate)) {
+                        if (end.isBefore(endDate) || end.isEqual(endDate)) {
                             period = new Occurrence(start, end);
                             occurrences.add(period);
-                            i++;
-                        }else{
+                        } else {
                             flag = true;
                         }
-                    }
-                    LocalDateTime start = period.getStartDate().minusDays(days[days.length-1]-days[0]).plusWeeks(count);
-                    LocalDateTime end = start.plusSeconds(this.length);
-                    if(end.isBefore(endDate) || end.isEqual(endDate)) {
-                        period = new Occurrence(start, end);
-                        occurrences.add(period);
-                    }else{
-                        flag = true;
                     }
                 }
 
@@ -515,16 +517,11 @@ public class CourseSession {
         for(int x = 0; x < occurrences.length; x++){
 
             if((start.getDayOfYear() <= occurrences[x].getStartDate().getDayOfYear())
-            && (end.getDayOfYear() > occurrences[x].getStartDate().getDayOfYear())){
+                    && (end.getDayOfYear() > occurrences[x].getStartDate().getDayOfYear())){
                     ALoccur.add(occurrences[x]);
                 }
             }
-        Occurrence[] toRe = new Occurrence[ALoccur.size()];
-        for (int x = 0; x < ALoccur.size();x++){
-            toRe[x] = ALoccur.get(x);
-
-        }
-        return toRe;
+        return ALoccur.toArray(new Occurrence[0]);
     }
 
     /**
@@ -618,6 +615,7 @@ public class CourseSession {
                 if (rs.first()) {
                     this.sessionID = rs.getInt("sessionID");
                 }
+                this.loadChildSessions(); // once the sessionID has been fetched we can now run loadChildSessions()
             }catch (Exception e){}
             this.recordExists = true;
             this.recordSaved = true;
@@ -647,13 +645,10 @@ public class CourseSession {
         }
         // delete associated child course sessions (if this is a parent course session for a recurring series)
         if (this.recType != null && this.recType != "none") {
-            sql = "DELETE FROM courseSession WHERE sessionPID = ?";
-            params = new Object[1];
-            types = new int[1];
-            params[0] = this.sessionID;
-            types[0] = Types.INTEGER;
-            if(!Database.update(sql, params, types)){
-                return false;
+            for(int i = 0 ; i < this.childSessions.length ; i++){
+                if(!this.childSessions[i].delete()){
+                    return false;
+                }
             }
         }
         // finally, delete the course session itself
