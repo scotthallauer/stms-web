@@ -47,17 +47,8 @@ dhtmlxEvent(window, 'load', function(){
                 case 0:
                     window.location = "/";
                     break;
-                // login failed - account not activated
-                case 1:
-                    $("body").loadingModal("hide");
-                    swal({
-                        icon: "warning",
-                        title: "Inactive Account",
-                        text: "Please click the activation link we sent to your email."
-                    });
-                    break;
                 // login failed - incorrect credentials
-                case 2:
+                case 1:
                     $("body").loadingModal("hide");
                     swal({
                         icon: "error",
@@ -66,7 +57,7 @@ dhtmlxEvent(window, 'load', function(){
                     });
                     break;
                 // login failed - server error
-                case 3:
+                case 2:
                     $("body").loadingModal("hide");
                     swal({
                         icon: "error",

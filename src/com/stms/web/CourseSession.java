@@ -1,7 +1,10 @@
 package com.stms.web;
 
-import java.util.Date;
+import java.time.*;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.sql.*;
+import java.util.TimeZone;
 
 /**
  * CourseSession class for Student Time Management System
@@ -15,6 +18,8 @@ public class CourseSession {
 
     private Boolean recordExists;
     private Boolean recordSaved;
+    private CourseSession[] childSessions; // if this is a recurring event, child sessions are occurrences that have been modified or deleted by the user
+    private CourseSession parentSession; // if this is a modified occurrence of a repeating event, the parent session is the original series
 
     private Integer sessionID;
     private Integer sessionPID;
@@ -22,14 +27,11 @@ public class CourseSession {
     private String type;
     private Timestamp startDate;
     private Timestamp endDate;
-    private Integer length;
+    private Long length;
     private String recType;
-    private String location;
-    private String note;
     private Integer priority;
     private Double weighting;
-    private Double possibleMark;
-    private Double earnedMark;
+    private Integer studyHours;
 
     // CONSTRUCTORS //
 
@@ -64,13 +66,14 @@ public class CourseSession {
             this.type = rs.getString("sessionType");
             this.startDate = rs.getTimestamp("startDate");
             this.endDate = rs.getTimestamp("endDate");
-            this.length = rs.getInt("length");
+            this.length = rs.getLong("length");
+            if(rs.wasNull()){
+                this.length = null;
+            }
             this.recType = rs.getString("recType");
             if(rs.wasNull()){
                 this.recType = null;
             }
-            this.location = rs.getString("location");
-            this.note = rs.getString("note");
             this.priority = rs.getInt("priority");
             if(rs.wasNull()){
                 this.priority = null;
@@ -79,15 +82,70 @@ public class CourseSession {
             if(rs.wasNull()){
                 this.weighting = null;
             }
-            this.possibleMark = rs.getDouble("possibleMark");
-            this.earnedMark = rs.getDouble("earnedMark");
+            this.studyHours = rs.getInt("studyHours");
+            if(rs.wasNull()){
+                this.studyHours = null;
+            }
             this.recordExists = true;
             this.recordSaved = true;
+            this.loadChildSessions();
         }else{
             throw new NullPointerException("No CourseSession exists with the sessionID " + sessionID);
         }
     }
 
+    /**
+     * Loads the session that has this CourseSession's parentID as their ID.
+     */
+    private void loadParentSession(){
+        // check if database is connected
+        if(Database.isConnected()) {
+            String sql = "SELECT sessionID FROM courseSession WHERE sessionID = ?";
+            Object[] params = new Object[1];
+            int[] types = new int[1];
+            params[0] = this.sessionPID;
+            types[0] = Types.INTEGER;
+            ResultSet rs = Database.query(sql, params, types);
+            try {
+                while(rs.next()){
+                    this.parentSession = new CourseSession(rs.getInt("sessionID"));
+                }
+            }catch(Exception e){
+                System.out.println("Failed to load parent session for CourseSession (sessionID: " + this.sessionID + ").");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Loads all the sessions that have this CourseSession's ID as their parentID. Mainly used for deleted sessions
+     * that are associated to this using the DHTMLX format
+     */
+    private void loadChildSessions(){
+        // check if database is connected
+        if(Database.isConnected()) {
+            String sql = "SELECT sessionID FROM courseSession WHERE sessionPID = ?";
+            Object[] params = new Object[1];
+            int[] types = new int[1];
+            params[0] = this.sessionID;
+            types[0] = Types.INTEGER;
+            ResultSet rs = Database.query(sql, params, types);
+            ArrayList<CourseSession> childSessions = new ArrayList<CourseSession>();
+            try {
+                while(rs.next()){
+                    childSessions.add(new CourseSession(rs.getInt("sessionID")));
+                }
+            }catch(Exception e){
+                System.out.println("Failed to load child sessions for CourseSession (sessionID: " + this.sessionID + ").");
+                e.printStackTrace();
+            }
+            this.childSessions = childSessions.toArray(new CourseSession[0]);
+        }
+    }
+
+    /**
+     * Getters and setters for the class
+     */
     public Integer getSessionID() {
         return this.sessionID;
     }
@@ -144,19 +202,19 @@ public class CourseSession {
         return this.endDate;
     }
 
-    public void setLength(Integer length) {
+    public void setLength(Long length) {
         if(length == null || length > 0) {
             this.length = length;
             this.recordSaved = false;
         }
     }
 
-    public Integer getLength() {
+    public Long getLength() {
         return this.length;
     }
 
     public void setRecType(String recType) {
-        if(recType == null || recType.length() > 0) {
+        if(recType == null || recType.length() > 0){
             this.recType = recType;
             this.recordSaved = false;
         }
@@ -164,24 +222,6 @@ public class CourseSession {
 
     public String getRecType() {
         return this.recType;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-        this.recordSaved = false;
-    }
-
-    public String getLocation() {
-        return this.location;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-        this.recordSaved = false;
-    }
-
-    public String getNote() {
-        return this.note;
     }
 
     public void setPriority(Integer priority){
@@ -203,25 +243,312 @@ public class CourseSession {
     }
 
     public Double getWeighting(){
-        return this.weighting;
+        if(this.weighting == null){
+            return 0.0;
+        }else {
+            return this.weighting;
+        }
     }
 
-    public void setPossibleMark(double possibleMark) {
-        this.possibleMark = possibleMark;
-        this.recordSaved = false;
+    public void setStudyHours(Integer studyHours){
+        if(studyHours == null || studyHours > 0){
+            this.studyHours = studyHours;
+            this.recordSaved = false;
+        }
     }
 
-    public Double getPossibleMark() {
-        return this.possibleMark;
+    public Integer getStudyHours(){
+        if(this.studyHours == null){
+            return 0;
+        }else {
+            return this.studyHours;
+        }
     }
 
-    public void setEarnedMark(double earnedMark) {
-        this.earnedMark = earnedMark;
-        this.recordSaved = false;
+    public boolean isGraded(){
+        return (this.priority != null);
     }
 
-    public Double getEarnedMark() {
-        return this.earnedMark;
+    /**
+     * Deletes old study sessions that are associated to this course session and calls scheduler to reschedule the
+     * amount of hours necessary for this application. This method is used when Users move the CourseSession with
+     * studySessions already scheduled
+     *
+     * @return true if all study sessions are scheduled and false if not all could be scheduled
+     */
+    public boolean scheduleStudySessions(){
+
+        // delete old study sessions associated with this course session
+        if(!Database.isConnected()) {
+            return false;
+        }
+        String sql = "DELETE FROM studySession WHERE courseSessionID = ?";
+        Object[] params = new Object[1];
+        int[] types = new int[1];
+        params[0] = this.sessionID;
+        types[0] = Types.INTEGER;
+        if(!Database.update(sql, params, types)){
+            return false;
+        }
+
+        if(this.parentSession != null){
+            return this.parentSession.scheduleStudySessions(); // if this is a child session (reschedule via the parent session instead)
+        }
+
+        if(this.isGraded()){
+
+            // schedule new study sessions
+            try {
+                int userID = new Semester(new Course(this.courseID).getSemesterID1()).getUserID();
+                Scheduler scheduler = new Scheduler(userID);
+                Occurrence[] occurrences = this.getOccurrences(1000);
+                int totalUnscheduledHours = 0;
+                for(int j = 0 ; j < occurrences.length ; j++) {
+                    int unscheduledHours = this.studyHours;
+                    for (int i = 0; i < 5 && unscheduledHours > 0; i++) { // give the scheduling algorithm 5 chances to schedule all required hours
+                        unscheduledHours = scheduler.generateSessions(unscheduledHours, occurrences[j].getStartDate(), "coursesession", this.sessionID);
+                    }
+                    totalUnscheduledHours += unscheduledHours;
+                }
+                if(totalUnscheduledHours > 0){
+                    return false;
+                }else{
+                    return true;
+                }
+            }catch(Exception e){
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get all of the occurrences for this session.
+     * @param max the maximum of occurrences to return (you can probably just always set this to 1000)
+     * @return an array of occurrences for this session
+     */
+    public Occurrence[] getOccurrences(int max){
+
+        LocalDateTime startDate = this.startDate.toLocalDateTime();
+        LocalDateTime endDate = this.endDate.toLocalDateTime();
+
+        ArrayList<Occurrence> occurrences = new ArrayList<Occurrence>();
+        Occurrence period;
+
+        if(this.recType == null || this.recType.length() == 0){
+
+            period = new Occurrence(startDate, endDate);
+            occurrences.add(period);
+
+        }else if(!this.recType.equals("none")){
+
+            String type = this.recType.split("_")[0];
+            Integer count;
+            try {
+                count = Integer.valueOf(this.recType.split("_")[1]);
+            }catch(Exception e){
+                count = null;
+            }
+            Integer day;
+            try {
+                day = Integer.valueOf(this.recType.split("_")[2]);
+            }catch(Exception e){
+                day = null;
+            }
+            Integer count2;
+            try {
+                count2 = Integer.valueOf(this.recType.split("_")[3]);
+            }catch(Exception e){
+                count2 = null;
+            }
+            Integer[] days;
+            try {
+                String[] strDays = this.recType.split("_")[4].replace("#", "").split(",");
+                days = new Integer[strDays.length];
+                for(int i = 0 ; i < strDays.length ; i++){
+                    days[i] = Integer.valueOf(strDays[i]);
+                }
+            }catch(Exception e){
+                days = null;
+            }
+            String extra;
+            try {
+                extra = this.recType.split("#")[1];
+            }catch (Exception e){
+                extra = "";
+            }
+
+            if(type.equals("day")){
+
+                // add first occurrence
+                period = new Occurrence(startDate, startDate.plusSeconds(this.length));
+                occurrences.add(period);
+
+                // add all other occurrences
+                boolean flag = false;
+                for(int i = 1 ; i < max && !flag ; i++){
+                    LocalDateTime start = period.getStartDate().plusDays(count);
+                    LocalDateTime end = start.plusSeconds(this.length);
+                    if(end.isBefore(endDate) || end.isEqual(endDate)) {
+                        period = new Occurrence(start, end);
+                        occurrences.add(period);
+                    }else{
+                        flag = true;
+                    }
+                }
+
+            }else if(type.equals("week")){
+
+                if(days.length > 0) {
+                    // add first occurrence
+                    period = new Occurrence(startDate.plusDays(days[0] - 1), startDate.plusDays(days[0] - 1).plusSeconds(this.length));
+                    occurrences.add(period);
+
+                    // add all other occurrences
+                    boolean flag = false;
+                    for (int i = 1; i < max && !flag; i++) {
+                        for (int j = 1; j < days.length && i < max && !flag; j++) {
+                            LocalDateTime start = period.getStartDate().plusDays(days[j] - days[j - 1]);
+                            LocalDateTime end = start.plusSeconds(this.length);
+                            if (end.isBefore(endDate) || end.isEqual(endDate)) {
+                                period = new Occurrence(start, end);
+                                occurrences.add(period);
+                                i++;
+                            } else {
+                                flag = true;
+                            }
+                        }
+                        LocalDateTime start = period.getStartDate().minusDays(days[days.length - 1] - days[0]).plusWeeks(count);
+                        LocalDateTime end = start.plusSeconds(this.length);
+                        if (end.isBefore(endDate) || end.isEqual(endDate)) {
+                            period = new Occurrence(start, end);
+                            occurrences.add(period);
+                        } else {
+                            flag = true;
+                        }
+                    }
+                }
+
+
+            }else if(type.equals("month")){
+
+                // monthly on same day number
+                if(day == null || count2 == null) {
+
+                    // add first occurrence
+                    period = new Occurrence(startDate, startDate.plusSeconds(this.length));
+                    occurrences.add(period);
+
+                    // add all other occurrences
+                    boolean flag = false;
+                    for (int i = 1; i < max && !flag; i++) {
+                        LocalDateTime start = period.getStartDate().plusMonths(count);
+                        LocalDateTime end = start.plusSeconds(this.length);
+                        if (end.isBefore(endDate) || end.isEqual(endDate)) {
+                            period = new Occurrence(start, end);
+                            occurrences.add(period);
+                        } else {
+                            flag = true;
+                        }
+                    }
+
+                }
+
+                // monthly on same week day
+                else{
+
+                    // get the date of the first occurrence
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(Calendar.YEAR, startDate.getYear());
+                    calendar.set(Calendar.MONTH, startDate.getMonthValue()-1);
+                    calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, count2);
+                    calendar.set(Calendar.DAY_OF_WEEK, day+1);
+                    calendar.set(Calendar.HOUR_OF_DAY, startDate.getHour());
+                    calendar.set(Calendar.MINUTE, startDate.getMinute());
+                    calendar.set(Calendar.SECOND, startDate.getSecond());
+                    calendar.set(Calendar.MILLISECOND, 0);
+
+                    // add first occurrence
+                    LocalDateTime start = Instant.ofEpochMilli(calendar.getTime().getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+                    LocalDateTime end = start.plusSeconds(this.length);
+                    period = new Occurrence(start, end);
+                    occurrences.add(period);
+
+                    // add all other occurrences
+                    boolean flag = false;
+                    for (int i = 1; i < max && !flag; i++) {
+                        LocalDateTime approxDate = period.getStartDate().plusMonths(count);
+                        calendar = Calendar.getInstance();
+                        calendar.set(Calendar.YEAR, approxDate.getYear());
+                        calendar.set(Calendar.MONTH, approxDate.getMonthValue()-1);
+                        calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, count2);
+                        calendar.set(Calendar.DAY_OF_WEEK, day+1);
+                        calendar.set(Calendar.HOUR_OF_DAY, approxDate.getHour());
+                        calendar.set(Calendar.MINUTE, approxDate.getMinute());
+                        calendar.set(Calendar.SECOND, approxDate.getSecond());
+                        calendar.set(Calendar.MILLISECOND, 0);
+                        start = Instant.ofEpochMilli(calendar.getTime().getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+                        end = start.plusSeconds(this.length);
+                        if (end.isBefore(endDate) || end.isEqual(endDate)) {
+                            period = new Occurrence(start, end);
+                            occurrences.add(period);
+                        } else {
+                            flag = true;
+                        }
+                    }
+
+                }
+
+
+
+            }else if(type.equals("year")){
+
+                // our app doesn't support annually recurring events, so this functionality is unnecessary
+
+            }
+
+        }
+
+        for(int i = 0 ; i < this.childSessions.length ; i++) {
+            // remove occurrences that have been deleted by the user
+            if(this.childSessions[i].getOccurrences(1000).length == 0) {
+                LocalDateTime childStart = this.childSessions[i].getStartDate().toLocalDateTime();
+                LocalDateTime childEnd = this.childSessions[i].getEndDate().toLocalDateTime();
+                occurrences.removeIf(o -> o.equals(new Occurrence(childStart, childEnd)));
+            // replace occurrences that have been modified by the user
+            }else{
+                LocalDateTime childNewStart = this.childSessions[i].getStartDate().toLocalDateTime();
+                LocalDateTime childNewEnd = this.childSessions[i].getEndDate().toLocalDateTime();
+                LocalDateTime childOldStart = LocalDateTime.ofInstant(Instant.ofEpochSecond(this.childSessions[i].getLength()), TimeZone.getDefault().toZoneId());
+                LocalDateTime childOldEnd = childOldStart.plusSeconds(Duration.between(childNewStart, childNewEnd).getSeconds());
+                occurrences.removeIf(o -> o.equals(new Occurrence(childOldStart, childOldEnd)));
+                occurrences.add(new Occurrence(childNewStart, childNewEnd));
+            }
+        }
+
+        return occurrences.toArray(new Occurrence[0]);
+
+    }
+	
+	/**
+     * Overloaded method of getOccurences which only return occurrences between 2 dates
+     *
+     * @param max   max number of occurences to return
+     * @param start start Date of your time window
+     * @param end end Date of your time window
+     * @return
+     */
+    public Occurrence[] getOccurrences(int max, LocalDate start, LocalDate end){
+        Occurrence[] occurrences = getOccurrences(max);
+        ArrayList<Occurrence> ALoccur = new ArrayList<>();
+        for(int x = 0; x < occurrences.length; x++){
+
+            if((start.getDayOfYear() <= occurrences[x].getStartDate().getDayOfYear())
+                    && (end.getDayOfYear() > occurrences[x].getStartDate().getDayOfYear())){
+                    ALoccur.add(occurrences[x]);
+                }
+            }
+        return ALoccur.toArray(new Occurrence[0]);
     }
 
     /**
@@ -245,23 +572,23 @@ public class CourseSession {
         String sql;
         // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
         if(!this.recordExists){
-            sql = "INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, location, note, priority, weighting, possibleMark, earnedMark) "
-                  + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO courseSession (sessionPID, courseID, sessionType, startDate, endDate, length, recType, priority, weighting, studyHours) "
+                  + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }else{
             sql = "UPDATE courseSession SET sessionPID = ?, courseID = ?, sessionType = ?, startDate = ?, endDate = ?, length = ?, "
-                  + " recType = ?, location = ?, note = ?, priority = ?, weighting = ?, possibleMark = ?, earnedMark = ? WHERE sessionID = ?";
+                  + " recType = ?, priority = ?, weighting = ?, studyHours = ? WHERE sessionID = ?";
         }
         // prepare query parameters
         Object[] params;
         int[] types;
         if(!this.recordExists){
-            params = new Object[13];
-            types = new int[13];
+            params = new Object[10];
+            types = new int[10];
         }else{
-            params = new Object[14];
-            types = new int[14];
-            params[13] = this.sessionID;
-            types[13] = Types.INTEGER;
+            params = new Object[11];
+            types = new int[11];
+            params[10] = this.sessionID;
+            types[10] = Types.INTEGER;
         }
         params[0] = this.sessionPID;
         types[0] = Types.INTEGER;
@@ -277,24 +604,27 @@ public class CourseSession {
         types[5] = Types.BIGINT;
         params[6] = this.recType;
         types[6] = Types.VARCHAR;
-        params[7] = this.location;
-        types[7] = Types.VARCHAR;
-        params[8] = this.note;
-        types[8] = Types.VARCHAR;
-        params[9] = this.priority;
+        params[7] = this.priority;
+        types[7] = Types.INTEGER;
+        params[8] = this.weighting;
+        types[8] = Types.DOUBLE;
+        params[9] = this.studyHours;
         types[9] = Types.INTEGER;
-        params[10] = this.weighting;
-        types[10] = Types.DOUBLE;
-        params[11] = this.possibleMark;
-        types[11] = Types.DOUBLE;
-        params[12] = this.earnedMark;
-        types[12] = Types.DOUBLE;
         // execute query
         if(Database.update(sql, params, types)){
             // get session ID
-            sql = "SELECT sessionID FROM courseSession WHERE courseID = ? AND sessionType = ? AND startDate = ? AND endDate = ? AND recType = ?";
-            params = new Object[5];
-            types = new int[5];
+            if(this.length == null){
+                sql = "SELECT sessionID FROM courseSession WHERE courseID = ? AND sessionType = ? AND startDate = ? AND endDate = ? AND length IS NULL";
+            }else {
+                sql = "SELECT sessionID FROM courseSession WHERE courseID = ? AND sessionType = ? AND startDate = ? AND endDate = ? AND length = ?";
+            }
+            if(this.length == null) {
+                params = new Object[4];
+                types = new int[4];
+            }else{
+                params = new Object[5];
+                types = new int[5];
+            }
             params[0] = this.courseID;
             types[0] = Types.INTEGER;
             params[1] = this.type;
@@ -303,13 +633,17 @@ public class CourseSession {
             types[2] = Types.TIMESTAMP;
             params[3] = this.endDate;
             types[3] = Types.TIMESTAMP;
-            params[4] = this.recType;
-            types[4] = Types.VARCHAR;
+            if(this.length != null) {
+                params[4] = this.length;
+                types[4] = Types.BIGINT;
+            }
             ResultSet rs = Database.query(sql, params, types); // if fetching the sessionID fails, this object will no longer be able to save data to the database (i.e. save() will always return false)
             try {
                 if (rs.first()) {
                     this.sessionID = rs.getInt("sessionID");
                 }
+                this.loadChildSessions(); // once the sessionID has been fetched we can now run loadChildSessions() and loadParentSession()
+                this.loadParentSession();
             }catch (Exception e){}
             this.recordExists = true;
             this.recordSaved = true;
@@ -323,14 +657,30 @@ public class CourseSession {
      * Delete the course session's details from the database.
      * @return true if successful, false otherwise.
      */
-    private boolean deleteCourseSession () {
+    public boolean delete() {
         // check if database is connected
         if(!Database.isConnected()) {
             return false;
         }
-        String sql = "DELETE FROM courseSession WHERE sessionID = ?";
-        Object[] params;
-        int[] types;
+        // delete associated study sessions (i.e. study sessions that were created for this event)
+        String sql = "DELETE FROM studySession WHERE courseSessionID = ?";
+        Object[] params = new Object[1];
+        int[] types = new int[1];
+        params[0] = this.sessionID;
+        types[0] = Types.INTEGER;
+        if(!Database.update(sql, params, types)){
+            return false;
+        }
+        // delete associated child course sessions (if this is a parent course session for a recurring series)
+        if (this.recType != null && this.recType != "none") {
+            for(int i = 0 ; i < this.childSessions.length ; i++){
+                if(!this.childSessions[i].delete()){
+                    return false;
+                }
+            }
+        }
+        // finally, delete the course session itself
+        sql = "DELETE FROM courseSession WHERE sessionID = ?";
         params = new Object[1];
         types = new int[1];
         params[0] = this.sessionID;

@@ -1,12 +1,7 @@
 package com.stms.web;
 
-import javax.rmi.CORBA.Util;
-import javax.swing.*;
 import java.sql.*;
-import static java.sql.Types.*;
-import java.util.LinkedList;
-import java.security.MessageDigest;
-import java.util.Random;
+import java.util.ArrayList;
 
 /**
  * User class for Student Time Management System
@@ -26,12 +21,10 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
-    private Boolean activated;
     private String pwdHash;
     private String pwdSalt;
-    private String tokenCode;
-    private Timestamp tokenDate;
     private Semester[] semesters;
+    private Task[] tasks;
 
     // CONSTRUCTOR //
 
@@ -64,13 +57,8 @@ public class User {
             this.firstName = rs.getString("firstName");
             this.lastName = rs.getString("lastName");
             this.email = rs.getString("email");
-            this.activated = rs.getBoolean("activated");
             this.pwdHash = rs.getString("pwdHash");
             this.pwdSalt = rs.getString("pwdSalt");
-            this.tokenCode = rs.getString("tokenCode");
-            if(rs.wasNull()) this.tokenCode = null;
-            this.tokenDate = rs.getTimestamp("tokenDate");
-            if(rs.wasNull()) this.tokenDate = null;
             this.recordExists = true;
             this.recordSaved = true;
         }else{
@@ -94,22 +82,16 @@ public class User {
         params[0] = this.userID;
         types[0] = Types.INTEGER;
         ResultSet rs = Database.query(sql, params, types);
+        ArrayList<Semester> arr = new ArrayList<Semester>();
         try {
-            // set length of array
-            if(rs.last()){
-                this.semesters = new Semester[rs.getRow()];
-            }
-            int count = 0;
-            if(rs.first()){
-                do{
-                    this.semesters[count] = new Semester(rs.getInt("semesterID"));
-                    count++;
-                }while(rs.next());
+            while(rs.next()){
+                arr.add(new Semester(rs.getInt("semesterID")));
             }
         } catch (Exception e){
             System.out.println("Failed to load all semesters for User (userID: " + this.userID + ").");
             e.printStackTrace();
         }
+        this.semesters = arr.toArray(new Semester[0]);
     }
 
     public Semester[] getSemesters(){
@@ -118,6 +100,40 @@ public class User {
             this.semesters = new Semester[0];
         }
         return this.semesters;
+    }
+
+    /**
+     * Loads all of the tasks for the user into an array stored as an attribute.
+     */
+    private void loadTasks() {
+        // check if database is connected
+        if(!Database.isConnected()) {
+            return;
+        }
+        String sql = "SELECT * FROM task WHERE userID = ?";
+        Object[] params = new Object[1];
+        int[] types = new int[1];
+        params[0] = this.userID;
+        types[0] = Types.INTEGER;
+        ResultSet rs = Database.query(sql, params, types);
+        ArrayList<Task> arr = new ArrayList<Task>();
+        try {
+            while(rs.next()){
+                arr.add(new Task(rs.getInt("taskID")));
+            }
+        } catch (Exception e){
+            System.out.println("Failed to load all tasks for User (userID: " + this.userID + ").");
+            e.printStackTrace();
+        }
+        this.tasks = arr.toArray(new Task[0]);
+    }
+
+    public Task[] getTasks(){
+        this.loadTasks();
+        if(this.tasks == null){
+            this.tasks = new Task[0];
+        }
+        return this.tasks;
     }
 
     public Integer getUserID(){
@@ -160,28 +176,6 @@ public class User {
         }
     }
 
-    public String getTokenCode() {
-        return this.tokenCode;
-    }
-
-    public Timestamp getTokenDate(){
-        return this.tokenDate;
-    }
-
-    private void generateToken(){
-        this.tokenCode = Utilities.randomString(64);
-        this.tokenDate = Utilities.getCurrentTimestamp();
-        this.recordSaved = false;
-    }
-
-    private void clearToken(){
-        if(this.tokenCode != null || this.tokenDate != null) {
-            this.tokenCode = null;
-            this.tokenDate = null;
-            this.recordSaved = false;
-        }
-    }
-
     /**
      * Checks if the supplied password matches the hashed password in the database.
      * @param plaintext the plaintext password to check
@@ -209,25 +203,6 @@ public class User {
         }
     }
 
-    public boolean forgotPassword () {
-        this.generateToken();
-        if(this.save()) {
-            // SEND EMAIL WITH TOKEN
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    public boolean isActivated(){
-        return this.activated;
-    }
-
-    public void setActivated(boolean activated){
-        this.activated = activated;
-        this.recordSaved = false;
-    }
-
     /**
      * Save the user's details to the database.
      * @return true if successful, false otherwise.
@@ -249,23 +224,21 @@ public class User {
         String sql;
         // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
         if(!this.recordExists){
-            sql = "INSERT INTO user (firstName, lastName, email, activated, pwdHash, pwdSalt, tokenCode, tokenDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO user (firstName, lastName, email, pwdHash, pwdSalt) VALUES (?, ?, ?, ?, ?)";
         }else{
-            sql = "UPDATE user SET firstName = ?, lastName = ?, email = ?, activated = ?, pwdHash = ?, pwdSalt = ?, tokenCode = ?, tokenDate = ? WHERE userID = ?";
+            sql = "UPDATE user SET firstName = ?, lastName = ?, email = ?, pwdHash = ?, pwdSalt = ? WHERE userID = ?";
         }
         // prepare query parameters
         Object[] params;
         int[] types;
         if(!this.recordExists){
-            params = new Object[8];
-            types = new int[8];
-            this.activated = false;
-            this.generateToken(); // token for activation link
+            params = new Object[5];
+            types = new int[5];
         }else{
-            params = new Object[9];
-            types = new int[9];
-            params[8] = this.userID;
-            types[8] = Types.INTEGER;
+            params = new Object[6];
+            types = new int[6];
+            params[5] = this.userID;
+            types[5] = Types.INTEGER;
         }
         params[0] = this.firstName;
         types[0] = Types.VARCHAR;
@@ -273,16 +246,10 @@ public class User {
         types[1] = Types.VARCHAR;
         params[2] = this.email;
         types[2] = Types.VARCHAR;
-        params[3] = this.activated;
-        types[3] = Types.BIT;
-        params[4] = this.pwdHash;
+        params[3] = this.pwdHash;
+        types[3] = Types.VARCHAR;
+        params[4] = this.pwdSalt;
         types[4] = Types.VARCHAR;
-        params[5] = this.pwdSalt;
-        types[5] = Types.VARCHAR;
-        params[6] = this.tokenCode;
-        types[6] = Types.VARCHAR;
-        params[7] = this.tokenDate;
-        types[7] = Types.TIMESTAMP;
         // execute query
         if(Database.update(sql, params, types)){
             // get user ID

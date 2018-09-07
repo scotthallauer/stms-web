@@ -1,5 +1,6 @@
 <%@ page import="com.stms.web.*" %>
 <%! boolean authRequired = true; %>
+<%! boolean ajaxRequest = false; %>
 <%@ include file="./includes/session.jsp" %>
 <!DOCTYPE html>
 <html>
@@ -22,7 +23,7 @@
 		<script src="./js/libraries/loadingModal/jquery.loadingModal.min.js" type="text/javascript"></script>
 	</head>
 	<body>
-	<div id="stms_loader"></div>
+	    <div id="stms_loader"></div>
 		<div id="stms_header">
 			<div id="stms_title">
 				<div id="stms_title_icon"></div>
@@ -38,35 +39,144 @@
 				<h2>To-Do List</h2>
 			</div>
 			<div id="stms_tasks_cont">
-				<h3>Friday, 24 August</h3>
-				<h4>Suggestions</h4>
-				<table class="stms_task_suggestion_list">
-					<tbody>
-						<tr>
-							<td rowspan="2" class="stms_task_suggestion_priority"><div class="stms_priority_icon stms_priority_icon_high">!!!</div></td>
-							<td style="border-bottom: 0" class="stms_task_suggestion_text"><span class="stms_priority_text stms_priority_text_high">Study for Computer Science Test</span></td>
-							<td style="border-bottom: 0" class="stms_task_suggestion_date">tomorrow</td>
-						</tr>
-						<tr>
-							<td style="color: red; font-size: 13px">Weighting: 10%</td>
-						</tr>
-						<tr>
-							<td class="stms_task_suggestion_priority"><div class="stms_priority_icon stms_priority_icon_medium">!!</div></td>
-							<td class="stms_task_suggestion_text"><span class="stms_priority_text stms_priority_text_medium">Work on Computer Science Assignment</span></td>
-							<td class="stms_task_suggestion_date">in 3 days</td>
-						</tr>
-						<tr>
-							<td class="stms_task_suggestion_priority"><div class="stms_priority_icon stms_priority_icon_low">!</div></td>
-							<td class="stms_task_suggestion_text"><span class="stms_priority_text stms_priority_text_low">Work on Philosophy Essay</span></td>
-							<td class="stms_task_suggestion_date">in 6 days</td>
-						</tr>
-					</tbody>
-				</table>
-				<h4>Your Tasks<div class='dhx_task_create_button' aria-label='Create' role='button'>Create</div></h4>
-				<div id="stms_tasks_grid"></div>
-				<div id="stms_tasks_none">No Tasks</div>
+				<h3></h3>
+				<div id="stms_task_suggestion_wrapper">
+					<h4>Suggestions</h4>
+					<table id="stms_task_suggestion_list"><tbody></tbody></table>
+				</div>
+				<div id="stms_task_user_wrapper">
+					<h4>Your Tasks<div class='dhx_task_create_button' aria-label='Create' role='button'>Create</div></h4>
+					<div id="stms_tasks_grid"></div>
+					<div id="stms_tasks_none">No Tasks</div>
+				</div>
 			</div>
 		</div>
+		<div id="stms_assignments_upcoming">
+			<h4>Your Assignments<div class='dhx_assignment_create_button' aria-label='Create' role='button'>Create</div></h4>
+			<table id="stms_assignments_upcoming_list" class="stms_assignments_list_table">
+				<tbody>
+					<tr class="stms_assignments_duedate_row">
+						<td>Due Yesterday</td>
+					</tr>
+					<tr class="stms_assignments_task_row">
+						<td>
+							<table class="stms_assignment_block colour_blue overdue">
+								<tbody>
+								<tr class="stms_assignment_header_row">
+									<td><div class="coloured_checkbox colour_blue"><input type="checkbox"></div>CSC3003S - Computer Science</td>
+									<td>09:00</td>
+								</tr>
+								<tr class="stms_assignment_cont_row stms_assignment_course_row">
+									<td colspan="2">Capstone Project</td>
+								</tr>
+								<tr class="stms_assignment_cont_row">
+									<td colspan="2">Priority: High</td>
+								</tr>
+								<tr class="stms_assignment_cont_row stms_assignment_weighting_row">
+									<td colspan="2">Weighting: 10%</td>
+								</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+					<tr class="stms_assignments_duedate_row">
+						<td>Due Tomorrow</td>
+					</tr>
+					<tr class="stms_assignments_task_row">
+						<td>
+							<table class="stms_assignment_block colour_green">
+								<tbody>
+								<tr class="stms_assignment_header_row">
+									<td><div class="coloured_checkbox colour_green"><input type="checkbox"></div>MCB3023S - Genetics</td>
+									<td>17:00</td>
+								</tr>
+								<tr class="stms_assignment_cont_row stms_assignment_course_row">
+									<td colspan="2">Mid-term Report</td>
+								</tr>
+								<tr class="stms_assignment_cont_row">
+									<td colspan="2">Priority: High</td>
+								</tr>
+								<tr class="stms_assignment_cont_row stms_assignment_weighting_row">
+									<td colspan="2">Weighting: 10%</td>
+								</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+					<tr class="stms_assignments_duedate_row">
+						<td>Due 12 September</td>
+					</tr>
+					<tr class="stms_assignments_task_row">
+						<td>
+							<table class="stms_assignment_block colour_blue">
+								<tbody>
+								<tr class="stms_assignment_header_row">
+									<td><div class="coloured_checkbox colour_blue"><input type="checkbox"></div>CSC3003S - Computer Science</td>
+									<td>09:00</td>
+								</tr>
+								<tr class="stms_assignment_cont_row stms_assignment_course_row">
+									<td colspan="2">Capstone Project</td>
+								</tr>
+								<tr class="stms_assignment_cont_row">
+									<td colspan="2">Priority: High</td>
+								</tr>
+								<tr class="stms_assignment_cont_row stms_assignment_weighting_row">
+									<td colspan="2">Weighting: 10%</td>
+								</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+					<tr class="stms_assignments_task_row">
+						<td>
+							<table class="stms_assignment_block colour_green">
+								<tbody>
+								<tr class="stms_assignment_header_row">
+									<td><div class="coloured_checkbox colour_green"><input type="checkbox"></div>MCB3023S - Genetics</td>
+									<td>17:00</td>
+								</tr>
+								<tr class="stms_assignment_cont_row stms_assignment_course_row">
+									<td colspan="2">Mid-term Report</td>
+								</tr>
+								<tr class="stms_assignment_cont_row">
+									<td colspan="2">Priority: High</td>
+								</tr>
+								<tr class="stms_assignment_cont_row stms_assignment_weighting_row">
+									<td colspan="2">Weighting: 10%</td>
+								</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="stms_assignments_none">No Upcoming Assignments</div>
+		</div>
+		<div id="stms_assignments_completed">
+			<table id="stms_assignments_completed_list" class="stms_assignments_list_table">
+				<tbody>
+
+				</tbody>
+			</table>
+			<div class="stms_assignments_none">No Completed Assignments</div>
+		</div>
+        <div id="stms_semesters_left">
+            <div id="stms_semesters_button_bar"><h2>Semesters</h2><div id='stms_semester_create_button' class='dhx_semester_create_button' aria-label='Create' role='button'>Create</div></div>
+            <div id="stms_semesters_list_wrapper">
+                <table id="stms_semesters_list"><tbody></tbody></table>
+				<div id="stms_semesters_none">No Semesters</div>
+            </div>
+        </div>
+        <div id="stms_semesters_right">
+			<div id="stms_semester_form_wrapper">
+				<h2>New Semester</h2>
+				<div id="stms_semester_dhx_form"></div>
+			</div>
+			<div id="stms_course_form_wrapper" style="display: none">
+				<h2>New Course</h2>
+				<div id="stms_course_dhx_form"></div>
+			</div>
+        </div>
 	</body>
 	<script type="text/javascript">
 		// show loading screen while app loads
@@ -80,6 +190,7 @@
         $("body").loadingModal("show");
 	</script>
 	<!-- load application scripts after we have started the loading screen -->
+	<script src="./js/libraries/ajax-interceptor/interceptor.js" type="text/javascript"></script>
 	<script src="./js/libraries/dhtmlxSuite/dhtmlx.js" type="text/javascript"></script>
 	<script src="./js/libraries/dhtmlxScheduler/dhtmlxscheduler.js" type="text/javascript"></script>
 	<script src="./js/libraries/dhtmlxScheduler/ext/dhtmlxscheduler_recurring.js" type="text/javascript"></script>

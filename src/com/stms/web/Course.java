@@ -1,6 +1,7 @@
 package com.stms.web;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * Course class for Student Time Management System
@@ -22,6 +23,7 @@ public class Course {
     private String code;
     private String colour;
     private CourseSession[] sessions;
+    private CourseAssignment[] assignments;
 
     // CONSTRUCTORS //
 
@@ -70,39 +72,78 @@ public class Course {
     // METHODS //
 
     /**
-     * Loads all of the course sessions for the course into an array stored as an attribute.
+     * Loads all or only graded course sessions for the course into an array stored as an attribute.
      */
-    private void loadCourseSessions(){
+    private void loadCourseSessions(boolean graded){
         // check if database is connected
         if(!Database.isConnected()) {
             return;
         }
         String sql = "SELECT * FROM courseSession WHERE courseID = ?";
+        if(graded){
+            sql = "SELECT * FROM courseSession WHERE courseID = ? AND priority IS NOT NULL"; // if priority is set, then the course is graded
+        }
         Object[] params = new Object[1];
         int[] types = new int[1];
         params[0] = this.courseID;
         types[0] = Types.INTEGER;
         ResultSet rs = Database.query(sql, params, types);
+        ArrayList<CourseSession> arr = new ArrayList<CourseSession>();
         try {
-            // set length of array
-            if(rs.last()){
-                this.sessions = new CourseSession[rs.getRow()];
-            }
-            int count = 0;
-            if(rs.first()){
-                do{
-                    this.sessions[count] = new CourseSession(rs.getInt("sessionID"));
-                    count++;
-                }while(rs.next());
+            while(rs.next()){
+                arr.add(new CourseSession(rs.getInt("sessionID")));
             }
         } catch (Exception e){
             System.out.println("Failed to load all course sessions for Course (courseID: " + this.courseID + ").");
             e.printStackTrace();
         }
+        this.sessions = arr.toArray(new CourseSession[0]);
     }
 
     public CourseSession[] getSessions () {
-        this.loadCourseSessions();
+        this.loadCourseSessions(false);
+        if(this.sessions == null){
+            this.sessions = new CourseSession[0];
+        }
+        return this.sessions;
+    }
+
+    /**
+     * Loads all course assignments for the course into an array stored as an attribute.
+     */
+    private void loadCourseAssignments(){
+        // check if database is connected
+        if(!Database.isConnected()) {
+            return;
+        }
+        String sql = "SELECT * FROM courseAssignment WHERE courseID = ?";
+        Object[] params = new Object[1];
+        int[] types = new int[1];
+        params[0] = this.courseID;
+        types[0] = Types.INTEGER;
+        ResultSet rs = Database.query(sql, params, types);
+        ArrayList<CourseAssignment> arr = new ArrayList<CourseAssignment>();
+        try {
+            while(rs.next()){
+                arr.add(new CourseAssignment(rs.getInt("assignmentID")));
+            }
+        } catch (Exception e){
+            System.out.println("Failed to load all course assignments for Course (courseID: " + this.courseID + ").");
+            e.printStackTrace();
+        }
+        this.assignments = arr.toArray(new CourseAssignment[0]);
+    }
+
+    public CourseAssignment[] getAssignments () {
+        this.loadCourseAssignments();
+        if(this.assignments == null){
+            this.assignments = new CourseAssignment[0];
+        }
+        return this.assignments;
+    }
+
+    public CourseSession[] getGradedSessions(){
+        this.loadCourseSessions(true);
         if(this.sessions == null){
             this.sessions = new CourseSession[0];
         }
@@ -145,6 +186,12 @@ public class Course {
     }
 
     public void setCode(String code) {
+        if(code != null && code.length() > 10){
+            return;
+        }
+        if(code != null && code.length() == 0){
+            code = null;
+        }
         this.code = code;
         this.recordSaved = false;
     }
@@ -162,7 +209,7 @@ public class Course {
      * Save the course's details to the database.
      * @return true if successful, false otherwise.
      */
-	private boolean save(){
+	public boolean save(){
         // check if database is connected
         if(!Database.isConnected()) {
             return false;
@@ -237,14 +284,11 @@ public class Course {
      * Delete the course's details from the database, along with all sessions and assignments related to it.
      * @return true if successful, false otherwise.
      */
-    private boolean deleteCourse () {
+    public boolean delete() {
         // check if database is connected
         if(!Database.isConnected()) {
             return false;
         }
-        // the count will be used to make sure all three classes of objects related to the course are deleted from the database
-        int count = 0;
-
         String sql = "DELETE FROM courseSession WHERE courseID = ?";
         Object[] params;
         int[] types;
@@ -252,23 +296,21 @@ public class Course {
         types = new int[1];
         params[0] = this.courseID;
         types[0] = Types.INTEGER;
-        if(Database.update(sql, params, types)) {
-            count++;
-        }
-        sql = "DELETE FROM courseAssignment WHERE courseID = ?";
-        if(Database.update(sql, params, types)) {
-            count++;
-        }
-        sql = "DELETE FROM course WHERE courseID = ?";
-        if(Database.update(sql, params, types)) {
-            count++;
-        }
-        if (count == 3) {
-            return true;
-        } else {
+        if(!Database.update(sql, params, types)) {
             System.out.println("Failed to delete all database entries for Course (courseID: " + this.courseID + ").");
             return false;
         }
+        sql = "DELETE FROM courseAssignment WHERE courseID = ?";
+        if(!Database.update(sql, params, types)) {
+            System.out.println("Failed to delete all database entries for Course (courseID: " + this.courseID + ").");
+            return false;
+        }
+        sql = "DELETE FROM course WHERE courseID = ?";
+        if(!Database.update(sql, params, types)) {
+            System.out.println("Failed to delete all database entries for Course (courseID: " + this.courseID + ").");
+            return false;
+        }
+        return true;
     }
 
     // Methods still to be implemented

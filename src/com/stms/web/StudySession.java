@@ -1,7 +1,6 @@
 package com.stms.web;
 
 import java.sql.*;
-import java.util.Date;
 
 /**
  * StudySessiom class for Student Time Management System
@@ -16,8 +15,9 @@ public class StudySession {
 
     private Boolean recordExists;
     private Boolean recordSaved;
-
     private Integer sSessionID;
+    private Integer assignmentID;
+    private Integer courseSessionID;
     private Integer semesterID;
     private Timestamp startTime;
     private Timestamp endTime;
@@ -38,7 +38,7 @@ public class StudySession {
      * Parameterised constructor used to create and fetch any existing study sessions from the database.
      * @param sSessionID the study session's unique ID in the database
      */
-    StudySession(int sSessionID) throws Exception {
+    public StudySession(int sSessionID) throws Exception {
         // check if database is connected
         if(!Database.isConnected()) {
             throw new SQLException("Database is not connected.");
@@ -57,6 +57,19 @@ public class StudySession {
             this.endTime = rs.getTimestamp("endTime");
             this.confirmed = rs.getBoolean("confirmed");
             this.note = rs.getString("note");
+            if(rs.wasNull()){
+                this.note = null;
+            }
+            this.assignmentID = rs.getInt("assignmentID");
+            if(rs.wasNull()){
+                this.assignmentID = null;
+            }
+            this.courseSessionID = rs.getInt("courseSessionID");
+            if(rs.wasNull()){
+                this.courseSessionID = null;
+            }
+            this.recordExists = true;
+            this.recordSaved = true;
         } else{
             throw new NullPointerException("No CourseSession exists with the sSessionID " + sSessionID);
         }
@@ -83,32 +96,38 @@ public class StudySession {
         String sql;
         // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
         if (!this.recordExists) {
-            sql = "INSERT INTO studySession (semesterID, startTime, endTime, confirmed, note) VALUES (?, ?, ?, ?, ?)";
+            sql = "INSERT INTO studySession (semesterID, courseSessionID, assignmentID, startTime, endTime, confirmed, note) VALUES (?, ?, ?, ?, ?, ?, ?)";
         } else {
-            sql = "UPDATE studySession SET semesterID = ?, startTime = ?, endTime = ?, confirmed = ?, note = ? WHERE sSessionID = ?";
+            sql = "UPDATE studySession SET semesterID = ?, courseSessionID = ?, assignmentID = ?, startTime = ?, endTime = ?, confirmed = ?, note = ? WHERE sSessionID = ?";
         }
         // prepare query parameters
         Object[] params;
         int[] types;
         if (!this.recordExists) {
-            params = new Object[5];
-            types = new int[5];
+            params = new Object[7];
+            types = new int[7];
         } else {
-            params = new Object[6];
-            types = new int[6];
-            params[5] = this.sSessionID;
-            types[5] = Types.INTEGER;
+            params = new Object[8];
+            types = new int[8];
+            params[7] = this.sSessionID;
+            types[7] = Types.INTEGER;
         }
         params[0] = this.semesterID;
         types[0] = Types.INTEGER;
-        params[1] = this.startTime;
-        types[1] = Types.TIMESTAMP;
-        params[2] = this.endTime;
-        types[2] = Types.TIMESTAMP;
-        params[3] = this.confirmed;
-        types[3] = Types.BOOLEAN;
-        params[4] = this.note;
-        types[4] = Types.VARCHAR;
+        params[1] = this.courseSessionID;
+        types[1] = Types.INTEGER;
+        params[2] = this.assignmentID;
+        types[2] = Types.INTEGER;
+        params[3] = this.startTime;
+        types[3] = Types.TIMESTAMP;
+        params[4] = this.endTime;
+        types[4] = Types.TIMESTAMP;
+        params[5] = this.confirmed;
+        types[5] = Types.BOOLEAN;
+        params[6] = this.note;
+        types[6] = Types.VARCHAR;
+
+
         // execute query
         if (Database.update(sql, params, types)) {
             // get study session ID
@@ -140,7 +159,7 @@ public class StudySession {
      * Delete the course session's details from the database.
      * @return true if successful, false otherwise.
      */
-    private boolean deleteStudySession () {
+    public boolean delete() {
         // check if database is connected
         if(!Database.isConnected()) {
             return false;
@@ -160,6 +179,9 @@ public class StudySession {
         }
     }
 
+    /**
+     * Getters and setters for this class
+     */
     public Integer getStudySessionID() {
         return this.sSessionID;
     }
@@ -186,8 +208,8 @@ public class StudySession {
     }
     public Timestamp getEndTime () { return this.endTime; }
 
-    public void setConfirmed(boolean bool) {
-        this.confirmed = bool;
+    public void setConfirmed(boolean confirmed) {
+        this.confirmed = confirmed;
         this.recordSaved = false;
     }
     public boolean getConfirmed() { return this.confirmed;}
@@ -196,8 +218,27 @@ public class StudySession {
         this.note = note;
         this.recordSaved = false;
     }
+
+    public void setCourseSessionID(Integer courseSessionID){
+        this.courseSessionID = courseSessionID;
+    }
+
+    public Integer getCourseSessionID(){
+        return  courseSessionID;
+    }
+
+    public void setAssignmentID(Integer assignmentID){
+        this.assignmentID = assignmentID;
+    }
+
+    public Integer getAssignmentID(){
+        return assignmentID;
+    }
+
     public String getNote() {
         return this.note;
     }
 }
+
+
 

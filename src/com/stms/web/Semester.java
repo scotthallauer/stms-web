@@ -1,6 +1,7 @@
 package com.stms.web;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.sql.*;
 
 /**
@@ -19,9 +20,10 @@ public class Semester {
     private Integer semesterID;
     private Integer userID;
     private String name;
-    private Timestamp startDate;
-    private Timestamp endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private Course[] courses;
+    private StudySession[] studySessions;
 
     // CONSTRUCTORS //
 
@@ -54,8 +56,8 @@ public class Semester {
             this.semesterID = rs.getInt("semesterID");
             this.userID = rs.getInt("userID");
             this.name = rs.getString("semesterName");
-            this.startDate = rs.getTimestamp("startDate");
-            this.endDate = rs.getTimestamp("endDate");
+            this.startDate = rs.getDate("startDate").toLocalDate();
+            this.endDate = rs.getDate("endDate").toLocalDate();
             this.recordExists = true;
             this.recordSaved = true;
         }else{
@@ -81,24 +83,24 @@ public class Semester {
         params[1] = this.semesterID;
         types[1] = Types.INTEGER;
         ResultSet rs = Database.query(sql, params, types);
+        ArrayList<Course> arr = new ArrayList<Course>();
         try {
-            // set length of array
-            if(rs.last()){
-                this.courses = new Course[rs.getRow()];
-            }
-            int count = 0;
-            if(rs.first()){
-                do{
-                    this.courses[count] = new Course(rs.getInt("courseID"));
-                    count++;
-                }while(rs.next());
+            while(rs.next()){
+                arr.add(new Course(rs.getInt("courseID")));
             }
         } catch (Exception e){
             System.out.println("Failed to load all courses for Semester (semesterID: " + this.semesterID + ").");
             e.printStackTrace();
         }
+        this.courses = arr.toArray(new Course[0]);
     }
 
+    /**
+     * loads courses if they haven't been loaded yet and then returns the array of courses that are associated
+     * with this semester
+     *
+     * @return an array of courses associated with this semesters
+     */
     public Course[] getCourses () {
         this.loadCourses();
         if(this.courses == null){
@@ -107,6 +109,49 @@ public class Semester {
         return this.courses;
     }
 
+    /**
+     * Loads all of the study sessions for the semester into an array stored as an attribute.
+     */
+    private void loadStudySessions(){
+        // check if database is connected
+        if(!Database.isConnected()) {
+            return;
+        }
+        String sql = "SELECT * FROM studySession WHERE semesterID = ?";
+        Object[] params = new Object[1];
+        int[] types = new int[1];
+        params[0] = this.semesterID;
+        types[0] = Types.INTEGER;
+        ResultSet rs = Database.query(sql, params, types);
+        ArrayList<StudySession> arr = new ArrayList<StudySession>();
+        try {
+            while(rs.next()){
+                arr.add(new StudySession(rs.getInt("sSessionID")));
+            }
+        } catch (Exception e){
+            System.out.println("Failed to load all study sessions for Semester (semesterID: " + this.semesterID + ").");
+            e.printStackTrace();
+        }
+        this.studySessions = arr.toArray(new StudySession[0]);
+    }
+
+    /**
+     * Loads an all the study sessions associated with this semester into an array in the class is not already loaded
+     * and then returns said array
+     *
+     * @return all the study sessions associated with this semester
+     */
+    public StudySession[] getStudySessions() {
+        this.loadStudySessions();
+        if(this.studySessions == null){
+            this.studySessions = new StudySession[0];
+        }
+        return this.studySessions;
+    }
+
+    /**
+     * Setters and getters for the class
+     */
     public int getSemesterID() {
         return this.semesterID;
     }
@@ -129,20 +174,20 @@ public class Semester {
         this.recordSaved = false;
     }
 
-    public Timestamp getStartDate() {
+    public LocalDate getStartDate() {
         return this.startDate;
     }
 
-    public void setStartDate(Timestamp startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
         this.recordSaved = false;
     }
 
-    public Timestamp getEndDate() {
+    public LocalDate getEndDate() {
         return this.endDate;
     }
 
-    public void setEndDate(Timestamp endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
         this.recordSaved = false;
     }
@@ -151,7 +196,7 @@ public class Semester {
      * Save the semester's details to the database.
      * @return true if successful, false otherwise.
      */
-    private boolean save(){
+    public boolean save(){
         // check if database is connected
         if(!Database.isConnected()) {
             return false;
@@ -189,9 +234,9 @@ public class Semester {
         params[1] = this.name;
         types[1] = Types.VARCHAR;
         params[2] = this.startDate;
-        types[2] = Types.TIMESTAMP;
+        types[2] = Types.DATE;
         params[3] = this.endDate;
-        types[3] = Types.TIMESTAMP;
+        types[3] = Types.DATE;
         // execute query
         if(Database.update(sql, params, types)){
             // get semester ID
@@ -201,9 +246,9 @@ public class Semester {
             params[0] = this.userID;
             types[0] = Types.INTEGER;
             params[1] = this.startDate;
-            types[1] = Types.TIMESTAMP;
+            types[1] = Types.DATE;
             params[2] = this.endDate;
-            types[2] = Types.TIMESTAMP;
+            types[2] = Types.DATE;
             ResultSet rs = Database.query(sql, params, types); // if fetching the semesterID fails, this object will no longer be able to save data to the database (i.e. save() will always return false)
             try {
                 if (rs.first()) {
@@ -223,13 +268,11 @@ public class Semester {
      * including courses, courseAssignments, courseSessions and studySessions.
      * @return true if successful, false otherwise.
      */
-    public boolean deleteSemester () {
+    public boolean delete() {
         // check if database is connected
         if(!Database.isConnected()) {
             return false;
         }
-        // the count will be used to make sure all five classes of objects are deleted from the database
-        int count = 0;
         String sql = "DELETE FROM studySession WHERE semesterID = ?";
         Object[] params;
         int[] types;
@@ -237,8 +280,9 @@ public class Semester {
         types = new int[1];
         params[0] = this.semesterID;
         types[0] = Types.INTEGER;
-        if(Database.update(sql, params, types)) {
-            count++;
+        if(!Database.update(sql, params, types)) {
+            System.out.println("Failed to delete all database entries for Semester (semesterID: " + this.semesterID + ").");
+            return false;
         }
         sql = "SELECT courseID FROM course WHERE semesterID1 = ? OR semesterID2 = ?";
         params = new Object[2];
@@ -251,22 +295,25 @@ public class Semester {
         try {
             int deletedCourse;
             while (rs.next()) {
+                deletedCourse = rs.getInt("courseID");
                 sql = "DELETE FROM courseSession WHERE courseID = ?";
-                deletedCourse = rs.getInt(1);
                 params = new Object[1];
                 types = new int[1];
                 params[0] = deletedCourse;
                 types[0] = Types.INTEGER;
-                if(Database.update(sql, params, types)) {
-                    count++;
+                if(!Database.update(sql, params, types)) {
+                    System.out.println("Failed to delete all database entries for Semester (semesterID: " + this.semesterID + ").");
+                    return false;
                 }
                 sql = "DELETE FROM courseAssignment WHERE courseID = ?";
-                if(Database.update(sql, params, types)) {
-                    count++;
+                if(!Database.update(sql, params, types)) {
+                    System.out.println("Failed to delete all database entries for Semester (semesterID: " + this.semesterID + ").");
+                    return false;
                 }
                 sql = "DELETE FROM course WHERE courseID = ?";
-                if(Database.update(sql, params, types)) {
-                    count++;
+                if(!Database.update(sql, params, types)) {
+                    System.out.println("Failed to delete all database entries for Semester (semesterID: " + this.semesterID + ").");
+                    return false;
                 }
             }
         } catch (Exception e){
@@ -278,28 +325,11 @@ public class Semester {
         types = new int[1];
         params[0] = this.semesterID;
         types[0] = Types.INTEGER;
-        if(Database.update(sql, params, types)) {
-            count++;
-        }
-        if (count == 5) {
-            return true;
-        } else {
-            System.out.println("Failed to delete all database entries for semesterID: " + this.semesterID + ".");
+        if(!Database.update(sql, params, types)) {
+            System.out.println("Failed to delete all database entries for Semester (semesterID: " + this.semesterID + ").");
             return false;
         }
+        return true;
     }
 
-
-    // Methods still to be implemented
-    /*
-    public void setCourses(Course[] crs) {
-        this.courses = crs; }
-
-
-    public void addCourse (Course course) {
-    }
-
-    public StudySession[] getStudySession() {
-    };
-    */
 }

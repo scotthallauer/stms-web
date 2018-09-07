@@ -1,6 +1,5 @@
 package com.stms.web;
 
-import java.util.Date;
 import java.sql.*;
 
 /**
@@ -18,14 +17,12 @@ public class CourseAssignment {
 
     private Integer assignmentID;
     private Integer courseID;
-    private String name;
+    private String description;
     private Timestamp dueDate;
     private Integer priority;
-    private Double possibleMark;
-    private Double earnedMark;
     private Double weighting;
-    private String note;
-    private boolean complete;
+    private Integer studyHours;
+    private Boolean complete;
 
     // CONSTRUCTORS //
 
@@ -41,7 +38,7 @@ public class CourseAssignment {
      * Parameterised constructor used to create and fetch any existing course assignments from the database.
      * @param assignmentID the course session's unique ID in the database
      */
-    CourseAssignment(int assignmentID) throws Exception {
+    public CourseAssignment(int assignmentID) throws Exception {
         // check if database is connected
         if(!Database.isConnected()) {
             throw new SQLException("Database is not connected.");
@@ -56,14 +53,23 @@ public class CourseAssignment {
         if (rs.first()) {
             this.assignmentID = rs.getInt("assignmentID");
             this.courseID = rs.getInt("courseID");
-            this.name = rs.getString("assignmentName");
+            this.description = rs.getString("description");
             this.dueDate = rs.getTimestamp("dueDate");
             this.priority = rs.getInt("priority");
-            this.possibleMark = rs.getDouble("possibleMark");
-            this.earnedMark = rs.getDouble("earnedMark");
+            if(rs.wasNull()){
+                this.priority = null;
+            }
             this.weighting = rs.getDouble("weighting");
-            this.note = rs.getString("note");
+            if(rs.wasNull()){
+                this.weighting = null;
+            }
+            this.studyHours = rs.getInt("studyHours");
+            if(rs.wasNull()){
+                this.studyHours = null;
+            }
             this.complete = rs.getBoolean("complete");
+            this.recordExists = true;
+            this.recordSaved = true;
         } else{
             throw new NullPointerException("No CourseAssignment exists with the assignmentID " + assignmentID);
         }
@@ -81,12 +87,12 @@ public class CourseAssignment {
         return this.courseID;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(String description) {
+        this.description = description;
         this.recordSaved = false;
     }
-    public String getName() {
-        return this.name;
+    public String getDescription() {
+        return this.description;
     }
 
     public void setDueDate(Timestamp dueDate) {
@@ -95,47 +101,93 @@ public class CourseAssignment {
     }
     public Timestamp getDueDate() { return this.dueDate; }
 
-    public void setPriority(int priority) {
-        this.priority = priority;
-        this.recordSaved = false;
+    public void setPriority(Integer priority){
+        if(priority == null || (priority >= 1 && priority <= 3)){
+            this.priority = priority;
+            this.recordSaved = false;
+        }
     }
-    public Integer getPriority() {
+
+    public Integer getPriority(){
         return this.priority;
     }
 
-    public void setPossibleMark(double possibleMark) {
-        this.possibleMark = possibleMark;
-        this.recordSaved = false;
-    }
-    public Double getPossibleMark() {
-        return this.possibleMark;
-    }
-
-    public void setEarnedMark(double earnedMark) {
-        this.earnedMark = earnedMark;
-        this.recordSaved = false;
-    }
-    public Double getEarnedMark() { return this.earnedMark; }
-
-    public void setWeighting(double weighting) {
-        this.weighting = weighting;
-        this.recordSaved = false;
-    }
-    public Double getWeighting() { return this.weighting; }
-
-    public void setNote(String note) {
-        this.note = note;
-        this.recordSaved = false;
-    }
-    public String getNote() {
-        return this.note;
+    public void setWeighting(Double weighting){
+        if(weighting == null || (weighting > 0.0 && weighting <= 100.0)){
+            this.weighting = weighting;
+            this.recordSaved = false;
+        }
     }
 
-    public void setCompleted(boolean bool) {
-        this.complete = bool;
+    public Double getWeighting(){
+        if(this.weighting == null){
+            return 0.0;
+        }else {
+            return this.weighting;
+        }
+    }
+
+    public void setStudyHours(Integer studyHours){
+        if(studyHours == null || studyHours > 0){
+            this.studyHours = studyHours;
+            this.recordSaved = false;
+        }
+    }
+
+    public Integer getStudyHours(){
+        if(this.studyHours == null){
+            return 0;
+        }else {
+            return this.studyHours;
+        }
+    }
+
+    public boolean isGraded(){
+        return (this.priority != null);
+    }
+
+    public void setComplete(Boolean complete) {
+        this.complete = complete;
         this.recordSaved = false;
     }
-    public boolean getCompleted() { return this.complete;}
+    public boolean isComplete() { return this.complete;}
+
+    public boolean scheduleStudySessions(){
+
+        // delete old study sessions associated with this course assignment
+        if(!Database.isConnected()) {
+            return false;
+        }
+        String sql = "DELETE FROM studySession WHERE assignmentID = ?";
+        Object[] params = new Object[1];
+        int[] types = new int[1];
+        params[0] = this.assignmentID;
+        types[0] = Types.INTEGER;
+        if(!Database.update(sql, params, types)){
+            return false;
+        }
+
+        if(this.isGraded() && !this.isComplete()){
+
+            // schedule new study sessions
+            try {
+                int userID = new Semester(new Course(this.courseID).getSemesterID1()).getUserID();
+                Scheduler scheduler = new Scheduler(userID);
+                int unscheduledHours = this.studyHours;
+                for(int i = 0 ; i < 5 && unscheduledHours > 0 ; i++) { // give the scheduling algorithm 5 chances to schedule all required hours
+                    unscheduledHours = scheduler.generateSessions(unscheduledHours, this.dueDate.toLocalDateTime(), "assignment", this.assignmentID);
+                }
+                if(unscheduledHours > 0){
+                    return false;
+                }else{
+                    return true;
+                }
+            }catch(Exception e){
+                return false;
+            }
+        }
+        return false;
+    }
 
     /**
      * Save the course assignment's details to the database.
@@ -158,51 +210,47 @@ public class CourseAssignment {
         String sql;
         // if the record does not exist in the database, then we must execute an insert query (otherwise an update query)
         if(!this.recordExists) {
-            sql = "INSERT INTO courseAssignment (courseID, name, dueDate, priority, possibleMark, earnedMark, weighting, note, complete) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO courseAssignment (courseID, description, dueDate, priority, weighting, studyHours, complete) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
         } else {
-            sql = "UPDATE courseAssignment SET courseID = ?, name = ?, dueDate = ?, priority = ?, possibleMark = ?, earnedMark = ?, "
-                    + "weighting = ?, note = ?, complete = ? WHERE assignmentID = ?";
+            sql = "UPDATE courseAssignment SET courseID = ?, description = ?, dueDate = ?, priority = ?, "
+                    + "weighting = ?, studyHours = ?, complete = ? WHERE assignmentID = ?";
         }
         // prepare query parameters
         Object[] params;
         int[] types;
         if(!this.recordExists){
-            params = new Object[9];
-            types = new int[9];
+            params = new Object[7];
+            types = new int[7];
         }else{
-            params = new Object[10];
-            types = new int[10];
-            params[9] = this.assignmentID;
-            types[9] = Types.INTEGER;
+            params = new Object[8];
+            types = new int[8];
+            params[7] = this.assignmentID;
+            types[7] = Types.INTEGER;
         }
         params[0] = this.courseID;
         types[0] = Types.INTEGER;
-        params[1] = this.name;
+        params[1] = this.description;
         types[1] = Types.VARCHAR;
         params[2] = this.dueDate;
         types[2] = Types.TIMESTAMP;
         params[3] = this.priority;
         types[3] = Types.INTEGER;
-        params[4] = this.possibleMark;
+        params[4] = this.weighting;
         types[4] = Types.DOUBLE;
-        params[5] = this.earnedMark;
-        types[5] = Types.DOUBLE;
-        params[6] = this.weighting;
-        types[6] = Types.DOUBLE;
-        params[7] = this.note;
-        types[7] = Types.VARCHAR;
-        params[8] = this.complete;
-        types[8] = Types.BOOLEAN;
+        params[5] = this.studyHours;
+        types[5] = Types.INTEGER;
+        params[6] = this.complete;
+        types[6] = Types.BOOLEAN;
         // execute query
         if(Database.update(sql, params, types)){
             // get assignment ID
-            sql = "SELECT assignmentID FROM courseAssignment WHERE courseID = ?, name = ?, dueDate = ?";
+            sql = "SELECT assignmentID FROM courseAssignment WHERE courseID = ? AND description = ? AND dueDate = ?";
             params = new Object[3];
             types = new int[3];
             params[0] = this.courseID;
             types[0] = Types.INTEGER;
-            params[1] = this.name;
+            params[1] = this.description;
             types[1] = Types.VARCHAR;
             params[2] = this.dueDate;
             types[2] = Types.TIMESTAMP;
@@ -224,14 +272,22 @@ public class CourseAssignment {
      * Delete the assignment's details from the database.
      * @return true if successful, false otherwise.
      */
-    private boolean deleteAssignment () {
+    public boolean delete() {
         // check if database is connected
         if(!Database.isConnected()) {
             return false;
         }
-        String sql = "DELETE FROM courseAssignment WHERE assignmentID = ?";
-        Object[] params;
-        int[] types;
+        // delete associated study sessions (i.e. study sessions that were created for this assignment)
+        String sql = "DELETE FROM studySession WHERE assignmentID = ?";
+        Object[] params = new Object[1];
+        int[] types = new int[1];
+        params[0] = this.assignmentID;
+        types[0] = Types.INTEGER;
+        if(!Database.update(sql, params, types)){
+            return false;
+        }
+        // finally, delete the course assignment itself
+        sql = "DELETE FROM courseAssignment WHERE assignmentID = ?";
         params = new Object[1];
         types = new int[1];
         params[0] = this.assignmentID;
