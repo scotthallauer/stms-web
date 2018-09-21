@@ -1040,6 +1040,7 @@ function loadAssignments(callback){
                 upcoming.push(assignments[i]);
             }
         }
+        completed.reverse();
         if(upcoming.length == 0){
             $("table#stms_assignments_upcoming_list").hide(); // if there are no upcoming assignments, then hide the table
             $("div#stms_assignments_upcoming div.stms_assignments_none").addClass("assignments_empty");
